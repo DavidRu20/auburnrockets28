@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact • AHS Class of ’28</title>
+  <meta name="theme-color" content="#0d6efd" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============================ HEADER / NAV ============================ -->
+  <header class="header" role="banner">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+        <span class="logo" aria-hidden="true">A</span>
+        AHS Class of ’28
+      </a>
+      <div class="links" role="navigation">
+        <a href="./">Home</a>
+        <a href="./fundraisers.html">Fundraisers</a>
+        <a href="./calendar.html">Calendar</a>
+        <a href="./media.html">Media</a>
+        <a href="./achievements.html">Achievements</a>
+        <a href="./about.html">About</a>
+        <a class="active" href="./contact.html">Contact</a>
+        <a href="./admin.html">Admin</a>
+      </div>
+      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+      <a href="./">Home</a>
+      <a href="./fundraisers.html">Fundraisers</a>
+      <a href="./calendar.html">Calendar</a>
+      <a href="./media.html">Media</a>
+      <a href="./achievements.html">Achievements</a>
+      <a href="./about.html">About</a>
+      <a class="active" href="./contact.html">Contact</a>
+      <a href="./admin.html">Admin</a>
+      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== HERO ================================= -->
+    <section class="hero" aria-labelledby="contactTitle">
+      <div class="card hover-up" style="max-width:820px; margin-inline:auto;">
+        <h1 id="contactTitle">Contact Student Officers</h1>
+        <p class="small" style="margin-top:6px;">
+          Phones aren’t allowed in school — use this form to reach us fast.
+        </p>
+        <div class="inline" style="justify-content:center; margin-top:14px;">
+          <a class="btn" href="mailto:matiemo28@auburn.k12.ma.us">Email Mikey (school)</a>
+          <a class="btn" href="mailto:michaelatiemo54@gmail.com">Email Mikey (personal)</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== FORM ================================= -->
+    <section class="section">
+      <div class="container">
+        <div class="grid grid-2">
+          <article class="panel glass hover-up">
+            <h2 class="section-title">Send a Message</h2>
+            <p class="section-sub">Choose who you want to contact and write your message.</p>
+
+            <!-- 
+              ACTION OPTIONS:
+              A) Works right now without setup: we’ll build a mailto: link in JS (default).
+              B) To use Formspree later: replace action with your endpoint, like:
+                 action="https://formspree.io/f/abcxyz"
+            -->
+            <form id="contactForm" class="form" action="mailto:" method="POST">
+              <!-- Officer -->
+              <label class="label" for="recipient">Who do you want to contact?</label>
+              <select id="recipient" name="recipient" class="select" required>
+                <option value="" disabled selected>Select an officer</option>
+                <option value="michaelatiemo54@gmail.com">Mikey Atiemo — Vice President (personal)</option>
+                <option value="matiemo28@auburn.k12.ma.us">Mikey Atiemo — Vice President (school)</option>
+                <option value="pharoian28@auburn.k12.ma.us">Patrick Haroian — President</option>
+                <option value="druco28@auburn.k12.ma.us">David Ruco — Treasurer</option>
+                <option value="mgonzalez28@auburn.k12.ma.us">Matias Gonzalez — Secretary</option>
+                <option value="student-gov@auburn.k12.ma.us">Student Government</option>
+              </select>
+
+              <!-- Your info -->
+              <div class="inline">
+                <div style="flex:1;">
+                  <label class="label" for="name">Your name</label>
+                  <input id="name" name="name" class="input" type="text" placeholder="Your name" required />
+                </div>
+                <div style="flex:1;">
+                  <label class="label" for="email">Your email</label>
+                  <input id="email" name="email" class="input" type="email" placeholder="you@school.org" required />
+                </div>
+              </div>
+
+              <!-- Subject -->
+              <label class="label" for="subject">Subject</label>
+              <input id="subject" name="subject" class="input" type="text" placeholder="What’s this about?" required />
+
+              <!-- Message -->
+              <label class="label" for="message">Message</label>
+              <textarea id="message" name="message" class="textarea" placeholder="Write your message…" required></textarea>
+
+              <!-- Honeypot (spam trap) -->
+              <input type="text" name="_gotcha" id="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+
+              <!-- Submit -->
+              <div class="inline" style="justify-content:flex-start;">
+                <button class="btn primary" type="submit">Send</button>
+                <button class="btn" type="reset">Clear</button>
+              </div>
+
+              <p class="help">Tip: Later, swap to Formspree by replacing the form’s <code>action</code> with your endpoint.</p>
+            </form>
+          </article>
+
+          <article class="panel hover-up">
+            <h2 class="section-title">Officer Emails</h2>
+            <table class="table">
+              <thead>
+                <tr><th>Role</th><th>Name</th><th>Email</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Vice President</td><td>Mikey Atiemo</td><td><a href="mailto:michaelatiemo54@gmail.com">michaelatiemo54@gmail.com</a></td></tr>
+                <tr><td>Vice President (school)</td><td>Mikey Atiemo</td><td><a href="mailto:matiemo28@auburn.k12.ma.us">matiemo28@auburn.k12.ma.us</a></td></tr>
+                <tr><td>President</td><td>Patrick Haroian</td><td><a href="mailto:pharoian28@auburn.k12.ma.us">pharoian28@auburn.k12.ma.us</a></td></tr>
+                <tr><td>Treasurer</td><td>David Ruco</td><td><a href="mailto:druco28@auburn.k12.ma.us">druco28@auburn.k12.ma.us</a></td></tr>
+                <tr><td>Secretary</td><td>Matias Gonzalez</td><td><a href="mailto:mgonzalez28@auburn.k12.ma.us">mgonzalez28@auburn.k12.ma.us</a></td></tr>
+                <tr><td>Student Gov</td><td>—</td><td><a href="mailto:student-gov@auburn.k12.ma.us">student-gov@auburn.k12.ma.us</a></td></tr>
+              </tbody>
+            </table>
+
+            <div class="inline" style="margin-top:12px;">
+              <a class="btn" href="./about.html">About this site</a>
+              <a class="btn" href="./media.html">Submit Media</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================= FOOTER ================================ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="small">
+        Built for AHS Class of 2028 • Contact page
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
+
+  <!-- Page-specific helper script (keeps your main script unchanged) -->
+  <script>
+    (function contactPage(){
+      const form = document.getElementById('contactForm');
+      const recipient = document.getElementById('recipient');
+      const nameEl = document.getElementById('name');
+      const emailEl = document.getElementById('email');
+      const subjEl = document.getElementById('subject');
+      const msgEl = document.getElementById('message');
+
+      if (!form || !recipient) return;
+
+      // Simple validation highlight
+      form.addEventListener('submit', function(e){
+        let ok = true;
+        [recipient, nameEl, emailEl, subjEl, msgEl].forEach(el=>{
+          if (!el.value || (el.type === 'email' && !/^[^@]+@[^@]+\.[^@]+$/.test(el.value))) {
+            el.style.boxShadow = '0 0 0 2px rgba(255,77,77,.6)';
+            ok = false;
+          } else {
+            el.style.boxShadow = '';
+          }
+        });
+        if (!ok) {
+          e.preventDefault();
+          alert('Please fill in all fields correctly.');
+          return;
+        }
+
+        // If action still "mailto:" (default), build a mailto link that opens the user’s email.
+        if ((form.getAttribute('action') || '').startsWith('mailto:') || form.getAttribute('action') === '') {
+          e.preventDefault();
+          const to = recipient.value;
+          const subject = encodeURIComponent(`[AHS '28] ${subjEl.value}`);
+          const body = encodeURIComponent(
+            `From: ${nameEl.value} <${emailEl.value}>\n\n${msgEl.value}\n\n— Sent from the AHS Class of '28 site`
+          );
+          const link = `mailto:${to}?subject=${subject}&body=${body}`;
+          window.location.href = link;
+          // Tiny success toast if your global toast exists
+          try { document.getElementById('toast').classList.remove('hidden'); 
+                document.getElementById('toast').textContent = 'Opening your email app…'; 
+                setTimeout(()=>document.getElementById('toast').classList.add('hidden'), 1800);
+          } catch{}
+        } else {
+          // Otherwise, assume you replaced action with Formspree — let it submit normally.
+        }
+      });
+
+      // Accessibility nicety: clear red highlight on input
+      [recipient, nameEl, emailEl, subjEl, msgEl].forEach(el=>{
+        el.addEventListener('input', ()=> el.style.boxShadow = '');
+      });
+    })();
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
