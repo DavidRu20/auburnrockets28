@@ -6,132 +6,16 @@
   <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
-  <style>
-    /* Starfield background */
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: white;
-      background: black;
-      overflow-x: hidden;
-    }
-    canvas#starfield {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: radial-gradient(ellipse at bottom, #001018 0%, #000000 100%);
-    }
-
-    /* Navbar styling (matching your standard site) */
-    .header {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .nav {
-      max-width: 1200px;
-      margin: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-    }
-    .nav .brand {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: white;
-      text-decoration: none;
-    }
-    .nav .links a {
-      color: white;
-      text-decoration: none;
-      margin-left: 15px;
-      font-size: 1rem;
-      transition: color 0.3s;
-    }
-    .nav .links a:hover {
-      color: #0d6efd;
-    }
-    .nav .links .active {
-      color: #0d6efd;
-      font-weight: bold;
-    }
-
-    /* Calendar styling */
-    .section {
-      padding: 30px 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-    .calendar {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 20px;
-      border-radius: 20px;
-      backdrop-filter: blur(12px);
-      animation: fadeIn 1s ease;
-    }
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 12px;
-    }
-    .day-name {
-      font-weight: bold;
-      text-align: center;
-      opacity: 0.8;
-    }
-    .day {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 25px 0;
-      text-align: center;
-      border-radius: 12px;
-      font-size: 1.2rem;
-      transition: transform 0.2s ease, background 0.3s ease;
-    }
-    .day:hover {
-      transform: scale(1.05);
-      background: rgba(255, 255, 255, 0.15);
-    }
-    .day.today {
-      background: #0d6efd;
-      color: white;
-      font-weight: bold;
-    }
-    .day.holiday {
-      background: rgba(255, 99, 71, 0.8);
-    }
-    .day.fundraiser {
-      background: rgba(255, 215, 0, 0.85);
-      color: black;
-      font-weight: bold;
-    }
-    .countdown {
-      margin-top: 20px;
-      font-size: 1.5rem;
-      text-align: center;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
 </head>
 <body>
-  <canvas id="starfield"></canvas>
 
+  <!-- Standard Navbar -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./">AHS Class of ’28</a>
+      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+        <span class="logo" aria-hidden="true">A</span>
+        AHS Class of ’28
+      </a>
       <div class="links" role="navigation">
         <a href="./">Home</a>
         <a href="./fundraisers.html">Fundraisers</a>
@@ -143,145 +27,26 @@
         <a href="./merch.html">Shop</a>
         <a href="./admin.html">Admin</a>
       </div>
+      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu">☰</button>
     </nav>
+
+    <div id="mobileMenu" class="mobile-menu hidden">
+      <a href="./">Home</a>
+      <a href="./fundraisers.html">Fundraisers</a>
+      <a class="active" href="./calendar.html">Calendar</a>
+      <a href="./media.html">Media</a>
+      <a href="./achievements.html">Achievements</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a href="./merch.html">Shop</a>
+      <a href="./admin.html">Admin</a>
+      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
+    </div>
   </header>
 
-  <main class="section">
-    <h1 class="section-title">Event Calendar</h1>
-    <p class="section-sub">School events, fundraisers, and no-school days.</p>
+  <!-- Keep your existing main content, starfield, countdown, and scripts here -->
+  <!-- ... -->
 
-    <div class="calendar">
-      <div class="calendar-header">
-        <button id="prevMonth" class="btn small">‹</button>
-        <h2 id="calendarMonth"></h2>
-        <button id="nextMonth" class="btn small">›</button>
-      </div>
-      <div class="calendar-grid" id="calendarGrid">
-        <div class="day-name">Sun</div>
-        <div class="day-name">Mon</div>
-        <div class="day-name">Tue</div>
-        <div class="day-name">Wed</div>
-        <div class="day-name">Thu</div>
-        <div class="day-name">Fri</div>
-        <div class="day-name">Sat</div>
-      </div>
-    </div>
-
-    <div class="countdown" id="countdown"></div>
-  </main>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="small">
-        Auburn High School • Class of 2028 • Calendar
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    const calendarGrid = document.getElementById("calendarGrid");
-    const monthLabel = document.getElementById("calendarMonth");
-    const countdownEl = document.getElementById("countdown");
-
-    let currentDate = new Date();
-    const firstDayOfSchool = new Date(2025, 7, 27);
-
-    const holidays = [
-      { month: 7, day: 27, type: "holiday", name: "First Day of School" },
-      { month: 8, day: 1, type: "fundraiser", name: "Crumbl Cookie Fundraiser" },
-      { month: 11, day: 25, type: "holiday", name: "Christmas Break Start" },
-      { month: 0, day: 1, type: "holiday", name: "New Year's Day" },
-      { month: 1, day: 17, type: "holiday", name: "Winter Break" },
-      { month: 3, day: 14, type: "holiday", name: "Spring Break" }
-    ];
-
-    function renderCalendar(date) {
-      const year = date.getFullYear();
-      const month = date.getMonth();
-      monthLabel.textContent = date.toLocaleString("default", { month: "long", year: "numeric" });
-
-      calendarGrid.querySelectorAll(".day:not(.day-name)").forEach(d => d.remove());
-
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-      const startDay = firstDay.getDay();
-
-      for (let i = 0; i < startDay; i++) {
-        const empty = document.createElement("div");
-        empty.classList.add("day", "empty");
-        calendarGrid.appendChild(empty);
-      }
-
-      for (let day = 1; day <= lastDay.getDate(); day++) {
-        const cell = document.createElement("div");
-        cell.classList.add("day");
-        cell.textContent = day;
-
-        const holiday = holidays.find(h => h.month === month && h.day === day);
-        if (holiday) cell.classList.add(holiday.type);
-
-        if (day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
-          cell.classList.add("today");
-        }
-        calendarGrid.appendChild(cell);
-      }
-    }
-
-    function updateCountdown() {
-      const now = new Date();
-      const diff = firstDayOfSchool - now;
-      if (diff > 0) {
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        countdownEl.textContent = `${days} days until the first day of school!`;
-      } else {
-        countdownEl.textContent = "School is in session!";
-      }
-    }
-
-    document.getElementById("prevMonth").addEventListener("click", () => {
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      renderCalendar(currentDate);
-    });
-
-    document.getElementById("nextMonth").addEventListener("click", () => {
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      renderCalendar(currentDate);
-    });
-
-    renderCalendar(currentDate);
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-
-    // Starfield
-    const canvas = document.getElementById("starfield");
-    const ctx = canvas.getContext("2d");
-    let stars = [];
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      stars = Array.from({ length: 200 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.2,
-        speed: Math.random() * 0.5
-      }));
-    }
-    function animateStars() {
-      ctx.fillStyle = "#000010";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(100,150,255,0.8)";
-      stars.forEach(s => {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-        ctx.fill();
-        s.y += s.speed;
-        if (s.y > canvas.height) s.y = 0;
-      });
-      requestAnimationFrame(animateStars);
-    }
-    window.addEventListener("resize", resize);
-    resize();
-    animateStars();
-  </script>
 </body>
 </html>
+
