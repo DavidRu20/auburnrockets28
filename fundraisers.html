@@ -84,12 +84,13 @@
         <a href="./merch.html">Shop</a>
         <a href="./admin.html">Admin</a>
       </div>
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
 
-    <div id="mobileMenu" class="mobile-menu hidden">
-      <a href="./">Home</a>
-      <a class="active" href="./fundraisers.html">Fundraisers</a>
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+      <a class="active" href="./">Home</a>
+      <a href="./fundraisers.html">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
       <a href="./media.html">Media</a>
       <a href="./achievements.html">Achievements</a>
@@ -100,6 +101,7 @@
       <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
     </div>
   </header>
+
 
   <main class="section">
     <h1 class="fundraiser-title">FUNDRAISER</h1>
