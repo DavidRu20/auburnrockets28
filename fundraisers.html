@@ -3,79 +3,114 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AHS Class of ’28 — Fundraisers</title>
+  <title>AHS Class of ’28 — Fundraiser</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       margin: 0;
-      background: radial-gradient(ellipse at bottom, #0b0f1a 0%, #000 100%);
+      font-family: Arial, sans-serif;
       color: white;
-      font-family: system-ui, sans-serif;
       overflow-x: hidden;
     }
 
-    /* Starfield background */
-    canvas#starfield {
+    /* Starfield canvas */
+    #starfield {
       position: fixed;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       z-index: -1;
     }
 
-    .section {
-      padding: 40px 20px;
+    main.section {
       text-align: center;
+      padding: 60px 20px;
     }
 
-    .section-title {
+    .fundraiser-box {
+      background: rgba(20, 20, 30, 0.85);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      margin: 50px auto;
+      animation: tilt 4s infinite ease-in-out alternate;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      transform-origin: center;
+    }
+
+    @keyframes tilt {
+      0% { transform: rotate(-1deg); }
+      100% { transform: rotate(1deg); }
+    }
+
+    h1 {
       font-size: 3rem;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    #countdown {
+      font-size: 2rem;
+      margin-top: 20px;
       font-weight: bold;
     }
 
-    .section-sub {
-      opacity: 0.8;
-      margin-bottom: 40px;
+    /* Navbar (from your provided HTML) */
+    .header {
+      background: #0d6efd;
+      color: white;
+      padding: 10px 20px;
     }
-
-    /* Fundraiser box */
-    .fundraiser-box {
-      background: rgba(255, 215, 0, 0.08);
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 500px;
-      margin: 0 auto;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: auto;
     }
-
-    .fundraiser-box:hover {
-      transform: rotate(-1deg) scale(1.03);
-      box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-    }
-
-    .fundraiser-title {
-      font-size: 2rem;
-      margin-bottom: 10px;
-      color: #ffd700;
-    }
-
-    .countdown {
-      font-size: 1.5rem;
-      margin-top: 20px;
-    }
-
-    .promo {
-      margin-top: 20px;
+    .nav .brand {
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
       font-size: 1.2rem;
-      opacity: 0.8;
+    }
+    .nav .logo {
+      background: white;
+      color: #0d6efd;
+      border-radius: 50%;
+      padding: 4px 10px;
+      margin-right: 8px;
+    }
+    .links a {
+      color: white;
+      margin: 0 8px;
+      text-decoration: none;
+    }
+    .links a.active {
+      text-decoration: underline;
+    }
+    .menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      display: none;
+    }
+    .mobile-menu {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Navbar (exact copy from calendar page) -->
+  <canvas id="starfield"></canvas>
+
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -110,31 +145,22 @@
     </div>
   </header>
 
-  <!-- Starfield -->
-  <canvas id="starfield"></canvas>
-
   <main class="section">
-    <h1 class="section-title">FUNDRAISER</h1>
-    <p class="section-sub">Support our class with our current fundraiser!</p>
+    <h1>FUNDRAISER</h1>
+    <p>Help support the AHS Class of 2028 with our latest fundraiser!</p>
 
     <div class="fundraiser-box">
-      <div class="fundraiser-title">Crumbl Cookie Fundraiser</div>
-      <p>Help support the AHS Class of 2028 by purchasing Crumbl Cookies! A portion of every order goes toward our class fund.</p>
-      <div class="countdown" id="countdown">Loading countdown...</div>
-      <div class="promo">Promo Code: <strong>[Coming Soon]</strong></div>
+      <h2>Countdown to Fundraiser End</h2>
+      <div id="countdown"></div>
     </div>
   </main>
 
-  <footer class="footer">
-    <div class="container">
-      <div class="small">
-        Auburn High School • Class of 2028 • Fundraisers
-      </div>
-    </div>
+  <footer class="footer" style="text-align:center; padding:20px; opacity:0.8;">
+    Auburn High School • Class of 2028 • Fundraiser
   </footer>
 
   <script>
-    // Starfield script
+    // Starfield script (darker version)
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
@@ -160,9 +186,9 @@
     }
 
     function drawStars() {
-      ctx.fillStyle = '#000814';
+      ctx.fillStyle = '#00040a';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#0d1b2a';
+      ctx.fillStyle = '#010e1a';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       stars.forEach(star => {
@@ -216,6 +242,5 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
   </script>
-
 </body>
 </html>
