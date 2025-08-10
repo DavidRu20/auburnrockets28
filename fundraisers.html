@@ -65,50 +65,43 @@
       border: 1px solid rgba(255, 215, 0, 0.3);
       color: #ffd700;
     }
-    /* Nav styles */
+    /* Nav styles — reverted to last iteration */
     .header {
       background: rgba(0,0,0,0.85);
-      padding: 10px 20px;
+      padding: 15px 20px;
       position: sticky;
       top: 0;
       z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
     .nav {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
     }
-    .links a {
+    .nav a {
       color: white;
-      margin: 0 10px;
+      margin: 0 12px;
       text-decoration: none;
+      font-weight: 500;
     }
-    .links a.active {
+    .nav a.active {
       color: #ffd700;
-    }
-    .menu-btn, .mobile-menu {
-      display: none;
     }
   </style>
 </head>
 <body>
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
-        <span class="logo" aria-hidden="true">A</span>
-        AHS Class of ’28
-      </a>
-      <div class="links" role="navigation">
-        <a href="./">Home</a>
-        <a class="active" href="./fundraisers.html">Fundraisers</a>
-        <a href="./calendar.html">Calendar</a>
-        <a href="./media.html">Media</a>
-        <a href="./achievements.html">Achievements</a>
-        <a href="./about.html">About</a>
-        <a href="./contact.html">Contact</a>
-        <a href="./merch.html">Shop</a>
-        <a href="./admin.html">Admin</a>
-      </div>
+      <a href="./">Home</a>
+      <a class="active" href="./fundraisers.html">Fundraisers</a>
+      <a href="./calendar.html">Calendar</a>
+      <a href="./media.html">Media</a>
+      <a href="./achievements.html">Achievements</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a href="./merch.html">Shop</a>
+      <a href="./admin.html">Admin</a>
     </nav>
   </header>
 
@@ -119,7 +112,7 @@
       <h2>Crumbl Cookie Fundraiser</h2>
       <p>Help support the Class of 2028 by purchasing delicious Crumbl Cookies!</p>
       <div class="countdown" id="countdown"></div>
-      <div class="promo">Promo code: <strong>____</strong></div>
+      <div class="promo">Promo code: <strong>CLASSOF28</strong></div>
     </div>
   </main>
 
@@ -195,7 +188,7 @@
       const distance = targetDate - now;
 
       if (distance < 0) {
-        countdownEl.textContent = "Fundraiser Starts";
+        countdownEl.textContent = "Fundraiser Ended";
         return;
       }
 
@@ -212,3 +205,4 @@
   </script>
 </body>
 </html>
+
