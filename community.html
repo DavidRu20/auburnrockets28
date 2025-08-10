@@ -1,1 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vote • AHS Class of ’28</title>
+  <meta name="theme-color" content="#0d6efd" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============================ HEADER / NAV ============================ -->
+  <header class="header" role="banner">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="./"><span class="logo">A</span> AHS Class of ’28</a>
+      <div class="links">
+        <a href="./">Home</a>
+        <a href="./fundraisers.html">Fundraisers</a>
+        <a href="./calendar.html">Calendar</a>
+        <a href="./media.html">Media</a>
+        <a href="./achievements.html">Achievements</a>
+        <a href="./about.html">About</a>
+        <a href="./contact.html">Contact</a>
+        <a class="active" href="./vote.html">Vote</a>
+      </div>
+      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true">
+      <a href="./">Home</a>
+      <a href="./fundraisers.html">Fundraisers</a>
+      <a href="./calendar.html">Calendar</a>
+      <a href="./media.html">Media</a>
+      <a href="./achievements.html">Achievements</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a class="active" href="./vote.html">Vote</a>
+      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================== HERO ================================= -->
+    <section class="hero" aria-labelledby="voteTitle">
+      <div class="card hover-up" style="max-width:860px; margin-inline:auto;">
+        <h1 id="voteTitle">Student Vote</h1>
+        <p class="small" style="margin-top:6px;">
+          Vote on class decisions. Live results appear below when the poll is active.
+        </p>
+      </div>
+    </section>
+
+    <!-- ====================== LIVE (GOOGLE) EMBEDS ========================= -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Live Poll</h2>
+        <p class="section-sub">When you’re ready, paste your Google Form link here (takes 2 minutes — I’ll show you in the next step).</p>
+
+        <!-- Replace the # links below after Step 3 -->
+        <div class="grid grid-2">
+          <article class="panel glass hover-up">
+            <h3 style="margin:6px 0 8px;">Vote Here</h3>
+            <div class="small" style="margin-bottom:8px; color:var(--muted);">
+              This form is an embed. Students submit here; results auto-update in the chart.
+            </div>
+            <!-- GOOGLE FORM EMBED goes here -->
+            <div class="media-item" style="aspect-ratio: 4/3;">
+              <iframe
+                src="#"
+                title="Class Vote Form (Google)"
+                style="width:100%;height:100%;border:0;border-radius:14px;background:var(--panel);"
+                loading="lazy"
+                allow="clipboard-write"
+              ></iframe>
+            </div>
+          </article>
+
+          <article class="panel glass hover-up">
+            <h3 style="margin:6px 0 8px;">Live Results</h3>
+            <div class="small" style="margin-bottom:8px; color:var(--muted);">
+              This chart is published from Google Sheets and updates as votes come in.
+            </div>
+            <!-- GOOGLE SHEETS CHART EMBED goes here -->
+            <div class="media-item" style="aspect-ratio: 4/3;">
+              <iframe
+                src="#"
+                title="Live Results (Google Sheets)"
+                style="width:100%;height:100%;border:0;border-radius:14px;background:var(--panel);"
+                loading="lazy"
+              ></iframe>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== BACKUP DEMO (LOCAL) ========================== -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Quick Demo Poll (local only)</h2>
+        <p class="section-sub">This counts only on the device you’re using. Good for testing the layout.</p>
+
+        <article class="panel hover-up" style="max-width:860px; margin-inline:auto;">
+          <h3 id="demoQ">Which merch should we drop first?</h3>
+          <div class="inline" style="flex-wrap:wrap; gap:10px; margin-top:10px;">
+            <button class="btn" data-opt="Hoodie">Hoodie</button>
+            <button class="btn" data-opt="Script Tee">Script Tee</button>
+            <button class="btn" data-opt="Basketball Jersey">Basketball Jersey</button>
+            <button class="btn" data-opt="Striped Polo">Striped Polo</button>
+          </div>
+          <div class="card-list" id="demoResults" style="margin-top:12px;"></div>
+          <div class="small" style="margin-top:6px;color:var(--muted);">Tip: results save in your browser only.</div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="small">AHS Class of ’28 • Voting</div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
+
+  <!-- Page-only script (does not change your main script.js) -->
+  <script>
+    // ===== DEMO POLL (localStorage) =====
+    (function(){
+      const KEY = "ahs28_demo_poll";
+      const resultsEl = document.getElementById("demoResults");
+      const buttons = document.querySelectorAll("[data-opt]");
+
+      function read(){
+        try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+        catch { return {}; }
+      }
+      function write(obj){
+        localStorage.setItem(KEY, JSON.stringify(obj));
+      }
+      function render(){
+        const data = read();
+        const total = Object.values(data).reduce((a,b)=>a+b,0) || 0;
+        resultsEl.innerHTML = "";
+        Object.keys(data).forEach(name=>{
+          const count = data[name];
+          const pct = total ? Math.round((count/total)*100) : 0;
+          const row = document.createElement("div");
+          row.className = "card-item";
+          row.innerHTML = `
+            <div class="row">
+              <div class="title">${name}</div>
+              <span class="status ${count ? 'success' : ''}">${count} vote${count!==1?'s':''} • ${pct}%</span>
+            </div>
+            <div class="progress" style="height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;">
+              <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#52a8ff,#7ab8ff);"></div>
+            </div>`;
+          resultsEl.appendChild(row);
+        });
+      }
+      buttons.forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const data = read();
+          const k = btn.dataset.opt;
+          data[k] = (data[k]||0) + 1;
+          write(data);
+          render();
+        });
+      });
+      // initialize with all options at 0
+      const init = {};
+      buttons.forEach(b=> init[b.dataset.opt]= init[b.dataset.opt]||0);
+      write(Object.assign(init, read()));
+      render();
+    })();
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
 
