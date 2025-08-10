@@ -518,6 +518,33 @@ h1{
   border-color: rgba(82,168,255,.28);
 }
 
+/* Fix Divi mobile menu colors */
+@media only screen and (max-width: 980px) {
+  /* Menu background */
+  .et_mobile_menu {
+    background-color: #000 !important; /* Black background */
+  }
+
+  /* Menu links */
+  .et_mobile_menu li a {
+    color: #fff !important; /* White text */
+  }
+
+  /* Hover state */
+  .et_mobile_menu li a:hover {
+    background-color: #333 !important; /* Dark gray hover */
+    color: #fff !important;
+  }
+
+  /* Optional: improve submenu visibility */
+  .et_mobile_menu .menu-item-has-children > a:after {
+    color: #fff !important;
+  }
+
+   background-color: rgba(0,0,0,0.85) !important;
+}
+
+
 
 /* End of file */
 /* ======================================================================= */
