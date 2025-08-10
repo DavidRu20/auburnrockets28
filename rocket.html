@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Rocket Clicker — Polished Edition</title>
+<title>Rocket Clicker — Polished Progressive</title>
 <style>
   :root{
     --sky-top: #071634;
@@ -11,62 +11,59 @@
     --panel: rgba(255,255,255,0.03);
     --accent: #ff8a2b;
     --muted: #9fb0c8;
+    --hud-bg: rgba(6,16,24,0.66);
+    --hud-border: rgba(255,255,255,0.04);
   }
   *{box-sizing:border-box;font-family:Inter,Segoe UI,system-ui,Arial,Helvetica,sans-serif}
   html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--sky-top),var(--sky-bottom));color:#eaf6ff}
-  .app{display:grid;grid-template-columns:1fr 360px;gap:18px;max-width:1280px;margin:18px auto;padding:18px}
+  .app{display:grid;grid-template-columns:1fr 380px;gap:18px;max-width:1280px;margin:18px auto;padding:18px}
   header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between}
   h1{margin:0;font-size:20px}
-  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:14px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,0.55)}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:14px;padding:12px;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
   .left{padding:12px}
-  .sky{height:680px;border-radius:12px;padding:0;position:relative;overflow:hidden}
+  .sky{height:720px;border-radius:12px;padding:0;position:relative;overflow:hidden}
   /* star layers for parallax */
   .star-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-  .star{position:absolute;border-radius:50%;background:rgba(255,255,255,0.9);filter:blur(.3px)}
-  /* nebula canvas sits under rocket but above far stars */
+  .star{position:absolute;border-radius:50%;background:rgba(255,255,255,0.95);filter:blur(.32px)}
   canvas#nebula{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen;opacity:0.12}
-  /* planet decorations */
-  .planet{position:absolute;border-radius:50%;pointer-events:none;filter:blur(2px);opacity:0.11}
+  .planet{position:absolute;border-radius:50%;pointer-events:none;filter:blur(1.8px);opacity:0.12}
   /* rocket container */
-  .rocket-wrap{position:absolute;left:50%;bottom:8%;transform:translateX(-50%) translateY(0);transition:transform 0.42s cubic-bezier(.2,.9,.2,1);will-change:transform}
-  .rocket-stage{position:absolute;left:50%;bottom:0;transform:translateX(-50%) translateY(10px);opacity:0;transition:opacity 320ms ease, transform 320ms ease;will-change:opacity,transform}
-  .rocket-stage.active{opacity:1;transform:translateX(-50%) translateY(0)}
-  .rocket-box{width:220px;height:360px;display:block;pointer-events:none}
-  .flame{position:absolute;left:50%;bottom:-28px;transform:translateX(-50%) scaleY(1);transform-origin:50% 0%;transition:transform 120ms,opacity 120ms}
-  /* morph animation helpers */
-  .morph-out{opacity:0;transform:translateX(-50%) scale(0.94); transition:opacity 320ms, transform 320ms}
-  .morph-in{opacity:1;transform:translateX(-50%) scale(1.06); transition:opacity 320ms, transform 320ms}
-  /* idle sway */
-  .idle-sway{animation:idle 3.6s ease-in-out infinite}
-  @keyframes idle{0%{transform:translateX(-50%) translateY(0) rotate(-0.8deg)}50%{transform:translateX(-50%) translateY(-5px) rotate(0.8deg)}100%{transform:translateX(-50%) translateY(0) rotate(-0.8deg)}}
-  /* HUD */
+  .rocket-wrap{position:absolute;left:50%;bottom:8%;transform:translateX(-50%) translateY(0);transition:transform 0.36s cubic-bezier(.2,.9,.2,1);will-change:transform}
+  .rocket-el{position:relative;width:220px;height:340px;pointer-events:none}
+  .flame{position:absolute;left:50%;bottom:-30px;transform:translateX(-50%) scaleY(1);transform-origin:50% 0%;transition:transform 120ms,opacity 120ms}
+  .morph-fade{transition:opacity 320ms, transform 320ms}
+  .idle-bob{animation:idle 3.6s ease-in-out infinite}
+  @keyframes idle{0%{transform:translateX(-50%) translateY(0) rotate(-0.7deg)}50%{transform:translateX(-50%) translateY(-5px) rotate(0.7deg)}100%{transform:translateX(-50%) translateY(0) rotate(-0.7deg)}}
+  /* HUD & shop */
   .hud{margin-top:10px;display:flex;gap:12px;align-items:center}
   .fuel-counter{font-weight:800;font-size:20px}
   .muted{color:var(--muted);font-size:13px}
   .shop{display:flex;flex-direction:column;gap:10px}
-  .store-list{max-height:420px;overflow:auto;padding-right:6px}
+  .store-list{max-height:520px;overflow:auto;padding-right:6px}
   .item{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:12px;background:rgba(255,255,255,0.02);cursor:pointer;transition:transform .12s}
   .item:hover{transform:translateY(-4px)}
-  .item.locked{opacity:0.44;cursor:not-allowed;transform:none}
+  .item.locked{opacity:0.46;cursor:not-allowed;transform:none}
   .name{font-weight:700}
   .num{color:var(--muted)}
   button{background:linear-gradient(180deg,#143444,#092528);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;color:#cfeefb;cursor:pointer}
   #fxLayer{position:absolute;inset:0;pointer-events:none}
-  .spark{position:absolute;border-radius:50%;pointer-events:none;filter:blur(.6px)}
-  .trail{position:absolute;pointer-events:none;filter:blur(1.6px);opacity:0.95;border-radius:4px}
+  .particle{position:absolute;border-radius:50%;pointer-events:none;opacity:0.95}
+  .trail{position:absolute;pointer-events:none;filter:blur(1.6px);opacity:0.95;border-radius:8px}
   .shoot{position:absolute;pointer-events:none;border-radius:50%;box-shadow:0 0 12px rgba(255,200,150,0.6)}
   .hit-flash{position:absolute;inset:0;pointer-events:none;background:rgba(255,255,255,0);transition:background 180ms}
-  .shake{animation:shake 320ms linear}
-  @keyframes shake{0%{transform:translate(0,0)}20%{transform:translate(-6px,4px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(4px,-2px)}100%{transform:translate(0,0)}}
+  .shake{animation:shake 340ms linear}
+  @keyframes shake{0%{transform:translate(0,0)}20%{transform:translate(-7px,4px)}40%{transform:translate(7px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(4px,-2px)}100%{transform:translate(0,0)}}
+  /* HUD skin mode */
+  .hud-skin .panel{background:linear-gradient(180deg, rgba(10,20,26,0.48), rgba(4,8,12,0.28)); border:1px solid rgba(120,180,255,0.06); box-shadow:0 12px 60px rgba(10,24,40,0.6)}
   footer{grid-column:1/-1;margin-top:8px;text-align:center;color:var(--muted);font-size:13px}
   .locked-tag{font-size:12px;color:#ffd7b3;background:rgba(0,0,0,0.24);padding:4px 8px;border-radius:8px}
-  @media (max-width:920px){.app{grid-template-columns:1fr}.sky{height:520px}}
+  @media (max-width:980px){.app{grid-template-columns:1fr}.sky{height:520px}}
 </style>
 </head>
 <body>
   <div class="app" id="appRoot">
     <header>
-      <h1>🚀 Rocket Clicker — Polished Edition</h1>
+      <h1>🚀 Rocket Clicker — Progressive Polished</h1>
       <div style="display:flex;gap:10px;align-items:center">
         <div class="muted">Fuel: <span id="fuelTop">0</span></div>
         <button id="saveBtn">Save</button>
@@ -76,194 +73,58 @@
 
     <main class="left panel">
       <div class="sky" id="sky">
-        <!-- layers -->
         <div class="star-layer" id="stars-far"></div>
         <canvas id="nebula"></canvas>
         <div class="star-layer" id="stars-mid"></div>
         <div class="star-layer" id="stars-near"></div>
-
-        <!-- planets (appear later) -->
         <div id="planets"></div>
 
-        <!-- rocket holder -->
-        <div class="rocket-wrap idle-sway" id="rocketWrap" style="touch-action:none">
-          <!-- multiple stages as separate elements for nicer morphing -->
-          <!-- Stage 0: base -->
-          <div class="rocket-stage" id="stage-0">
-            <div class="rocket-box" aria-hidden="true">
-              <svg viewBox="0 0 200 320" class="rocket-svg">
-                <!-- base hull -->
-                <defs>
-                  <linearGradient id="g_body0" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stop-color="#fff7ef"/><stop offset="100%" stop-color="#cfeffb" stop-opacity="0.06"/>
-                  </linearGradient>
-                  <linearGradient id="g_nose0" x1="0" x2="1">
-                    <stop offset="0%" stop-color="#ffb07a"/><stop offset="100%" stop-color="#ff6b6b"/>
-                  </linearGradient>
-                </defs>
-                <g transform="translate(20,12)">
-                  <ellipse cx="80" cy="250" rx="36" ry="12" fill="#071822" opacity="0.12"/>
-                  <rect x="48" y="40" width="64" height="140" rx="18" fill="url(#g_body0)" stroke="#9edfff" stroke-opacity="0.06"/>
-                  <path d="M80 8 C64 36,96 36,80 8 Z" fill="url(#g_nose0)"/>
-                  <rect x="30" y="86" width="20" height="56" rx="6" fill="#0f2a3a"/>
-                  <rect x="112" y="86" width="20" height="56" rx="6" fill="#0f2a3a"/>
-                  <circle cx="80" cy="104" r="12" fill="#001a22" stroke="#bfe7ff" stroke-opacity="0.12"/>
-                </g>
-              </svg>
-            </div>
-            <div class="flame" id="flame-0">
-              <svg viewBox="0 0 48 80" width="76" height="120">
-                <g>
-                  <path d="M24 2 C12 24,10 44,24 70 C38 44,36 24,24 2 Z" fill="#ffd7a6"/>
-                  <path d="M24 18 C18 36,16 44,24 58 C32 44,30 36,24 18 Z" fill="#ff6b18"/>
-                </g>
-              </svg>
-            </div>
+        <!-- Rocket wrapper: parametric single SVG. We'll alter classes/attrs per tier -->
+        <div class="rocket-wrap idle-bob" id="rocketWrap" style="touch-action:none">
+          <div class="rocket-el morph-fade" id="rocketEl" aria-hidden="true">
+            <!-- Parametric rocket SVG: parts have ids so JS can change attributes -->
+            <svg id="rocketSVG" viewBox="0 0 200 320" width="220" height="352" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <linearGradient id="bodyGrad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#fff7ef"/><stop offset="100%" stop-color="#cfeffb" stop-opacity="0.06"/>
+                </linearGradient>
+                <linearGradient id="flameGrad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#fff8d8"/><stop offset="100%" stop-color="#ff7a18"/>
+                </linearGradient>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="6" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+
+              <!-- shadow -->
+              <ellipse id="shadow" cx="100" cy="292" rx="36" ry="12" fill="#071822" opacity="0.12"/>
+
+              <!-- body -->
+              <g id="bodyGroup" transform="translate(0,6)">
+                <rect id="bodyRect" x="60" y="32" width="80" height="152" rx="22" fill="url(#bodyGrad)" stroke="#9edfff" stroke-opacity="0.06"/>
+                <path id="nose" d="M100 10 C84 44,116 44,100 10 Z" fill="#ffb07a"/>
+                <g id="fins"></g>
+                <circle id="cockpit" cx="100" cy="96" r="16" fill="#001b24" stroke="#bfe7ff" stroke-opacity="0.12"/>
+                <!-- boosters (extra elements toggled) -->
+                <g id="boosters"></g>
+                <!-- decorative lights -->
+                <g id="lights"></g>
+              </g>
+            </svg>
           </div>
 
-          <!-- Stage 1: mk2 -->
-          <div class="rocket-stage" id="stage-1">
-            <div class="rocket-box">
-              <svg viewBox="0 0 220 340" class="rocket-svg">
-                <defs>
-                  <linearGradient id="g_body1" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stop-color="#fff7f1"/><stop offset="100%" stop-color="#ffd6c0" stop-opacity="0.06"/>
-                  </linearGradient>
-                </defs>
-                <g transform="translate(18,8)">
-                  <ellipse cx="95" cy="270" rx="44" ry="14" fill="#071822" opacity="0.12"/>
-                  <rect x="52" y="34" width="86" height="150" rx="20" fill="url(#g_body1)" stroke="#ffb78a" stroke-opacity="0.06"/>
-                  <path d="M95 6 C74 40,116 40,95 6 Z" fill="#ff5a7a"/>
-                  <circle cx="95" cy="112" r="14" fill="#021827" stroke="#ffd7b3" stroke-opacity="0.12"/>
-                  <!-- small animated detail -->
-                  <rect x="36" y="124" width="20" height="64" rx="8" fill="#0b2a3b"/>
-                  <rect x="150" y="124" width="20" height="64" rx="8" fill="#0b2a3b"/>
-                </g>
-              </svg>
-            </div>
-            <div class="flame" id="flame-1">
-              <svg viewBox="0 0 56 90" width="88" height="140">
-                <g>
-                  <path d="M28 2 C12 26,10 44,28 78 C46 44,44 26,28 2 Z" fill="#ffe0c0"/>
-                  <path d="M28 16 C22 34,20 44,28 64 C36 44,34 34,28 16 Z" fill="#ff7a18"/>
-                </g>
-              </svg>
-            </div>
+          <!-- Flame box (positioned so it stays attached to nozzle). We will scale, recolor and emit particles from here. -->
+          <div class="flame morph-fade" id="flameEl" style="pointer-events:none">
+            <svg id="flameSVG" viewBox="0 0 48 80" width="88" height="140" preserveAspectRatio="xMidYMid meet">
+              <g id="coreFlame">
+                <path id="flameOuter" d="M24 2 C12 24,10 44,24 70 C38 44,36 24,24 2 Z" fill="#ffd7a6"/>
+                <path id="flameInner" d="M24 18 C18 36,16 44,24 58 C32 44,30 36,24 18 Z" fill="#ff6b18"/>
+              </g>
+            </svg>
           </div>
-
-          <!-- Stage 2: mk3 -->
-          <div class="rocket-stage" id="stage-2">
-            <div class="rocket-box">
-              <svg viewBox="0 0 240 360" class="rocket-svg">
-                <defs><linearGradient id="g_body2" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#f9fdff"/><stop offset="100%" stop-color="#dbf7ff" stop-opacity="0.06"/></linearGradient></defs>
-                <g transform="translate(20,6)">
-                  <ellipse cx="100" cy="290" rx="48" ry="15" fill="#071822" opacity="0.12"/>
-                  <rect x="58" y="30" width="84" height="168" rx="22" fill="url(#g_body2)" stroke="#aef2ff" stroke-opacity="0.08"/>
-                  <path d="M100 8 C76 46,124 46,100 8 Z" fill="#9a7bff"/>
-                  <circle cx="100" cy="118" r="16" fill="#021827" stroke="#cfefff" stroke-opacity="0.12"/>
-                  <path d="M40 150 L12 196 L40 168 Z" fill="#0f3446"/>
-                  <path d="M160 150 L188 196 L160 168 Z" fill="#0f3446"/>
-                </g>
-              </svg>
-            </div>
-            <div class="flame" id="flame-2">
-              <svg viewBox="0 0 64 96" width="100" height="160">
-                <g>
-                  <path d="M32 2 C14 32,12 56,32 96 C52 56,50 32,32 2 Z" fill="#fff3d8"/>
-                  <path d="M32 20 C24 40,22 52,32 78 C42 52,40 40,32 20 Z" fill="#ff7a18"/>
-                </g>
-              </svg>
-            </div>
-          </div>
-
-          <!-- Stage 3..11 (late and flashy variants) - we'll include several decorative variants -->
-          <!-- Stage 3 -->
-          <div class="rocket-stage" id="stage-3">
-            <div class="rocket-box">
-              <svg viewBox="0 0 260 380" class="rocket-svg">
-                <defs>
-                  <linearGradient id="g_body3" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#fff9f3"/><stop offset="100%" stop-color="#ffd7b3" stop-opacity="0.06"/></linearGradient>
-                </defs>
-                <g transform="translate(24,6)">
-                  <ellipse cx="120" cy="300" rx="54" ry="16" fill="#071822" opacity="0.12"/>
-                  <rect x="70" y="28" width="100" height="178" rx="24" fill="url(#g_body3)" stroke="#ffdbb3" stroke-opacity="0.07"/>
-                  <path d="M120 6 C92 56,148 56,120 6 Z" fill="#ffd37a"/>
-                  <circle cx="120" cy="130" r="18" fill="#041827" stroke="#fff1d6" stroke-opacity="0.14"/>
-                  <!-- solar panels -->
-                  <rect x="20" y="136" width="44" height="84" rx="4" fill="#0b2a40"/>
-                  <rect x="176" y="136" width="44" height="84" rx="4" fill="#0b2a40"/>
-                </g>
-              </svg>
-            </div>
-            <div class="flame" id="flame-3">
-              <svg viewBox="0 0 72 110" width="110" height="180">
-                <g>
-                  <path d="M36 2 C12 44,10 72,36 110 C62 72,60 44,36 2 Z" fill="#fff4dd"/>
-                  <path d="M36 20 C28 46,26 60,36 92 C46 60,44 46,36 20 Z" fill="#ff6b18"/>
-                </g>
-              </svg>
-            </div>
-          </div>
-
-          <!-- Stage 4 -->
-          <div class="rocket-stage" id="stage-4">
-            <div class="rocket-box">
-              <svg viewBox="0 0 280 420" class="rocket-svg">
-                <defs><linearGradient id="g_body4" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#fff3ff"/><stop offset="100%" stop-color="#f0f9ff" stop-opacity="0.06"/></linearGradient></defs>
-                <g transform="translate(24,10)">
-                  <ellipse cx="140" cy="330" rx="62" ry="18" fill="#071822" opacity="0.12"/>
-                  <rect x="84" y="32" width="112" height="206" rx="26" fill="url(#g_body4)" stroke="#ffd7f0" stroke-opacity="0.06"/>
-                  <path d="M140 6 C106 68,174 68,140 6 Z" fill="#ffd0ff"/>
-                  <circle cx="140" cy="150" r="20" fill="#021827" stroke="#fff6ff" stroke-opacity="0.14"/>
-                  <!-- extra animated modules -->
-                  <g transform="translate(24,160)"><rect x="0" y="0" width="56" height="100" rx="6" fill="#0b2a40"/></g>
-                  <g transform="translate(200,160)"><rect x="0" y="0" width="56" height="100" rx="6" fill="#0b2a40"/></g>
-                </g>
-              </svg>
-            </div>
-            <div class="flame" id="flame-4">
-              <svg viewBox="0 0 84 120" width="126" height="200">
-                <g>
-                  <path d="M42 2 C12 54,10 88,42 120 C74 88,72 54,42 2 Z" fill="#fff4f0"/>
-                  <path d="M42 24 C32 54,30 70,42 102 C54 70,52 54,42 24 Z" fill="#ff4a18"/>
-                </g>
-              </svg>
-            </div>
-          </div>
-
-          <!-- Stage 5 (legendary variant 1) -->
-          <div class="rocket-stage" id="stage-5">
-            <div class="rocket-box">
-              <svg viewBox="0 0 300 440" class="rocket-svg">
-                <defs><linearGradient id="g_body5" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#fffefc"/><stop offset="100%" stop-color="#eaf8ff" stop-opacity="0.06"/></linearGradient></defs>
-                <g transform="translate(28,12)">
-                  <ellipse cx="150" cy="350" rx="70" ry="20" fill="#071822" opacity="0.12"/>
-                  <rect x="98" y="36" width="124" height="220" rx="28" fill="url(#g_body5)" stroke="#ffe0a8" stroke-opacity="0.06"/>
-                  <path d="M150 6 C112 80,188 80,150 6 Z" fill="#ffd37a"/>
-                  <circle cx="150" cy="164" r="22" fill="#021827" stroke="#fff6d8" stroke-opacity="0.14"/>
-                  <!-- spinning ring decorative -->
-                  <g transform="translate(70,220)"><rect x="0" y="0" width="160" height="18" rx="9" fill="#162f3f" opacity="0.7"/></g>
-                </g>
-              </svg>
-            </div>
-            <div class="flame" id="flame-5">
-              <svg viewBox="0 0 100 140" width="150" height="220">
-                <g>
-                  <path d="M50 2 C18 68,16 108,50 140 C84 108,82 68,50 2 Z" fill="#fff8e8"/>
-                  <path d="M50 28 C38 64,36 84,50 116 C64 84,62 64,50 28 Z" fill="#ff6b18"/>
-                </g>
-              </svg>
-            </div>
-          </div>
-
-          <!-- We'll reuse stage-5 look for later stages but morph effects and flame color will vary.
-               For simplicity in this single file we'll supply up to stage-8 explicit elements, then reuse stage-5 visually for very late stages (appearance cycles). -->
-          <div class="rocket-stage" id="stage-6"><!-- fancy alt --></div>
-          <div class="rocket-stage" id="stage-7"></div>
-          <div class="rocket-stage" id="stage-8"></div>
         </div>
 
-        <!-- fx layer and hit flash -->
         <div id="fxLayer"></div>
         <div class="hit-flash" id="hitFlash"></div>
       </div>
@@ -280,9 +141,9 @@
       </div>
     </main>
 
-    <aside class="panel">
+    <aside class="panel" id="rightPanel">
       <h3 style="margin-top:0">Launch Bay — Shop</h3>
-      <div class="muted small">Engineers (autoclickers), Thrusters (click boosts), Labs (multipliers).</div>
+      <div class="muted small">Engineers (autoclickers), Thrusters (click boosts), Labs (multipliers). Two upgrades unlock UI/control features.</div>
       <div style="height:12px"></div>
       <div class="shop">
         <div class="store-list panel" id="storeList"></div>
@@ -297,50 +158,115 @@
       </div>
     </aside>
 
-    <footer class="muted small">Tip: Click anywhere to glide to that location and dodge shooting stars. Press <strong>Space</strong> to click (gain fuel).</footer>
+    <footer class="muted small">Tip: Click in the sky to glide. Buy the "Gyro Stabilizer" to enable WASD (or arrows) movement.</footer>
   </div>
 
 <script>
-/* ---------- Polished Rocket Clicker (full game) ---------- */
+/* -----------------------------
+   Polished Progressive Rocket Clicker
+   - ~18 small visual progression tiers
+   - parametric SVG rocket (one SVG updated per tier)
+   - fewer, pooled flame particles
+   - improved shooting stars with trails & fair hitboxes
+   - two shop upgrades unlock HUD skin and WASD controls
+   - organized WebAudio synth sounds
+   ----------------------------- */
 
-/* -----------------------
+/* -----------------------------
+   CONFIG & DATA (easy to tweak)
+   ----------------------------- */
+const TIERS = [
+  /* Each tier adjusts a few visual parameters:
+     bodyColor, noseColor, cockpitGlow, finStyle(0..2), boosters(0..n), flame (color/scale)
+     threshold = fuel needed to be at this tier (if fuel below next threshold, downgrade)
+  */
+  { name:'Base', threshold:0, body:'#eaf8ff', nose:'#ffb07a', cockpit:'#bfe7ff', fins:0, boosters:0, flame:{col1:'#ffd7a6', col2:'#ff7a18', scale:1} },
+  { name:'Tier 1', threshold:250, body:'#e6f5ff', nose:'#ffb07a', cockpit:'#bfe7ff', fins:1, boosters:0, flame:{col1:'#ffd8a8', col2:'#ff7a20', scale:1.05} },
+  { name:'Tier 2', threshold:600, body:'#e3f2ff', nose:'#ffad6b', cockpit:'#bfe7ff', fins:1, boosters:0, flame:{col1:'#ffe0b0', col2:'#ff7f18', scale:1.08} },
+  { name:'Tier 3', threshold:1200, body:'#ddf0ff', nose:'#ffa36b', cockpit:'#cfe7ff', fins:1, boosters:1, flame:{col1:'#ffe8bf', col2:'#ff8630', scale:1.15} },
+  { name:'Tier 4', threshold:2500, body:'#d2ecff', nose:'#ff9755', cockpit:'#dff2ff', fins:2, boosters:1, flame:{col1:'#ffeec8', col2:'#ff8a2b', scale:1.2} },
+  { name:'Tier 5', threshold:4500, body:'#c5e6ff', nose:'#ff8c4a', cockpit:'#eaf7ff', fins:2, boosters:1, flame:{col1:'#fff0d0', col2:'#ff922b', scale:1.28} },
+  { name:'Tier 6', threshold:7000, body:'#b8e0ff', nose:'#ff7a6b', cockpit:'#f0f9ff', fins:2, boosters:2, flame:{col1:'#fff4d8', col2:'#ff6d20', scale:1.34} },
+  { name:'Tier 7', threshold:10000, body:'#aee7ff', nose:'#ff6b6b', cockpit:'#f6fbff', fins:2, boosters:2, flame:{col1:'#fff6df', col2:'#ff5f1f', scale:1.42} },
+  { name:'Tier 8', threshold:14000, body:'#a0e2ff', nose:'#ff6080', cockpit:'#fbfeff', fins:3, boosters:2, flame:{col1:'#fff8e8', col2:'#ff53ff', scale:1.5} },
+  { name:'Tier 9', threshold:19000, body:'#8fe0ff', nose:'#ff52a2', cockpit:'#fff6ff', fins:3, boosters:3, flame:{col1:'#fffbe8', col2:'#ff3bb3', scale:1.6} },
+  { name:'Tier10', threshold:25000, body:'#7fe0ff', nose:'#ff4aac', cockpit:'#fff8ff', fins:3, boosters:3, flame:{col1:'#fff9ff', col2:'#ff2bba', scale:1.72} },
+  { name:'Tier11', threshold:32000, body:'#7ae6ff', nose:'#ff3a9a', cockpit:'#fff9ff', fins:3, boosters:3, flame:{col1:'#fff9ff', col2:'#ff2be0', scale:1.86} },
+  { name:'Tier12', threshold:42000, body:'#6bf6ff', nose:'#ff3aff', cockpit:'#fff9ff', fins:4, boosters:4, flame:{col1:'#fffaff', col2:'#dd2bff', scale:2.0} },
+  { name:'Tier13', threshold:54000, body:'#5ff2ff', nose:'#ff6bff', cockpit:'#fff9ff', fins:4, boosters:4, flame:{col1:'#fdf8ff', col2:'#b82bff', scale:2.16} },
+  { name:'Tier14', threshold:68000, body:'#4ff2f7', nose:'#ff9aff', cockpit:'#fff9ff', fins:4, boosters:5, flame:{col1:'#fdf8ff', col2:'#782bff', scale:2.34} },
+  { name:'Tier15', threshold:85000, body:'#3ff7f7', nose:'#ffd7ff', cockpit:'#fff9ff', fins:5, boosters:5, flame:{col1:'#fff9ff', col2:'#6b2bff', scale:2.6} },
+  { name:'Tier16', threshold:105000, body:'#2bfcff', nose:'#ffd7e0', cockpit:'#fff9ff', fins:5, boosters:6, flame:{col1:'#fff9ff', col2:'#4b2bff', scale:2.9} },
+  { name:'Tier17', threshold:130000, body:'#12fffa', nose:'#fff0ff', cockpit:'#fff9ff', fins:6, boosters:6, flame:{col1:'#fff9ff', col2:'#2b1fff', scale:3.2} }
+];
+const MAX_TIER_INDEX = TIERS.length - 1;
+
+/* Shop items (includes two special items that alter UI/input) */
+const SHOP_ITEMS = [
+  { id:'engineer', name:'Engineer', desc:'Automate clicks (small).', base:12, cps:0.18 },
+  { id:'robot', name:'Junior Robot', desc:'Better automation.', base:48, cps:0.9 },
+  { id:'thruster', name:'Thruster', desc:'Improve click power.', base:56, cpc:1.8 },
+  { id:'adv_thruster', name:'Advanced Thruster', desc:'Stronger manual power.', base:420, cpc:7 },
+  { id:'lab', name:'Research Lab', desc:'Multiplicative thrusters.', base:950, type:'mult', mult:1.45 },
+  { id:'sat', name:'Satellite', desc:'Remote passive sensors.', base:1400, cps:12 },
+  // ... fill in remaining to reach ~15 items; add special items
+  { id:'ai', name:'AI Systems', desc:'Smart optimization.', base:7200, cps:72 },
+  { id:'factory', name:'Factory', desc:'Mass production.', base:32000, cps:320 },
+  { id:'gyro', name:'Gyro Stabilizer', desc:'Unlock WASD/Arrow flight control.', base:250000, special:'enableWASD' },
+  { id:'hud', name:'Command Bridge', desc:'Upgrade HUD to a tech HUD skin.', base:600000, special:'hudSkin' },
+  { id:'megafactory', name:'Mega Factory', desc:'Huge passive.', base:220000, cps:1900 },
+  { id:'orbital', name:'Orbital Platform', desc:'Advanced passive.', base:1_500_000, cps:12000 },
+  { id:'colony', name:'Lunar Colony', desc:'Off-world production.', base:7_500_000, cps:56000 },
+  { id:'dyson', name:'Dyson Swarm', desc:'Massive power.', base:45_000_000, cps:350000 },
+  { id:'quantum', name:'Quantum Lab', desc:'Multiply thrusters.', base:180_000_000, type:'mult', mult:2.0 }
+];
+
+/* Tuning */
+const STAR_SPAWN_MIN = 15000; // ms
+const STAR_SPAWN_MAX = 36000;
+
+/* -----------------------------
+   SOUND: small WebAudio synth (all sounds managed here)
+   ----------------------------- */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playTone(freq, type='sine', time=0.04, gain=0.08){
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = type; osc.frequency.value = freq;
+  g.gain.value = gain;
+  osc.connect(g); g.connect(audioCtx.destination);
+  const nowt = audioCtx.currentTime;
+  osc.start(nowt);
+  g.gain.setValueAtTime(gain, nowt);
+  g.gain.exponentialRampToValueAtTime(0.001, nowt + time);
+  osc.stop(nowt + time + 0.02);
+}
+function playClickSound(){ playTone(880,'triangle',0.06,0.06); }
+function playBuySound(){ playTone(1200,'sine',0.12,0.08); playTone(900,'sine',0.08,0.04); }
+function playUpgradeSound(){ playTone(220,'sawtooth',0.22,0.16); playTone(660,'sine',0.12,0.06); }
+function playHitSound(){ playTone(120,'square',0.12,0.18); playTone(260,'triangle',0.08,0.06); }
+
+/* -----------------------------
    GAME STATE
-   ----------------------- */
-const state = {
+   ----------------------------- */
+let game = {
   fuel: 0,
   perClick: 1,
   perSecond: 0,
   lastTick: Date.now(),
+  lastClick: 0,
   clickBurst: 0,
   prestige: 0,
-  // rocket movement
-  rocket: { x:0, y:0, tx: null, ty: null, vx:0, vy:0, speed: 880, easing: 0.14 },
-  // shooting star objects
+  items: SHOP_ITEMS.map(it => Object.assign({ qty:0 }, it)),
+  // rocket position & control
+  rocket: { x:0, y:0, tx:null, ty:null, easing:0.14, speed:800, useWASD:false },
   stars: [],
-  lastStarSpawn: 0,
-  // progression items (15)
-  items: [
-    { id:'engineer', name:'Engineer', desc:'Skilled engineers automate clicks.', baseCost:12, cps:0.18, cpc:0, qty:0 },
-    { id:'robot', name:'Junior Robot', desc:'Basic automation bots.', baseCost:48, cps:0.9, cpc:0, qty:0 },
-    { id:'senior', name:'Senior Engineer', desc:'Fast production.', baseCost:240, cps:3.6, cpc:0, qty:0 },
-    { id:'thruster', name:'Thruster', desc:'Better manual click power.', baseCost:56, cps:0, cpc:1.8, qty:0 },
-    { id:'adv_thruster', name:'Advanced Thruster', desc:'Strong manual power.', baseCost:420, cps:0, cpc:7, qty:0 },
-    { id:'lab', name:'Research Lab', desc:'Multiplicative thruster boost.', baseCost:950, cps:0, cpc:0, qty:0, type:'mult', mult:1.45 },
-    { id:'sat', name:'Satellite Relay', desc:'Passive remote feed.', baseCost:1400, cps:12, cpc:0, qty:0 },
-    { id:'ai', name:'AI Systems', desc:'Smart optimization (big passive).', baseCost:7200, cps:72, cpc:0, qty:0 },
-    { id:'factory', name:'Factory', desc:'Mass produce parts.', baseCost:32000, cps:320, cpc:0, qty:0 },
-    { id:'megafactory', name:'Mega Factory', desc:'Large-scale production.', baseCost:220000, cps:1900, cpc:0, qty:0 },
-    { id:'orbital', name:'Orbital Platform', desc:'Advanced passive power.', baseCost:1_500_000, cps:12000, cpc:0, qty:0 },
-    { id:'colony', name:'Lunar Colony', desc:'Expand production off-world.', baseCost:7_500_000, cps:56000, cpc:0, qty:0 },
-    { id:'dyson', name:'Dyson Swarm', desc:'Enormous passive power.', baseCost:45_000_000, cps:350_000, cpc:0, qty:0 },
-    { id:'quantum', name:'Quantum Labs', desc:'Multiply thrusters.', baseCost:180_000_000, cps:0, cpc:0, qty:0, type:'mult', mult:2.0 },
-    { id:'singularity', name:'Singularity Core', desc:'Ultimate passive engine.', baseCost:1_000_000_000, cps:2_000_000, cpc:0, qty:0 }
-  ]
+  lastStarSpawn: 0
 };
 
-/* -----------------------
-   DOM REFERENCES
-   ----------------------- */
+/* -----------------------------
+   DOM refs
+   ----------------------------- */
 const fuelEl = document.getElementById('fuel');
 const fuelTopEl = document.getElementById('fuelTop');
 const perClickEl = document.getElementById('perClick');
@@ -348,457 +274,563 @@ const perSecondEl = document.getElementById('perSecond');
 const storeList = document.getElementById('storeList');
 const sky = document.getElementById('sky');
 const rocketWrap = document.getElementById('rocketWrap');
+const rocketEl = document.getElementById('rocketEl');
+const rocketSVG = document.getElementById('rocketSVG');
+const flameEl = document.getElementById('flameEl');
+const flameSVG = document.getElementById('flameSVG');
 const fxLayer = document.getElementById('fxLayer');
 const hitFlash = document.getElementById('hitFlash');
 const altitudeEl = document.getElementById('altitude');
 const prestigeBtn = document.getElementById('prestigeBtn');
+const appRoot = document.getElementById('appRoot');
+const rightPanel = document.getElementById('rightPanel');
 
-/* -----------------------
+/* -----------------------------
    UTILITIES
-   ----------------------- */
-function fmt(n){
-  if(n < 1000) return Math.round(n*100)/100;
-  const si=['','K','M','B','T','Qa','Qi','Sx','Sp'];
-  let i=0; while(n>=1000 && i<si.length-1){ n/=1000; i++; } return (Math.round(n*100)/100) + si[i];
-}
+   ----------------------------- */
+function fmt(n){ if(n < 1000) return Math.round(n*100)/100; const si=['','K','M','B','T']; let i=0; while(n>=1000 && i<si.length-1){ n/=1000; i++; } return (Math.round(n*100)/100) + si[i]; }
 function now(){ return Date.now(); }
 
-/* -----------------------
-   COSTS & SHOP
-   ----------------------- */
-function cost(item){ return Math.ceil(item.baseCost * Math.pow(1.135, item.qty)); }
-function sortedItems(){ return state.items.map(it=>({ ...it, cost: cost(it) })).sort((a,b)=>a.cost-b.cost); }
-function unlocked(i){ if(i===0) return true; return state.items[i-1].qty > 0; }
+/* -----------------------------
+   RELOAD / SAVE
+   ----------------------------- */
+function saveGame(){ try{ const s = { fuel: game.fuel, prestige: game.prestige, items: game.items.map(it=>({id:it.id, qty:it.qty})), useWASD: game.rocket.useWASD }; localStorage.setItem('rocket_polished_v2', JSON.stringify(s)); spawnPopup('Saved'); } catch(e){console.error(e);} }
+function loadGame(){ try{ const raw = localStorage.getItem('rocket_polished_v2'); if(!raw) return; const s = JSON.parse(raw); game.fuel = s.fuel||0; game.prestige = s.prestige||0; if(Array.isArray(s.items)) s.items.forEach(si=>{ const it = game.items.find(x=>x.id===si.id); if(it) it.qty = si.qty||0; }); if(s.useWASD) game.rocket.useWASD = true; recalc(); renderUI(); spawnPopup('Loaded'); }catch(e){console.error(e);} }
 
-/* -----------------------
+/* -----------------------------
+   SHOP / COSTS
+   ----------------------------- */
+function itemCost(it){ return Math.ceil(it.base * Math.pow(1.135, it.qty)); }
+function sortedStore(){ return game.items.map(it=>({ ...it, cost: itemCost(it) })).sort((a,b)=>a.cost - b.cost); }
+function unlockedIndex(i){ if(i === 0) return true; return game.items[i-1].qty > 0; }
+
+function renderStore(){
+  storeList.innerHTML = '';
+  sortedStore().forEach(si=>{
+    const idx = game.items.findIndex(x=>x.id === si.id);
+    const ok = unlockedIndex(idx);
+    const el = document.createElement('div'); el.className = 'item' + (ok ? '' : ' locked');
+    el.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><div><div class="name">${si.name}</div><div class="muted small">${si.desc}</div></div></div>
+      <div style="text-align:right"><div class="num">${ ok ? fmt(si.cost) : '<span class="locked-tag">Locked</span>' }</div><div class="muted small">Owned: ${si.qty}</div></div>`;
+    el.addEventListener('click', ()=> {
+      if(!ok){ lockedFeedback(); return; }
+      buyItem(si.id);
+    });
+    storeList.appendChild(el);
+  });
+}
+
+/* -----------------------------
    RECALC PRODUCTION
-   ----------------------- */
+   ----------------------------- */
 function recalc(){
   let pc = 1; let ps = 0;
-  state.items.forEach(it=>{
+  game.items.forEach(it=>{
     if(it.cpc) pc += it.cpc * it.qty;
     if(it.cps) ps += it.cps * it.qty;
     if(it.type === 'mult' && it.qty > 0) pc *= Math.pow(it.mult, it.qty);
   });
-  state.perClick = pc; state.perSecond = ps;
+  game.perClick = pc; game.perSecond = ps;
 }
 
-/* -----------------------
-   RENDER STORE & UI
-   ----------------------- */
-function renderStore(){
-  storeList.innerHTML = '';
-  const sorted = sortedItems();
-  sorted.forEach(si=>{
-    const originalIndex = state.items.findIndex(x=>x.id===si.id);
-    const ok = unlocked(originalIndex);
-    const el = document.createElement('div');
-    el.className = 'item' + (ok ? '' : ' locked');
-    el.innerHTML = `<div style="display:flex;gap:12px;align-items:center"><div><div class="name">${si.name}</div><div class="muted small">${si.desc}</div></div></div><div style="text-align:right"><div class="num">${ ok ? fmt(si.cost) : '<span class="locked-tag">Locked</span>' }</div><div class="muted small">Owned: ${si.qty}</div></div>`;
-    el.addEventListener('click', ()=>{ if(!ok){ lockedFeedback(); return; } buy(si.id); });
-    storeList.appendChild(el);
-  });
-}
-function renderUI(){
-  fuelEl.textContent = fmt(state.fuel);
-  fuelTopEl.textContent = Math.round(state.fuel);
-  perClickEl.textContent = fmt(state.perClick);
-  perSecondEl.textContent = fmt(state.perSecond);
-  const alt = Math.min(99, Math.sqrt(state.fuel / (1500 + state.prestige*600)) * 100);
-  altitudeEl.textContent = Math.round(alt) + '%';
-  // vertical rocket offset (affects actual DOM transform)
-  const bottomOffset = -(alt/1.6);
-  rocketWrap.style.transform = `translateX(-50%) translateY(${bottomOffset}px)`;
-  renderStore();
-  applyStage();
-  if(state.fuel >= 1_000_000) prestigeBtn.style.display = 'inline-block'; else prestigeBtn.style.display = 'none';
+/* -----------------------------
+   PURCHASE / BUY
+   ----------------------------- */
+function buyItem(id){
+  const it = game.items.find(x=>x.id === id);
+  if(!it) return;
+  const c = itemCost(it);
+  if(game.fuel >= c){
+    game.fuel -= c; it.qty++;
+    // special handling for UI/control items
+    if(it.special === 'enableWASD' || it.id === 'gyro') { game.rocket.useWASD = true; spawnPopup('Gyro Stabilizer acquired — WASD enabled'); }
+    if(it.special === 'hudSkin' || it.id === 'hud') { document.documentElement.classList.add('hud-skin'); spawnPopup('Command Bridge online — HUD upgraded'); }
+    recalc(); renderUI(); spawnSparkles(18); playBuySound();
+  } else {
+    lockedFeedback();
+  }
 }
 
-/* -----------------------
-   BUY ITEM
-   ----------------------- */
-function buy(id){
-  const it = state.items.find(x=>x.id===id);
-  const c = cost(it);
-  if(state.fuel >= c){
-    state.fuel -= c; it.qty++; recalc(); spawnPopup(`+ ${it.name}`); spawnSparkles(20); renderUI();
-  } else lockedFeedback();
+/* -----------------------------
+   CLICK ACTIONS
+   ----------------------------- */
+function doClick(n=1){
+  game.clickBurst = Math.min(8, game.clickBurst + 1);
+  game.fuel += game.perClick * n;
+  spawnExhaust(); spawnSparkles(10); playClickSound(); renderUI();
 }
+
+/* -----------------------------
+   UI FEEDBACK
+   ----------------------------- */
 function lockedFeedback(){
-  rocketWrap.style.transition = 'transform .08s';
+  rocketWrap.style.transition = 'transform 0.08s';
   rocketWrap.style.transform = 'translateX(-50%) translateY(-8px)';
   setTimeout(()=> rocketWrap.style.transform = 'translateX(-50%)', 120);
   setTimeout(()=> rocketWrap.style.transition = '', 220);
 }
-
-/* -----------------------
-   CLICK / EXHAUST / SPARKLES
-   ----------------------- */
-function doClick(n=1){
-  state.clickBurst = Math.min(8, state.clickBurst + 1);
-  state.fuel += state.perClick * n;
-  spawnExhaust(); spawnSparkles(14); renderUI();
+function spawnPopup(text){
+  const el = document.createElement('div'); el.textContent = text; el.style.position='absolute'; el.style.left='50%'; el.style.top='28%';
+  el.style.transform='translate(-50%,-50%)'; el.style.color='#ffd7b3'; el.style.fontWeight='800'; el.style.pointerEvents='none'; sky.appendChild(el);
+  let t=0; const iv = setInterval(()=> { t+=16; el.style.top = (28 - t/140) + '%'; el.style.opacity = 1 - t/900; if(t>900){ clearInterval(iv); el.remove(); } }, 16);
 }
-function spawnSparkles(cnt=12){
-  for(let i=0;i<cnt;i++){
-    const s = document.createElement('div'); s.className='spark';
-    const layerRect = fxLayer.getBoundingClientRect();
-    const rx = rocketWrap.getBoundingClientRect().left + rocketWrap.getBoundingClientRect().width/2 - layerRect.left;
-    const ry = rocketWrap.getBoundingClientRect().top + rocketWrap.getBoundingClientRect().height - layerRect.top - 20;
-    s.style.left = (rx + (Math.random()*64-32)) + 'px'; s.style.top = (ry + (Math.random()*32-12)) + 'px';
-    const size = 4 + Math.random()*10; s.style.width = s.style.height = size + 'px';
-    s.style.background = `radial-gradient(circle, #ffd9b3, rgba(255,120,30,0.7))`;
-    fxLayer.appendChild(s);
-    const dx = (Math.random()*180-90); const dy = (80 + Math.random()*120);
-    s.animate([{ transform:'translate(0,0) scale(1)', opacity:1 }, { transform:`translate(${dx}px, -${dy}px) scale(0.2)`, opacity:0 }], { duration:700 + Math.random()*500, easing:'cubic-bezier(.2,.9,.2,1)' });
-    setTimeout(()=> s.remove(), 1200);
+
+/* -----------------------------
+   PARTICLE POOL for flame & spark (efficient)
+   ----------------------------- */
+const PARTICLE_POOL = [];
+function createParticle(){
+  const el = document.createElement('div'); el.className = 'particle';
+  el.style.position='absolute'; el.style.pointerEvents='none';
+  fxLayer.appendChild(el);
+  return { el, busy:false };
+}
+for(let i=0;i<28;i++) PARTICLE_POOL.push(createParticle());
+
+function spawnParticle(x,y,color,size,dx,dy,life=700){
+  const p = PARTICLE_POOL.find(pp => !pp.busy);
+  if(!p) return; p.busy = true;
+  const el = p.el;
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+  el.style.width = el.style.height = size + 'px'; el.style.background = color; el.style.opacity = 1; el.style.borderRadius = '50%';
+  el.animate([{ transform:'translate(0,0) scale(1)', opacity:1 }, { transform:`translate(${dx}px, ${dy}px) scale(0.25)`, opacity:0 }], { duration: life, easing:'cubic-bezier(.2,.9,.2,1)' });
+  setTimeout(()=> { p.busy = false; el.style.opacity = 0; }, life);
+}
+
+/* Flame emission (limited particles, organized) */
+function emitFlameBurst(intensity=1.0){
+  const wrapRect = rocketWrap.getBoundingClientRect();
+  const fxRect = fxLayer.getBoundingClientRect();
+  const cx = wrapRect.left + wrapRect.width/2 - fxRect.left;
+  const cy = wrapRect.top + wrapRect.height - fxRect.top - 16;
+  const particlesToSpawn = Math.min(12, Math.max(4, Math.round(4 * intensity)));
+  for(let i=0;i<particlesToSpawn;i++){
+    const angle = Math.PI + (Math.random()-0.5)*0.9;
+    const speed = (18 + Math.random()*40) * intensity;
+    const dx = Math.cos(angle)*speed + (Math.random()*12-6);
+    const dy = Math.sin(angle)*speed + (Math.random()*8-6);
+    const size = 6 + Math.random()*10 * (0.6 + intensity*0.6);
+    const c1 = getCurrentTier().flame.col1;
+    spawnParticle(cx + (Math.random()*20-10), cy + (Math.random()*6-3), c1, size, dx, dy, 650 + Math.random()*300);
   }
 }
-function spawnExhaust(){
-  const rect = fxLayer.getBoundingClientRect(); const wrap = rocketWrap.getBoundingClientRect();
-  const cx = wrap.left + wrap.width/2 - rect.left; const cy = wrap.top + wrap.height - rect.top - 20;
-  for(let i=0;i<10;i++){
-    const p = document.createElement('div'); p.className='trail';
-    const size = 6 + Math.random()*14; p.style.width = size+'px'; p.style.height = size+'px';
-    p.style.left = (cx + (Math.random()*48-24)) + 'px'; p.style.top = (cy + (Math.random()*20-8)) + 'px';
-    p.style.background = `radial-gradient(circle,#ffd6a0, rgba(255,120,30,0.6))`;
-    fxLayer.appendChild(p);
-    const angle = Math.PI + (Math.random()-0.5)*1.3; const dist = 40 + Math.random()*160; const dx = Math.cos(angle)*dist; const dy = Math.sin(angle)*dist;
-    p.animate([{ transform:'translate(0,0) scale(1)', opacity:1 }, { transform:`translate(${dx}px, ${dy}px) scale(0.2)`, opacity:0 }], { duration:600 + Math.random()*600, easing:'cubic-bezier(.2,.9,.2,1)' });
-    setTimeout(()=> p.remove(), 1100);
+
+/* spawn sparkles */
+function spawnSparkles(n=10){
+  for(let i=0;i<n;i++){
+    const wrapRect = rocketWrap.getBoundingClientRect(); const fxRect = fxLayer.getBoundingClientRect();
+    const x = wrapRect.left + wrapRect.width/2 - fxRect.left + (Math.random()*80-40);
+    const y = wrapRect.top + wrapRect.height - fxRect.top - 20 + (Math.random()*20-10);
+    const col = '#ffd9b3';
+    spawnParticle(x,y,col,4 + Math.random()*8, (Math.random()*140-70), -(40 + Math.random()*120), 700+Math.random()*500);
   }
 }
 
-/* -----------------------
-   SAVE / LOAD
-   ----------------------- */
-function save(){
-  try{
-    const s = { fuel: state.fuel, prestige: state.prestige, items: state.items.map(it=>({id:it.id,qty:it.qty})) };
-    localStorage.setItem('rocket_polished_v1', JSON.stringify(s));
-    spawnPopup('Saved');
-  }catch(e){ console.error(e); }
+/* -----------------------------
+   Shooting stars (pool + improved trails + fair hitboxes)
+   ----------------------------- */
+const STAR_POOL = [];
+function createStarObj(){ return { el: null, trail: null, busy:false }; }
+function ensureStarDOM(){
+  // create dom on demand for up to 12
+  while(STAR_POOL.length < 12){
+    const obj = createStarObj();
+    obj.el = document.createElement('div'); obj.el.className='shoot'; obj.el.style.position='absolute';
+    obj.trail = document.createElement('div'); obj.trail.className='trail'; obj.trail.style.position='absolute';
+    fxLayer.appendChild(obj.trail); fxLayer.appendChild(obj.el);
+    STAR_POOL.push(obj);
+  }
 }
-function load(){
-  try{
-    const raw = localStorage.getItem('rocket_polished_v1');
-    if(!raw) return;
-    const s = JSON.parse(raw); state.fuel = s.fuel || 0; state.prestige = s.prestige || 0;
-    if(s.items && Array.isArray(s.items)) s.items.forEach(si=>{ const it = state.items.find(x=>x.id===si.id); if(it) it.qty = si.qty || 0; });
-    recalc(); renderUI(); spawnPopup('Loaded');
-  }catch(e){ console.error(e); }
+ensureStarDOM();
+
+function getFreeStar(){
+  return STAR_POOL.find(s => !s.busy);
+}
+function spawnShootingStar(){
+  const free = getFreeStar(); if(!free) return;
+  const rect = sky.getBoundingClientRect();
+  const types = [
+    { name:'white', color:'#fff6d6', trail:'#ffd8a8', speed:[420,720], size:[6,10], penalty:0.065 },
+    { name:'blue', color:'#a6e0ff', trail:'#a6e6ff', speed:[640,980], size:[4,8], penalty:0.05 },
+    { name:'red', color:'#ffb3b3', trail:'#ffb3b3', speed:[220,420], size:[10,18], penalty:0.12 },
+    { name:'green', color:'#bfffd6', trail:'#bfffd6', speed:[480,760], size:[5,9], penalty:0.045 }
+  ];
+  const r = Math.random(); let t = types[0];
+  if(r < 0.6) t = types[0]; else if(r < 0.82) t = types[1]; else if(r < 0.95) t = types[2]; else t = types[3];
+  // spawn edge
+  let sx, sy, angleDeg;
+  if(Math.random() < 0.7){
+    sx = Math.random()*rect.width*0.9 + rect.width*0.05; sy = -20;
+    angleDeg = 30 + Math.random()*80; if(Math.random() < 0.5) angleDeg = 120 + Math.random()*60;
+  } else {
+    if(Math.random() < 0.5){ sx = -40; sy = Math.random() * rect.height * 0.7 + 20; angleDeg = 10 + Math.random()*60; } else { sx = rect.width + 40; sy = Math.random() * rect.height * 0.7 + 20; angleDeg = 200 + Math.random()*60; }
+  }
+  const speed = t.speed[0] + Math.random()*(t.speed[1]-t.speed[0]);
+  const size = t.size[0] + Math.random()*(t.size[1]-t.size[0]);
+  const rad = angleDeg * Math.PI / 180;
+  const vx = Math.cos(rad) * speed, vy = Math.sin(rad) * speed;
+  free.busy = true; free.x = sx; free.y = sy; free.vx = vx; free.vy = vy; free.size = size; free.type = t; free.birth = now();
+  free.el.style.left = sx + 'px'; free.el.style.top = sy + 'px'; free.el.style.width = (size) + 'px'; free.el.style.height = (size) + 'px';
+  free.el.style.background = t.color; free.el.style.boxShadow = `0 0 ${Math.max(6,size)}px ${t.trail}`;
+  free.trail.style.left = sx + 'px'; free.trail.style.top = sy + 'px';
+  free.trail.style.width = (size*5) + 'px'; free.trail.style.height = Math.max(4, size/1.6) + 'px';
+  free.trail.style.background = `linear-gradient(90deg, ${t.trail}, rgba(0,0,0,0))`;
+  free.trail.style.opacity = 0.9; free.el.style.opacity = 1;
 }
 
-/* -----------------------
-   TICK (passive income)
-   ----------------------- */
+/* update stars; dt in seconds */
+function updateShootingStars(dt){
+  const rect = sky.getBoundingClientRect();
+  for(let i=0;i<STAR_POOL.length;i++){
+    const s = STAR_POOL[i];
+    if(!s.busy) continue;
+    s.x += s.vx * dt; s.y += s.vy * dt;
+    s.el.style.left = s.x + 'px'; s.el.style.top = s.y + 'px';
+    const ang = Math.atan2(s.vy, s.vx) * 180/Math.PI;
+    s.trail.style.transform = `rotate(${ang}deg) translateX(${-s.size*1.8}px)`;
+    s.trail.style.left = s.x + 'px'; s.trail.style.top = s.y + 'px';
+    // collision against rocket center
+    const fxRect = fxLayer.getBoundingClientRect(); const rocketRect = rocketWrap.getBoundingClientRect();
+    if(!rocketRect.width) continue;
+    const rcx = rocketRect.left + rocketRect.width/2 - fxRect.left; const rcy = rocketRect.top + rocketRect.height/2 - fxRect.top;
+    const dx = s.x - rcx, dy = s.y - rcy; const dist = Math.hypot(dx,dy);
+    const hitRadius = Math.max(28, rocketRect.width*0.22) + s.size*0.6;
+    if(dist < hitRadius){
+      // hit
+      const lost = Math.max(1, Math.round(game.fuel * s.type.penalty));
+      game.fuel = Math.max(0, game.fuel - lost);
+      // visual feedback
+      appShake(); spawnFloating(`-${fmt(lost)} fuel`, s.x, s.y); spawnSparkles(18); playHitSound();
+      s.el.style.opacity = 0; s.trail.style.opacity = 0; s.busy = false;
+      continue;
+    }
+    // off-screen clean
+    if(s.x < -400 || s.x > rect.width+400 || s.y < -400 || s.y > rect.height+400){
+      s.el.style.opacity = 0; s.trail.style.opacity = 0; s.busy = false;
+    }
+  }
+}
+
+/* star spawner loop */
+function starSpawnerLoop(){
+  const next = STAR_SPAWN_MIN + Math.random()*(STAR_SPAWN_MAX-STAR_SPAWN_MIN);
+  setTimeout(()=>{ spawnShootingStar(); if(Math.random() > 0.35) setTimeout(spawnShootingStar, 120 + Math.random()*600); starSpawnerLoop(); }, next);
+}
+
+/* -----------------------------
+   SMALL UTILS: effects
+   ----------------------------- */
+function spawnFloating(text, x, y){
+  const fxRect = fxLayer.getBoundingClientRect();
+  const el = document.createElement('div'); el.textContent = text; el.style.position='absolute';
+  el.style.left = (x) + 'px'; el.style.top = (y) + 'px'; el.style.transform='translate(-50%,-50%)'; el.style.color='#ffb38a';
+  el.style.fontWeight='800'; fxLayer.appendChild(el);
+  let t = 0; const iv = setInterval(()=>{ t+=16; el.style.top = (y - t/20) + 'px'; el.style.opacity = 1 - t/900; if(t>900){ clearInterval(iv); el.remove(); } },16);
+}
+function appShake(){ appRoot.classList.add('shake'); hitFlash.style.background = 'rgba(255,255,255,0.12)'; setTimeout(()=>{ appRoot.classList.remove('shake'); hitFlash.style.background = 'rgba(255,255,255,0)'; }, 360); }
+
+/* -----------------------------
+   FLAME & ROCKET RENDER (parametric)
+   ----------------------------- */
+function getCurrentTier(){
+  // pick highest tier where fuel >= threshold
+  let idx = 0;
+  for(let i=0;i<TIERS.length;i++){ if(game.fuel >= TIERS[i].threshold) idx = i; else break; }
+  return TIERS[Math.min(idx, MAX_TIER_INDEX)];
+}
+let lastTierIdx = -1;
+function applyTierVisuals(){
+  const tier = getCurrentTier();
+  const idx = TIERS.indexOf(tier);
+  if(idx !== lastTierIdx){
+    // play morph sound and animation
+    playUpgradeSound();
+    morphRocketToTier(tier);
+    lastTierIdx = idx;
+  }
+  // sky color morph
+  document.documentElement.style.setProperty('--sky-top', tier.body); // subtle mapping
+  document.documentElement.style.setProperty('--sky-bottom', '#02020a');
+  // update flame colors/scale in DOM
+  document.getElementById('flameOuter').setAttribute('fill', tier.flame.col1);
+  document.getElementById('flameInner').setAttribute('fill', tier.flame.col2);
+  flameEl.style.transform = `translateX(-50%) scaleY(${tier.flame.scale})`;
+}
+
+/* morph animation: fade/scale + update parametric parts */
+function morphRocketToTier(tier){
+  const el = document.querySelector('.rocket-el');
+  el.classList.add('morph-fade'); el.style.opacity = 0.02; el.style.transform = 'translateX(-50%) scale(0.96)';
+  setTimeout(()=>{
+    // update parametric parts: body color, nose, cockpit, fins, boosters, lights
+    document.getElementById('bodyRect').setAttribute('fill', tier.body);
+    document.getElementById('nose').setAttribute('fill', tier.nose || '#ffb07a');
+    document.getElementById('cockpit').setAttribute('fill', tier.cockpit || '#bfe7ff');
+    // fins: create simple fins based on tier.fins (0..6)
+    const finsGroup = document.getElementById('fins'); finsGroup.innerHTML = '';
+    const fins = Math.min(6, tier.fins || 0);
+    for(let i=0;i<fins;i++){
+      const x = 40 + i*18;
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d', `M${x} 120 L${x-22} 160 L${x+6} 130 Z`);
+      path.setAttribute('fill', '#0f2a3b'); finsGroup.appendChild(path);
+      const path2 = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path2.setAttribute('d', `M${160 - i*18} 120 L${182 - i*18} 160 L${156 - i*18} 130 Z`);
+      path2.setAttribute('fill', '#0f2a3b'); finsGroup.appendChild(path2);
+    }
+    // boosters
+    const boostersGroup = document.getElementById('boosters'); boostersGroup.innerHTML = '';
+    for(let b=0;b<(tier.boosters||0);b++){
+      const bx = 26 + (b*20);
+      const rect = document.createElementNS('http://www.w3.org/2000/svg','rect'); rect.setAttribute('x', bx); rect.setAttribute('y', 150); rect.setAttribute('width', 18); rect.setAttribute('height', 58); rect.setAttribute('rx', 6); rect.setAttribute('fill','#0d2b3f');
+      boostersGroup.appendChild(rect);
+      const bx2 = 156 - (b*20);
+      const rect2 = document.createElementNS('http://www.w3.org/2000/svg','rect'); rect2.setAttribute('x', bx2); rect2.setAttribute('y', 150); rect2.setAttribute('width', 18); rect2.setAttribute('height', 58); rect2.setAttribute('rx', 6); rect2.setAttribute('fill','#0d2b3f');
+      boostersGroup.appendChild(rect2);
+    }
+    // lights (a few glowing circles)
+    const lightsGroup = document.getElementById('lights'); lightsGroup.innerHTML = '';
+    const lightsCount = Math.min(6, 1 + Math.floor((tier.threshold || 0) / 10000));
+    for(let L=0; L<lightsCount; L++){
+      const cx = 88 + L*6;
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle'); c.setAttribute('cx', cx); c.setAttribute('cy', 66); c.setAttribute('r', 2.8); c.setAttribute('fill','#ffd7b3'); c.setAttribute('opacity', 0.9);
+      lightsGroup.appendChild(c);
+    }
+    // finish morph: fade-in + scale
+    el.style.transform = 'translateX(-50%) scale(1.06)';
+    el.style.opacity = 1;
+    setTimeout(()=> { el.style.transform = 'translateX(-50%) scale(1)'; }, 360);
+  }, 160);
+}
+
+/* -----------------------------
+   ROCKET MOVEMENT (click glide + optional WASD)
+   ----------------------------- */
+function initRocketPos(){
+  const rect = sky.getBoundingClientRect();
+  game.rocket.x = rect.width/2; game.rocket.y = rect.height*0.72;
+  game.rocket.tx = game.rocket.x; game.rocket.ty = game.rocket.y;
+  updateRocketDOM();
+}
+function skyToLocal(e){
+  const r = sky.getBoundingClientRect();
+  let x,y;
+  if(e.touches && e.touches[0]){ x = e.touches[0].clientX; y = e.touches[0].clientY; } else { x = e.clientX; y = e.clientY; }
+  x -= r.left; y -= r.top;
+  x = Math.max(48, Math.min(r.width-48, x)); y = Math.max(48, Math.min(r.height-48, y));
+  return { x,y };
+}
+sky.addEventListener('click', (e)=> {
+  const p = skyToLocal(e); game.rocket.tx = p.x; game.rocket.ty = p.y; // glide-to
+});
+sky.addEventListener('touchstart', (e)=> {
+  const p = skyToLocal(e); game.rocket.tx = p.x; game.rocket.ty = p.y;
+}, { passive:true });
+
+/* optional WASD movement */
+const keys = {};
+window.addEventListener('keydown', e=>{ keys[e.key] = true; if(e.code === 'Space'){ e.preventDefault(); doClick(1); }});
+window.addEventListener('keyup', e=>{ keys[e.key] = false; });
+
+function handleWASD(dt){
+  if(!game.rocket.useWASD) return;
+  const speed = 420; // px per second
+  let moved = false;
+  if(keys['w'] || keys['ArrowUp']){ game.rocket.ty -= speed * dt; moved = true; }
+  if(keys['s'] || keys['ArrowDown']){ game.rocket.ty += speed * dt; moved = true; }
+  if(keys['a'] || keys['ArrowLeft']){ game.rocket.tx -= speed * dt; moved = true; }
+  if(keys['d'] || keys['ArrowRight']){ game.rocket.tx += speed * dt; moved = true; }
+  if(moved){ constrainRocketTargets(); }
+}
+
+function constrainRocketTargets(){
+  const r = sky.getBoundingClientRect();
+  game.rocket.tx = Math.max(48, Math.min(r.width-48, game.rocket.tx));
+  game.rocket.ty = Math.max(48, Math.min(r.height-48, game.rocket.ty));
+}
+
+/* easing glide update */
+function updateRocket(dt){
+  // optional WASD control
+  handleWASD(dt);
+  if(game.rocket.tx === null) return;
+  const dx = game.rocket.tx - game.rocket.x; const dy = game.rocket.ty - game.rocket.y;
+  game.rocket.x += dx * Math.min(1, game.rocket.easing + dt*2.6);
+  game.rocket.y += dy * Math.min(1, game.rocket.easing + dt*2.6);
+  updateRocketDOM();
+}
+function updateRocketDOM(){
+  const r = sky.getBoundingClientRect();
+  const px = game.rocket.x; const py = game.rocket.y;
+  const bottom = r.height - py;
+  rocketWrap.style.left = px + 'px'; rocketWrap.style.bottom = bottom + 'px';
+  // tilt based on dx
+  const tilt = Math.max(-12, Math.min(12, (game.rocket.tx - game.rocket.x) / 18));
+  rocketWrap.style.transform = `translateX(-50%) translateY(0) rotate(${tilt}deg)`;
+}
+
+/* -----------------------------
+   TICK LOOP & UI RENDER
+   ----------------------------- */
+function renderUI(){
+  fuelEl.textContent = fmt(game.fuel);
+  fuelTopEl.textContent = Math.round(game.fuel);
+  perClickEl.textContent = fmt(game.perClick);
+  perSecondEl.textContent = fmt(game.perSecond);
+  const altPct = Math.min(99, Math.sqrt(game.fuel / (1700 + game.prestige*700)) * 100);
+  altitudeEl.textContent = Math.round(altPct) + '%';
+  renderStore();
+  applyTierVisuals();
+  // show prestige button
+  if(game.fuel >= 1_000_000) prestigeBtn.style.display = 'inline-block'; else prestigeBtn.style.display = 'none';
+}
+
 function tick(){
-  const nowMs = now(); const dt = (nowMs - state.lastTick)/1000; state.lastTick = nowMs;
-  if(state.perSecond > 0) state.fuel += state.perSecond * dt;
-  state.clickBurst = Math.max(0, state.clickBurst - dt*4.5);
-  updateFlame(); renderUI(); updateRocket(dt); updateShootingStars(dt);
+  const nowt = now(); const dt = (nowt - game.lastTick)/1000; game.lastTick = nowt;
+  if(game.perSecond > 0) game.fuel += game.perSecond * dt;
+  game.clickBurst = Math.max(0, game.clickBurst - dt*4.4);
+  updateFlame(); updateRocket(dt); updateShootingStars(dt);
+  renderUI();
 }
 
-/* -----------------------
-   STAGE / SKY LOGIC & MORPH
-   ----------------------- */
-const stages = [
-  { id:'base', min:0, max:2499, skyTop:'#071634', skyBottom:'#020417' },
-  { id:'mk2', min:2500, max:4999, skyTop:'#081b2b', skyBottom:'#020512' },
-  { id:'mk3', min:5000, max:9999, skyTop:'#160a2f', skyBottom:'#030014' },
-  { id:'mk4', min:10000, max:14999, skyTop:'#0b0720', skyBottom:'#00010a' },
-  { id:'mk5', min:15000, max:19999, skyTop:'#0e0618', skyBottom:'#00000b' },
-  { id:'mk6', min:20000, max:29999, skyTop:'#050012', skyBottom:'#000009' },
-  { id:'mk7', min:30000, max:49999, skyTop:'#00000b', skyBottom:'#000007' },
-  { id:'mk8', min:50000, max:74999, skyTop:'#00000a', skyBottom:'#000006' },
-  { id:'legend', min:75000, max:Infinity, skyTop:'#000007', skyBottom:'#000002' }
-];
-let currentStage = -1;
-function computeStage(fuel){
-  for(let i=stages.length-1;i>=0;i--){ if(fuel >= stages[i].min) return i; }
-  return 0;
-}
-function applyStage(){
-  const idx = computeStage(state.fuel);
-  if(idx !== currentStage){
-    // morph: fade out old stage then fade in new
-    const prevStage = currentStage;
-    currentStage = idx;
-    morphToStage(idx);
-  }
-  // sky color
-  const top = stages[Math.min(idx, stages.length-1)].skyTop;
-  const bottom = stages[Math.min(idx, stages.length-1)].skyBottom;
-  document.documentElement.style.setProperty('--sky-top', top);
-  document.documentElement.style.setProperty('--sky-bottom', bottom);
+/* -----------------------------
+   Flame intensity update
+   ----------------------------- */
+function updateFlame(){
+  const intensity = 1 + Math.min(8, game.clickBurst) * 0.28;
+  flameEl.style.transform = `translateX(-50%) scaleY(${getCurrentTier().flame.scale * intensity})`;
+  // emit occasional small flame particles based on intensity
+  if(Math.random() < 0.5 + intensity*0.08) emitFlameBurst(Math.min(2.4, intensity));
 }
 
-/* morph animation */
-function morphToStage(idx){
-  // hide all then show the correct one with fade+scale
-  const stagesEls = Array.from(document.querySelectorAll('.rocket-stage'));
-  stagesEls.forEach(el => { el.classList.remove('active'); el.classList.remove('morph-in'); el.classList.remove('morph-out'); });
-  // if idx maps > available specific DOM stages, reuse stage-5 as fanciful stage
-  let domId = (idx <= 5) ? `stage-${idx}` : 'stage-5';
-  const el = document.getElementById(domId);
-  if(!el) return;
-  // animate
-  el.classList.add('morph-out'); // start hidden
-  requestAnimationFrame(()=> {
-    // small delay to allow CSS changes to apply
-    el.classList.add('active');
-    el.classList.remove('morph-out');
-    el.classList.add('morph-in');
-    setTimeout(()=> el.classList.remove('morph-in'), 420);
+/* -----------------------------
+   Shooting stars loop start
+   ----------------------------- */
+function startStarSpawner(){ starSpawnerLoop(); }
+
+/* -----------------------------
+   Floating / Spark helpers
+   ----------------------------- */
+function spawnFloating(text, x, y){
+  const fxRect = fxLayer.getBoundingClientRect();
+  const el = document.createElement('div'); el.textContent = text; el.style.position='absolute';
+  el.style.left = (x) + 'px'; el.style.top = (y) + 'px'; el.style.transform = 'translate(-50%,-50%)'; el.style.color='#ffb38a'; el.style.fontWeight='800';
+  fxLayer.appendChild(el);
+  let t=0; const iv = setInterval(()=>{ t+=16; el.style.top = (y - t/18) + 'px'; el.style.opacity = 1 - t/900; if(t>900){ clearInterval(iv); el.remove(); } },16);
+}
+
+/* -----------------------------
+   Init & wiring
+   ----------------------------- */
+document.getElementById('saveBtn').addEventListener('click', saveGame);
+document.getElementById('resetBtn').addEventListener('click', ()=>{ if(confirm('Reset progress?')){ localStorage.removeItem('rocket_polished_v2'); location.reload(); }});
+rocketWrap.addEventListener('click', ()=> doClick(1));
+document.addEventListener('keydown', (e)=> { if(e.code === 'Space'){ e.preventDefault(); doClick(1); }});
+prestigeBtn.addEventListener('click', ()=> alert('Prestige unlocked! (placeholder)'));
+
+// clicking on store items is wired through renderStore
+function renderStore(){
+  storeList.innerHTML = '';
+  sortedStore().forEach(si=>{
+    const idx = game.items.findIndex(x=>x.id === si.id);
+    const ok = unlockedIndex(idx);
+    const el = document.createElement('div'); el.className = 'item' + (ok? '' : ' locked');
+    el.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><div><div class="name">${si.name}</div><div class="muted small">${si.desc}</div></div></div><div style="text-align:right"><div class="num">${ ok ? fmt(si.cost) : '<span class="locked-tag">Locked</span>' }</div><div class="muted small">Owned: ${si.qty}</div></div>`;
+    el.addEventListener('click', ()=> { if(!ok){ lockedFeedback(); return; } buyItem(si.id); });
+    storeList.appendChild(el);
   });
-  spawnSparkles(28);
 }
 
-/* -----------------------
-   Stars, Nebula & Planets
-   ----------------------- */
-function makeStarLayers(){
-  const far = document.getElementById('stars-far');
-  const mid = document.getElementById('stars-mid');
-  const near = document.getElementById('stars-near');
-  far.innerHTML=''; mid.innerHTML=''; near.innerHTML='';
-  // far: many faint stars
+/* -----------------------------
+   Nebula + starfield + planets setup
+   ----------------------------- */
+function makeStarfield(){
+  const far = document.getElementById('stars-far'); const mid = document.getElementById('stars-mid'); const near = document.getElementById('stars-near');
+  far.innerHTML = ''; mid.innerHTML = ''; near.innerHTML = '';
+  const rect = sky.getBoundingClientRect();
+  // far
   for(let i=0;i<110;i++){
     const s = document.createElement('div'); s.className='star';
     s.style.left = Math.random()*100 + '%'; s.style.top = Math.random()*100 + '%';
-    const r = 0.6 + Math.random()*1.6; s.style.width = s.style.height = r + 'px'; s.style.opacity = 0.12 + Math.random()*0.6;
-    // slow drift using CSS animation (randomize duration)
-    s.animate([{ transform:'translateY(-4vh)' }, { transform:'translateY(4vh)' }], { duration: 60000 + Math.random()*120000, iterations: Infinity });
+    const r = 0.6 + Math.random()*1.6; s.style.width = s.style.height = r + 'px'; s.style.opacity = 0.08 + Math.random()*0.7;
+    s.animate([{ transform:'translateY(-6vh)' }, { transform:'translateY(6vh)' }], { duration: 60000 + Math.random()*90000, iterations: Infinity });
     far.appendChild(s);
   }
   for(let i=0;i<70;i++){
     const s = document.createElement('div'); s.className='star';
     s.style.left = Math.random()*100 + '%'; s.style.top = Math.random()*100 + '%';
-    const r = 1 + Math.random()*2.4; s.style.width = s.style.height = r + 'px'; s.style.opacity = 0.18 + Math.random()*0.7;
-    s.animate([{ transform:'translateY(-3vh)' }, { transform:'translateY(3vh)' }], { duration: 42000 + Math.random()*80000, iterations: Infinity });
+    const r = 1 + Math.random()*2.6; s.style.width = s.style.height = r + 'px'; s.style.opacity = 0.12 + Math.random()*0.7;
+    s.animate([{ transform:'translateY(-4vh)' }, { transform:'translateY(4vh)' }], { duration: 42000 + Math.random()*70000, iterations: Infinity });
     mid.appendChild(s);
   }
   for(let i=0;i<36;i++){
     const s = document.createElement('div'); s.className='star';
     s.style.left = Math.random()*100 + '%'; s.style.top = Math.random()*100 + '%';
-    const r = 1.6 + Math.random()*3.2; s.style.width = s.style.height = r + 'px'; s.style.opacity = 0.28 + Math.random()*0.8;
-    s.animate([{ transform:'translateY(-2vh)' }, { transform:'translateY(2vh)' }], { duration: 32000 + Math.random()*52000, iterations: Infinity });
+    const r = 1.6 + Math.random()*3.2; s.style.width = s.style.height = r + 'px'; s.style.opacity = 0.28 + Math.random()*0.7;
+    s.animate([{ transform:'translateY(-2vh)' }, { transform:'translateY(2vh)' }], { duration: 32000 + Math.random()*42000, iterations: Infinity });
     near.appendChild(s);
   }
 }
-
-function setupNebulaCanvas(){
+function setupNebula(){
   const canvas = document.getElementById('nebula'); const ctx = canvas.getContext('2d');
   function resize(){ const r = sky.getBoundingClientRect(); canvas.width = r.width; canvas.height = r.height; }
   resize(); window.addEventListener('resize', resize);
-  // create blobs
-  const blobs = [];
-  const colors = ['#6f46ff','#2ab6ff','#ff8db3','#8effc6'];
-  for(let i=0;i<6;i++){
-    blobs.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height*0.8, r: 180+Math.random()*320, color: colors[i%colors.length], vx:(Math.random()-0.5)*8, vy:(Math.random()-0.5)*1.2, alpha: 0.06 + Math.random()*0.12 });
-  }
+  const blobs = []; const colors = ['#6f46ff','#2ab6ff','#ff8db3','#8effc6'];
+  for(let i=0;i<6;i++){ blobs.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height*0.8, r: 180+Math.random()*360, color: colors[i%colors.length], vx:(Math.random()-0.5)*8, vy:(Math.random()-0.5)*1.2, a:0.06 + Math.random()*0.12 }) }
   function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     blobs.forEach(b=>{
       b.x += b.vx*0.06; b.y += b.vy*0.06;
       if(b.x > canvas.width + b.r) b.x = -b.r; if(b.x < -b.r) b.x = canvas.width + b.r;
       const g = ctx.createRadialGradient(b.x, b.y, b.r*0.02, b.x, b.y, b.r);
-      g.addColorStop(0, hexToRgba(b.color, b.alpha*1.5));
-      g.addColorStop(0.45, hexToRgba(b.color, b.alpha));
-      g.addColorStop(1, hexToRgba('#000000', 0));
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+      g.addColorStop(0, hexToRgba(b.color, b.a*1.5)); g.addColorStop(0.45, hexToRgba(b.color, b.a)); g.addColorStop(1, hexToRgba('#000000', 0));
+      ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
     });
     requestAnimationFrame(draw);
-  }
-  draw();
+  } draw();
 }
-function hexToRgba(hex,a){ const c=hex.replace('#',''); const num = parseInt(c,16); const r=(num>>16)&255,g=(num>>8)&255,b=num&255; return `rgba(${r},${g},${b},${a})`; }
-
-/* -----------------------
-   SHOOTING STARS (improved) - spawn & update & collisions
-   ----------------------- */
-const starTypes = [
-  { name:'white', color:'#fff6d6', speedR:[420,720], sizeR:[6,10], penalty:0.065, trail:'#ffd8a8' },
-  { name:'blue',  color:'#a6e0ff', speedR:[640,980], sizeR:[4,8], penalty:0.05, trail:'#a6e6ff' },
-  { name:'red',   color:'#ffb3b3', speedR:[220,420], sizeR:[10,18], penalty:0.12, trail:'#ffb3b3' },
-  { name:'green', color:'#bfffd6', speedR:[480,760], sizeR:[5,9], penalty:0.045, trail:'#bfffd6' }
-];
-
-function spawnStar(){
+function hexToRgba(hex,a){ const c=hex.replace('#',''); const num=parseInt(c,16); const r=(num>>16)&255,g=(num>>8)&255,b=num&255; return `rgba(${r},${g},${b},${a})`; }
+function spawnPlanetsForHighTiers(){
+  // spawn decorative planets once you reach mid-late tiers
+  const wrap = document.getElementById('planets'); wrap.innerHTML='';
   const rect = sky.getBoundingClientRect();
-  // choose type weighted
-  const r = Math.random();
-  let t = starTypes[0];
-  if(r < 0.6) t = starTypes[0]; else if(r < 0.82) t = starTypes[1]; else if(r < 0.95) t = starTypes[2]; else t = starTypes[3];
-  // choose spawn edge (top or sides)
-  let sx, sy, angle;
-  if(Math.random() < 0.7){
-    sx = Math.random()*rect.width*0.9 + rect.width*0.05;
-    sy = -20;
-    angle = (30 + Math.random()*60) * (Math.random() < 0.5 ? 1 : -1);
-    if(Math.random()<0.5) angle = 10 + Math.random()*40; else angle = 140 + Math.random()*40;
-  } else {
-    if(Math.random() < 0.5){ sx = -40; sy = Math.random()*rect.height*0.7 + 20; angle = 10 + Math.random()*60; } 
-    else { sx = rect.width + 40; sy = Math.random()*rect.height*0.7 + 20; angle = 200 + Math.random()*60; }
-  }
-  const speed = t.speedR[0] + Math.random()*(t.speedR[1]-t.speedR[0]); // px/s
-  const size = t.sizeR[0] + Math.random()*(t.sizeR[1]-t.sizeR[0]);
-  const rad = angle * Math.PI/180;
-  const vx = Math.cos(rad)*speed, vy = Math.sin(rad)*speed;
-  // DOM elements
-  const el = document.createElement('div'); el.className='shoot'; el.style.width = size+'px'; el.style.height = size+'px';
-  el.style.left = sx + 'px'; el.style.top = sy + 'px';
-  el.style.background = t.color; el.style.boxShadow = `0 0 ${Math.max(6,size)}px ${t.trail}`;
-  const trail = document.createElement('div'); trail.className='trail';
-  trail.style.left = sx + 'px'; trail.style.top = sy + 'px'; trail.style.width = (size*5) + 'px'; trail.style.height = Math.max(4, size/1.6) + 'px';
-  trail.style.background = `linear-gradient(90deg, ${t.trail}, rgba(0,0,0,0))`; trail.style.transformOrigin = '0 50%';
-  fxLayer.appendChild(trail); fxLayer.appendChild(el);
-  const obj = { el, trail, x:sx, y:sy, vx, vy, size, type: t, birth: now() };
-  state.stars.push(obj);
-}
-
-/* update stars, collision with rocket (circular hitbox around rocket center) */
-function updateShootingStars(dt){
-  const rect = sky.getBoundingClientRect();
-  // spawn rare: every 12-28s
-  const tSince = now() - state.lastStarSpawn;
-  const spawnDelay = 12000 + Math.random()*16000;
-  if(tSince > spawnDelay){
-    state.lastStarSpawn = now();
-    // spawn 1-2
-    spawnStar(); if(Math.random() < 0.45) setTimeout(spawnStar, 120 + Math.random()*480);
-  }
-  // move & check
-  for(let i = state.stars.length-1; i >= 0; i--){
-    const s = state.stars[i];
-    s.x += s.vx * dt; s.y += s.vy * dt;
-    // update DOM
-    s.el.style.left = s.x + 'px'; s.el.style.top = s.y + 'px';
-    const deg = Math.atan2(s.vy, s.vx) * 180/Math.PI; s.trail.style.transform = `rotate(${deg}deg) translateX(${-s.size*1.8}px)`;
-    s.trail.style.left = s.x + 'px'; s.trail.style.top = s.y + 'px';
-    // collision: compute rocket center in fxLayer coordinates
-    const rocketRect = rocketWrap.getBoundingClientRect();
-    const fxRect = fxLayer.getBoundingClientRect();
-    const rcx = rocketRect.left + rocketRect.width/2 - fxRect.left;
-    const rcy = rocketRect.top + rocketRect.height/2 - fxRect.top;
-    const dx = s.x - rcx; const dy = s.y - rcy; const dist = Math.hypot(dx,dy);
-    const hitRadius = Math.max(28, rocketRect.width*0.22) + s.size*0.6; // fair hitbox (smaller than long trail)
-    if(dist < hitRadius){
-      // hit!
-      starHit(s);
-      s.el.remove(); s.trail.remove(); state.stars.splice(i,1);
-      continue;
-    }
-    // remove off-screen
-    if(s.x < -300 || s.x > rect.width+300 || s.y < -300 || s.y > rect.height+300){
-      s.el.remove(); s.trail.remove(); state.stars.splice(i,1);
-    }
+  if(game.fuel < 15000) return;
+  const p = document.createElement('div'); p.className='planet'; p.style.left = '14%'; p.style.top = '10%'; p.style.width='220px'; p.style.height='220px';
+  p.style.background = 'radial-gradient(circle,#2b1f4a,#081024)'; wrap.appendChild(p);
+  if(game.fuel > 50000){
+    const p2 = document.createElement('div'); p2.className='planet'; p2.style.left='78%'; p2.style.top='18%'; p2.style.width='160px'; p2.style.height='160px';
+    p2.style.background='radial-gradient(circle,#2b3f2b,#051014)'; p2.style.opacity='0.08'; wrap.appendChild(p2);
   }
 }
 
-/* on hit */
-function starHit(star){
-  const penaltyPct = star.type.penalty; const lost = Math.max(1, Math.round(state.fuel * penaltyPct));
-  state.fuel = Math.max(0, state.fuel - lost);
-  // impact visuals: screen shake & flash
-  const app = document.getElementById('appRoot');
-  app.classList.add('shake'); hitFlash.style.background = 'rgba(255,255,255,0.14)';
-  setTimeout(()=> { app.classList.remove('shake'); hitFlash.style.background = 'rgba(255,255,255,0)'; }, 360);
-  // floating text near impact point
-  const fxRect = fxLayer.getBoundingClientRect();
-  spawnFloating(`-${fmt(lost)} fuel`, star.x + fxRect.left, star.y + fxRect.top);
-  spawnSparkles(18);
-  renderUI();
+/* -----------------------------
+   INITIALIZATION
+   ----------------------------- */
+function init(){
+  makeStarfield(); setupNebula(); spawnPlanetsForHighTiers();
+  recalc(); renderStore(); loadGame(); renderUI();
+  // rocket start pos
+  const r = sky.getBoundingClientRect(); game.rocket.x = r.width/2; game.rocket.y = r.height*0.72; game.rocket.tx = game.rocket.x; game.rocket.ty = game.rocket.y; updateRocketDOM();
+  // start ticks & spawners
+  game.lastTick = now();
+  setInterval(()=>{ tick(); }, 500);
+  setInterval(()=>{ saveGame(); }, 15000);
+  startStarSpawner();
 }
 
-/* spawn floating text helper */
-function spawnFloating(text, px, py){
-  const layerRect = fxLayer.getBoundingClientRect();
-  const el = document.createElement('div'); el.textContent = text; el.style.position='absolute';
-  el.style.left = (px - layerRect.left) + 'px'; el.style.top = (py - layerRect.top) + 'px';
-  el.style.transform = 'translate(-50%,-50%)'; el.style.color = '#ff9f7a'; el.style.fontWeight='800'; el.style.pointerEvents='none';
-  fxLayer.appendChild(el);
-  let t = 0; const iv = setInterval(()=>{ t+=16; el.style.top = (py - layerRect.top - t/12) + 'px'; el.style.opacity = 1 - t/900; if(t>900){ clearInterval(iv); el.remove(); } }, 16);
-}
+// start
+init();
 
-/* -----------------------
-   FLAME intensity based on clickBurst
-   ----------------------- */
-function updateFlame(){
-  const flames = document.querySelectorAll('.flame');
-  const intensity = 1 + Math.min(7, state.clickBurst) * 0.24;
-  flames.forEach(f => { f.style.transform = `translateX(-50%) scaleY(${intensity})`; f.style.opacity = Math.min(1, 0.65 + (intensity-1)/1.2); });
-}
+/* -----------------------------
+   Helper: set initial DOM transform
+   ----------------------------- */
+function updateRocketDOM(){ const r = sky.getBoundingClientRect(); const px = game.rocket.x; const py = game.rocket.y; const bottom = r.height - py; rocketWrap.style.left = px + 'px'; rocketWrap.style.bottom = bottom + 'px'; const tilt = Math.max(-12, Math.min(12, (game.rocket.tx - game.rocket.x) / 18)); rocketWrap.style.transform = `translateX(-50%) translateY(0) rotate(${tilt}deg)`; }
 
-/* -----------------------
-   ROCKET GLIDING (smooth easing)
-   ----------------------- */
-function initRocket(){
-  const rect = sky.getBoundingClientRect();
-  state.rocket.x = rect.width/2; state.rocket.y = rect.height*0.72;
-  state.rocket.tx = state.rocket.x; state.rocket.ty = state.rocket.y;
-  updateRocketDOM();
-}
-function skyToLocal(e){
-  const r = sky.getBoundingClientRect(); let x,y;
-  if(e.touches && e.touches[0]){ x=e.touches[0].clientX; y=e.touches[0].clientY; } else { x=e.clientX; y=e.clientY; }
-  x -= r.left; y -= r.top; x = Math.max(44, Math.min(r.width-44, x)); y = Math.max(44, Math.min(r.height-44, y));
-  return { x,y };
-}
-sky.addEventListener('click', e=>{ const p = skyToLocal(e); state.rocket.tx = p.x; state.rocket.ty = p.y; });
-sky.addEventListener('touchstart', e=>{ const p = skyToLocal(e); state.rocket.tx = p.x; state.rocket.ty = p.y; }, { passive:true });
-
-function updateRocket(dt){
-  // easing towards target
-  if(state.rocket.tx === null) return;
-  const dx = state.rocket.tx - state.rocket.x; const dy = state.rocket.ty - state.rocket.y;
-  // eased interpolation
-  state.rocket.x += dx * Math.min(1, state.rocket.easing + dt*2.4);
-  state.rocket.y += dy * Math.min(1, state.rocket.easing + dt*2.4);
-  updateRocketDOM();
-}
-function updateRocketDOM(){
-  const rect = sky.getBoundingClientRect();
-  const px = state.rocket.x; const py = state.rocket.y;
-  const bottom = rect.height - py;
-  rocketWrap.style.left = px + 'px'; rocketWrap.style.bottom = bottom + 'px';
-  // tilt based on horizontal velocity (approx)
-  const vx = (state.rocket.tx === null) ? 0 : (state.rocket.tx - state.rocket.x);
-  const tilt = Math.max(-12, Math.min(12, vx / 24));
-  rocketWrap.style.transform = `translateX(-50%) translateY(0) rotate(${tilt}deg)`;
-}
-
-/* -----------------------
-   INIT / BOOT
-   ----------------------- */
-document.getElementById('saveBtn').addEventListener('click', save);
-document.getElementById('resetBtn').addEventListener('click', ()=>{ if(confirm('Reset progress?')){ localStorage.removeItem('rocket_polished_v1'); location.reload(); }});
-prestigeBtn.addEventListener('click', ()=> alert('Prestige unlocked! (placeholder)'));
-rocketWrap.addEventListener('click', ()=> doClick(1));
-document.addEventListener('keydown', e=>{ if(e.code === 'Space'){ e.preventDefault(); doClick(1); }});
-
-// init visuals & loops
-makeStarLayers(); setupNebulaCanvas(); initRocket(); recalc(); renderStore(); renderUI(); load();
-
-state.lastTick = now();
-setInterval(tick, 500); setInterval(save, 15000);
-
-/* shooting star update is called by tick -> updateShootingStars */
-function updateShootingStars(dt){ updateShootingStarsCore(dt); } // alias
-
-/* small popup */
-function spawnPopup(txt){
-  const el = document.createElement('div'); el.textContent = txt; el.style.position='absolute'; el.style.left='50%'; el.style.top='28%';
-  el.style.transform='translate(-50%,-50%)'; el.style.color='#ffd7b3'; el.style.fontWeight='800'; el.style.pointerEvents='none'; sky.appendChild(el);
-  let t=0; const iv=setInterval(()=>{ t+=16; el.style.top = (28 - t/140) + '%'; el.style.opacity = 1 - t/900; if(t>900){ clearInterval(iv); el.remove(); } },16);
-}
-
-// small wrapper to allow the star update func earlier
-function updateShootingStarsCore(dt){ updateShootingStars(dt); } // already defined
-
-/* welcome */
-setTimeout(()=> spawnPopup('Welcome, Commander! Click the sky to glide and dodge hazards.'), 800);
+/* expose some functions to console for tweaking */
+window._game = game;
+window._tiers = TIERS;
+window._buy = buyItem;
+window._spawnStar = spawnShootingStar;
 
 </script>
 </body>
