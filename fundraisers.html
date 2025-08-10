@@ -3,38 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fundraisers — AHS Class of ’28</title>
+  <title>AHS Class of ’28 — Fundraisers</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    body {
-      margin: 0;
-      color: white;
-      background: black;
-      font-family: Arial, sans-serif;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    .fundraiser-card {
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 15px;
-      padding: 30px;
-      max-width: 600px;
-      text-align: center;
-      box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
-      backdrop-filter: blur(10px);
-      animation: fadeInUp 1s ease;
-    }
-
-    main {
-      display: flex;
-      justify-content: center;
-      margin-top: 40px;
-      z-index: 2;
-      position: relative;
-    }
-
+    /* Starfield canvas */
     #starfield {
       position: fixed;
       top: 0;
@@ -42,29 +15,57 @@
       width: 100%;
       height: 100%;
       z-index: -1;
+      background: black;
     }
 
-    .promo-code {
-      margin-top: 15px;
-      font-size: 1.1em;
-      color: #00d4ff;
+    .fundraiser-container {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      color: white;
     }
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .fundraiser-card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      animation: floatUp 1.5s ease-out;
+    }
+
+    .fundraiser-card h2 {
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+    }
+
+    .countdown {
+      font-size: 1.5rem;
+      margin: 1rem 0;
+      font-weight: bold;
+    }
+
+    .promo {
+      margin-top: 1rem;
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
+  <!-- HEADER / NAV -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -82,28 +83,43 @@
         <a href="./merch.html">Shop</a>
         <a href="./admin.html">Admin</a>
       </div>
+      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+      <a href="./">Home</a>
+      <a class="active" href="./fundraisers.html">Fundraisers</a>
+      <a href="./calendar.html">Calendar</a>
+      <a href="./media.html">Media</a>
+      <a href="./achievements.html">Achievements</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a href="./merch.html">Shop</a>
+      <a href="./admin.html">Admin</a>
+      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
+    </div>
   </header>
 
-  <!-- Starfield background -->
-  <canvas class="starfield" id="starfield"></canvas>
+  <!-- Starfield Background -->
+  <canvas id="starfield"></canvas>
 
-  <!-- Fundraiser Section -->
-  <main>
-    <div class="fundraiser-card" id="fundraiser">
+  <!-- Fundraiser Content -->
+  <main class="fundraiser-container">
+    <div class="fundraiser-card">
       <h2>🍪 Crumbl Cookie Fundraiser</h2>
-      <p>Help support the Class of ’28 by grabbing your favorite cookies! Every purchase helps fund class events and activities.</p>
-      <div class="countdown" id="countdown">Loading countdown...</div>
-      <div class="promo-code">Promo Code: <span>(Coming Soon)</span></div>
+      <p>Support AHS Class of ’28 by purchasing Crumbl Cookies! Proceeds go towards school events and activities.</p>
+      <div class="countdown" id="countdown"></div>
+      <div class="promo">Promo Code: <span id="promo-code">[Coming Soon]</span></div>
     </div>
   </main>
 
+  <!-- Starfield Script -->
   <script>
-    // Starfield animation
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
-    const numStars = 200;
+    const numStars = 250; // more, but smaller
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -118,16 +134,17 @@
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2,
-          speed: 0.2 + Math.random() * 0.5
+          size: Math.random() * 1.2, // smaller
+          speed: 0.1 + Math.random() * 0.3, // slower
+          opacity: 0.2 + Math.random() * 0.4 // lighter look
         });
       }
     }
 
     function drawStars() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
       for (let star of stars) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
@@ -152,17 +169,19 @@
 
     createStars();
     animateStars();
+  </script>
 
-    // Countdown timer
-    const countdownElement = document.getElementById("countdown");
-    const targetDate = new Date("September 8, 2025 00:00:00").getTime();
+  <!-- Countdown Script -->
+  <script>
+    const countdownEl = document.getElementById('countdown');
+    const targetDate = new Date('September 8, 2025 00:00:00').getTime();
 
     function updateCountdown() {
       const now = new Date().getTime();
       const distance = targetDate - now;
 
-      if (distance < 0) {
-        countdownElement.innerHTML = "Fundraiser Ended!";
+      if (distance <= 0) {
+        countdownEl.textContent = "Fundraiser Day is Here!";
         return;
       }
 
@@ -171,11 +190,12 @@
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
     setInterval(updateCountdown, 1000);
     updateCountdown();
   </script>
+
 </body>
 </html>
