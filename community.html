@@ -126,55 +126,89 @@
 
   <!-- Page-only script (does not change your main script.js) -->
   <script>
-    // ===== DEMO POLL (localStorage) =====
-    (function(){
-      const KEY = "ahs28_demo_poll";
-      const resultsEl = document.getElementById("demoResults");
-      const buttons = document.querySelectorAll("[data-opt]");
+  // ===== DEMO POLL (localStorage) with 10-vote limit =====
+  (function(){
+    const KEY = "ahs28_demo_poll";
+    const KEY_VOTES_LEFT = "ahs28_demo_votes_left";
+    const MAX_VOTES = 10;
 
-      function read(){
-        try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
-        catch { return {}; }
-      }
-      function write(obj){
-        localStorage.setItem(KEY, JSON.stringify(obj));
-      }
-      function render(){
-        const data = read();
-        const total = Object.values(data).reduce((a,b)=>a+b,0) || 0;
-        resultsEl.innerHTML = "";
-        Object.keys(data).forEach(name=>{
-          const count = data[name];
-          const pct = total ? Math.round((count/total)*100) : 0;
-          const row = document.createElement("div");
-          row.className = "card-item";
-          row.innerHTML = `
-            <div class="row">
-              <div class="title">${name}</div>
-              <span class="status ${count ? 'success' : ''}">${count} vote${count!==1?'s':''} • ${pct}%</span>
+    const resultsEl = document.getElementById("demoResults");
+    const buttons = document.querySelectorAll("[data-opt]");
+
+    function read(){
+      try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+      catch { return {}; }
+    }
+    function write(obj){
+      localStorage.setItem(KEY, JSON.stringify(obj));
+    }
+    function readVotesLeft(){
+      const v = parseInt(localStorage.getItem(KEY_VOTES_LEFT), 10);
+      return isNaN(v) ? MAX_VOTES : v;
+    }
+    function writeVotesLeft(v){
+      localStorage.setItem(KEY_VOTES_LEFT, v);
+    }
+    function render(){
+      const data = read();
+      const total = Object.values(data).reduce((a,b)=>a+b,0) || 0;
+      const votesLeft = readVotesLeft();
+      resultsEl.innerHTML = "";
+      Object.keys(data).forEach(name=>{
+        const count = data[name];
+        const pct = total ? Math.round((count/total)*100) : 0;
+        const row = document.createElement("div");
+        row.className = "card-item";
+        row.innerHTML = `
+          <div class="row">
+            <div class="title">${name}</div>
+            <span class="status ${count ? 'success' : ''}">${count} vote${count!==1?'s':''} • ${pct}%</span>
+          </div>
+          <div class="progress" style="height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;position:relative;">
+            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#52a8ff,#7ab8ff);position:relative;">
+              <span style="position:absolute;right:-12px;top:-10px;">🚀</span>
             </div>
-            <div class="progress" style="height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;">
-              <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#52a8ff,#7ab8ff);"></div>
-            </div>`;
-          resultsEl.appendChild(row);
-        });
-      }
-      buttons.forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const data = read();
-          const k = btn.dataset.opt;
-          data[k] = (data[k]||0) + 1;
-          write(data);
-          render();
-        });
+          </div>`;
+        resultsEl.appendChild(row);
       });
-      // initialize with all options at 0
-      const init = {};
-      buttons.forEach(b=> init[b.dataset.opt]= init[b.dataset.opt]||0);
-      write(Object.assign(init, read()));
-      render();
-    })();
-  </script>
+
+      // show votes left
+      const info = document.createElement("div");
+      info.className = "small";
+      info.style.marginTop = "6px";
+      info.style.color = "var(--muted)";
+      info.textContent = `You have ${votesLeft} vote${votesLeft !== 1 ? "s" : ""} left.`;
+      resultsEl.appendChild(info);
+    }
+
+    buttons.forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        let votesLeft = readVotesLeft();
+        if (votesLeft <= 0) {
+          alert("You’ve used all your votes!");
+          return;
+        }
+        const data = read();
+        const k = btn.dataset.opt;
+        data[k] = (data[k]||0) + 1;
+        write(data);
+        votesLeft--;
+        writeVotesLeft(votesLeft);
+        render();
+      });
+    });
+
+    // initialize storage if empty
+    const init = {};
+    buttons.forEach(b=> init[b.dataset.opt]= init[b.dataset.opt]||0);
+    write(Object.assign(init, read()));
+    if (localStorage.getItem(KEY_VOTES_LEFT) === null) {
+      writeVotesLeft(MAX_VOTES);
+    }
+    render();
+  })();
+</script>
+
 
   <script src="script.js"></script>
 </body>
