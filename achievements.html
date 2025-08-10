@@ -80,6 +80,55 @@
       z-index: 0;
       opacity: 0.15;
     }
+
+    <style>
+  /* ...existing styles from before... */
+
+  /* Animation setup */
+  .achievement-card {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    padding: 40px 25px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 25px rgba(0, 150, 255, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    /* Animation starting state */
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  .achievement-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.8s ease, transform 0.8s ease, box-shadow 0.3s ease;
+  }
+
+  .achievement-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 0 35px rgba(0, 150, 255, 0.8);
+  }
+</style>
+
+<script>
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.achievement-card').forEach(card => {
+    observer.observe(card);
+  });
+</script>
   </style>
 </head>
 <body>
