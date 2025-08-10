@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AHS Achievements</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       background: black;
-      color: white; /* Make all text white */
+      color: white;
       overflow-x: hidden;
     }
-
-    /* Achievements layout */
     main.achievements-container {
       display: flex;
       flex-direction: column;
@@ -21,7 +19,6 @@
       margin: auto;
       padding: 2rem;
     }
-
     .achievement-card {
       background: var(--glass-bg);
       backdrop-filter: blur(12px);
@@ -29,31 +26,24 @@
       padding: 1.5rem;
       box-shadow: 0 0 20px rgba(0, 200, 255, 0.2);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      color: white;
     }
-
     .achievement-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 0 25px rgba(0, 200, 255, 0.4);
     }
-
     .achievement-title {
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
       color: var(--blue-1);
     }
-
     .achievement-desc {
       font-size: 1rem;
       opacity: 0.9;
     }
-
     .student-of-month {
       border: 2px solid var(--blue-2);
       box-shadow: 0 0 25px rgba(0, 170, 255, 0.5);
     }
-
-    /* Starfield canvas stays behind everything */
     .starfield {
       position: fixed;
       top: 0;
@@ -67,30 +57,33 @@
   </style>
 </head>
 <body>
-  <!-- Navigation bar from index.html -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="nav-logo">Auburn High</a>
-      <ul class="nav-menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="calendar.html">Calendar</a></li>
-        <li><a href="achievements.html" class="active">Achievements</a></li>
-        <li><a href="shop.html">Shop</a></li>
-      </ul>
-    </div>
-  </nav>
+  <!-- Exact same nav from index.html -->
+  <header>
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="logo">
+          <img src="logo.png" alt="AHS Logo" class="logo-img">
+          <span class="logo-text">Auburn High School</span>
+        </div>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="calendar.html">Calendar</a></li>
+          <li><a href="achievements.html" class="active">Achievements</a></li>
+          <li><a href="shop.html">Shop</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
 
   <!-- Starfield -->
   <canvas class="starfield" id="starfield"></canvas>
 
   <main class="achievements-container">
-    <!-- Student of the Month -->
     <div class="achievement-card student-of-month">
       <h2 class="achievement-title">🏆 Student of the Month</h2>
       <p class="achievement-desc">[Student Name] — Recognized for outstanding academic excellence, leadership, and community service.</p>
     </div>
 
-    <!-- Other Achievements -->
     <div class="achievement-card">
       <h2 class="achievement-title">Achievement 1</h2>
       <p class="achievement-desc">Details coming soon...</p>
@@ -118,7 +111,6 @@
   </main>
 
   <script>
-    // Starfield animation
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
