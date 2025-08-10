@@ -4,9 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Achievements</title>
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
   <style>
+    /* Base styling */
     body {
       background: #000;
       color: white;
@@ -15,51 +16,7 @@
       padding: 0;
     }
 
-    /* NAVBAR (exact same style as your original) */
-    header {
-      position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 10;
-      background-color: black;
-      padding: 12px 0;
-      box-shadow: 0 0 12px rgba(0,0,0,0.6);
-    }
-    nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1400px;
-      margin: auto;
-      padding: 0 20px;
-    }
-    nav .brand {
-      color: white;
-      text-decoration: none;
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
-    nav .links {
-      display: flex;
-      gap: 18px;
-    }
-    nav .links a {
-      color: white;
-      text-decoration: none;
-      font-size: 1rem;
-      padding: 6px 10px;
-      transition: background 0.2s, color 0.2s;
-      border-radius: 6px;
-    }
-    nav .links a:hover {
-      background: rgba(255,255,255,0.1);
-    }
-    nav .links a.active {
-      background: #007bff;
-      color: white;
-    }
-
-    /* Achievements Layout */
+    /* Main layout */
     .achievements-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -71,7 +28,7 @@
       margin: auto;
     }
 
-    /* Card style */
+    /* Glass card style */
     .achievement-card {
       background: rgba(255, 255, 255, 0.07);
       border-radius: 20px;
@@ -85,21 +42,26 @@
       flex-direction: column;
       justify-content: center;
     }
+
     .achievement-card:hover {
       transform: translateY(-8px);
       box-shadow: 0 0 35px rgba(0, 150, 255, 0.8);
     }
+
     .achievement-title {
       font-size: 1.6rem;
       color: #4dc3ff;
       margin-bottom: 15px;
       text-shadow: 0 0 5px rgba(77, 195, 255, 0.6);
     }
+
     .achievement-desc {
       font-size: 1.05rem;
       opacity: 0.9;
       line-height: 1.5;
     }
+
+    /* Special card for Student of the Month */
     .student-of-month {
       box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
       border: 1px solid rgba(255, 215, 0, 0.5);
@@ -109,38 +71,43 @@
       text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
     }
 
-    /* Starfield Canvas */
-    #starfield {
+    /* Starfield styling */
+    .starfield {
       position: fixed;
       top: 0; left: 0;
       width: 100%;
       height: 100%;
       z-index: 0;
+      opacity: 0.15;
     }
   </style>
 </head>
 <body>
 
-  <!-- Header / Navbar -->
-  <header>
-    <nav>
-      <a class="brand" href="./">AHS Class of ’28</a>
-      <div class="links">
+  <!-- Header / Nav -->
+  <header class="header" role="banner">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+        <span class="logo" aria-hidden="true">A</span>
+        AHS Class of ’28
+      </a>
+      <div class="links" role="navigation">
         <a href="index.html">Home</a>
-        <a href="fundraisers.html">Fundraisers</a>
+        <a href="./fundraisers.html">Fundraisers</a>
         <a href="calendar.html">Calendar</a>
-        <a href="media.html">Media</a>
-        <a class="active" href="achievements.html">Achievements</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-        <a href="merch.html">Shop</a>
-        <a href="community.html">Community</a>
+        <a href="./media.html">Media</a>
+        <a class="active" href="./achievements.html">Achievements</a>
+        <a href="./about.html">About</a>
+        <a href="./contact.html">Contact</a>
+        <a href="./merch.html">Shop</a>
+        <a href="./community.html">Community</a>
       </div>
+      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
   </header>
 
   <!-- Starfield -->
-  <canvas id="starfield"></canvas>
+  <canvas class="starfield" id="starfield"></canvas>
 
   <!-- Achievements -->
   <main class="achievements-container">
@@ -175,12 +142,11 @@
     </div>
   </main>
 
-  <!-- Starfield Script -->
   <script>
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
-    const numStars = 250;
+    const numStars = 200;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -195,15 +161,15 @@
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 1.8 + 0.2,
-          speed: Math.random() * 0.5 + 0.1
+          size: Math.random() * 1.4,
+          speed: 0.2 + Math.random() * 0.5
         });
       }
     }
 
     function drawStars() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "white";
+      ctx.fillStyle = 'white';
       for (let star of stars) {
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
@@ -213,9 +179,9 @@
 
     function updateStars() {
       for (let star of stars) {
-        star.y += star.speed;
-        if (star.y > canvas.height) {
-          star.y = 0;
+        star.y -= star.speed;
+        if (star.y < 0) {
+          star.y = canvas.height;
           star.x = Math.random() * canvas.width;
         }
       }
@@ -232,4 +198,3 @@
   </script>
 </body>
 </html>
-
