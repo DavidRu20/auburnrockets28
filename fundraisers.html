@@ -220,28 +220,7 @@
 
     </div> <!-- closes .fundraiser-grid -->
 
-    <!-- Money Goal Bar -->
-    <div style="margin-top:40px; max-width:600px; margin-left:auto; margin-right:auto; text-align:center;">
-      <h2 style="margin-bottom:10px;">Fundraising Goal</h2>
-      <div style="background:#333; border-radius:20px; overflow:hidden; height:30px; box-shadow:0 0 10px rgba(255,255,255,0.2);">
-        <div id="goalProgress" style="background:linear-gradient(90deg, #00ff88, #00cc66); height:100%; width:0%; text-align:right; padding-right:10px; box-sizing:border-box; font-weight:bold; color:black;">
-          $0
-        </div>
-      </div>
-      <p id="goalText" style="margin-top:8px;">Goal: $10,000</p>
-    </div>
 
-    let currentAmount = 0;     // Change this number to update progress
-    let goalAmount = 10000;    // Change this number for new goal
-
-    function updateGoalBar() {
-      let percent = Math.min((currentAmount / goalAmount) * 100, 100);
-      document.getElementById("goalProgress").style.width = percent + "%";
-      document.getElementById("goalProgress").textContent = `$${currentAmount.toLocaleString()}`;
-      document.getElementById("goalText").textContent = `Goal: $${goalAmount.toLocaleString()}`;
-    }
-
-    updateGoalBar();
   </script>
 </body>
 </html>
