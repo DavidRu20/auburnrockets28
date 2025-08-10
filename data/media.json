@@ -1,7 +1,28 @@
-[
-  {
-    "type": "image",
-    "url": "https://via.placeholder.com/800x450.png?text=AHS+Media",
-    "caption": "Replace with approved images later."
-  }
-]
+{
+  "photos": [
+    {
+      "src": "public/merch/hoodie_variants.jpg",
+      "caption": "Hoodie drop preview",
+      "tags": ["merch", "hoodie"]
+    },
+    {
+      "src": "public/merch/basketball_front.jpg",
+      "caption": "Game day energy",
+      "tags": ["sports", "basketball"]
+    }
+  ],
+  "videos": [
+    {
+      "youtube": "N7ZMhfD7a0Q",
+      "title": "Welcome back Rockets!",
+      "meta": "00:45 • Announcement",
+      "tags": ["announcement"]
+    },
+    {
+      "youtube": "dQw4w9WgXcQ",
+      "title": "Pep rally highlights",
+      "meta": "01:12 • Highlights",
+      "tags": ["pep","rally"]
+    }
+  ]
+}
