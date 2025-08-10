@@ -62,38 +62,61 @@
     </section>
 
     <section class="section">
-      <div class="container">
-        <div class="grid grid-2">
-          <article class="panel glass hover-up">
-            <h2 id="form-title" class="section-title">Sign In</h2>
+  <div class="container">
+    <div class="grid grid-2">
+      <article class="panel glass hover-up" style="
+        max-width: 500px;
+        margin: auto;
+        padding: 2rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      ">
+        <h2 id="form-title" class="section-title" style="text-align:center; font-size:1.8rem; margin-bottom:1rem;">Sign In</h2>
 
-            <form id="auth-form" method="POST" action="/auth">
-              <input type="hidden" name="mode" id="mode" value="login">
+        <form id="auth-form" method="POST" action="/auth">
+          <input type="hidden" name="mode" id="mode" value="login">
 
-              <div id="name-field" class="hidden">
-                <label class="label" for="name">Your name</label>
-                <input id="name" name="name" class="input" type="text" placeholder="Your name" autocomplete="name" />
-              </div>
+          <div id="name-field" class="hidden" style="margin-bottom: 1rem;">
+            <label class="label" for="name">Your name</label>
+            <input id="name" name="name" class="input" type="text" placeholder="Your name" autocomplete="name" />
+          </div>
 
-              <label class="label" for="email">Your email</label>
-              <input id="email" name="email" class="input" type="email" placeholder="you@school.org" required autocomplete="email" />
+          <div style="margin-bottom: 1rem;">
+            <label class="label" for="email">Your email</label>
+            <input id="email" name="email" class="input" type="email" placeholder="you@school.org" required autocomplete="email" />
+          </div>
 
-              <label class="label" for="password">Password</label>
-              <input id="password" name="password" class="input" type="password" placeholder="••••••••" required autocomplete="current-password" />
+          <div style="margin-bottom: 1rem;">
+            <label class="label" for="password">Password</label>
+            <input id="password" name="password" class="input" type="password" placeholder="••••••••" required autocomplete="current-password" />
+          </div>
 
-              <!-- Honeypot -->
-              <input type="text" name="_gotcha" id="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+          <!-- Honeypot -->
+          <input type="text" name="_gotcha" id="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
 
-              <button type="submit" class="btn">Submit</button>
-            </form>
+          <button type="submit" class="btn" style="
+            width: 100%;
+            padding: 12px;
+            background: #0d6efd;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+          ">Submit</button>
+        </form>
 
-            <p id="toggle-text" style="margin-top:1rem;">
-              Don’t have an account? <a href="#" id="toggle-link">Sign up</a>
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
+        <p id="toggle-text" style="margin-top:1rem; text-align:center;">
+          Don’t have an account? <a href="#" id="toggle-link">Sign up</a>
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
   </main>
 
 <script>
