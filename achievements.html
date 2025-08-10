@@ -9,27 +9,39 @@
     body {
       background: #000;
       color: white;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       overflow-x: hidden;
     }
 
-    header {
-      background: black;
-      padding: 10px 20px;
+    /* Original Nav Bar Styling from your code */
+    #navbar {
       position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      z-index: 1000;
+      background-color: black;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 0;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
     }
-    nav a {
+    #navbar a {
       color: white;
-      margin-right: 15px;
+      padding: 8px 14px;
       text-decoration: none;
+      font-size: 16px;
+      transition: background 0.3s;
     }
-    nav a.active {
-      font-weight: bold;
+    #navbar a:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    #navbar a.active {
       color: gold;
+      font-weight: bold;
     }
 
     /* Achievements title */
@@ -65,6 +77,8 @@
       box-shadow: 0 0 25px rgba(0, 150, 255, 0.4);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       min-height: 220px;
+      position: relative;
+      overflow: hidden;
     }
     .achievement-card:hover {
       transform: translateY(-8px);
@@ -80,6 +94,22 @@
     .student-of-month .achievement-title {
       color: gold;
       text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    }
+
+    /* Crown hover effect */
+    .hover-crown {
+      position: absolute;
+      top: -70px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 50px;
+      opacity: 0;
+      transition: all 0.4s ease;
+      pointer-events: none;
+    }
+    .student-of-month:hover .hover-crown {
+      top: -40px;
+      opacity: 1;
     }
 
     /* Celebration overlay */
@@ -119,19 +149,17 @@
 </head>
 <body>
 
-  <header>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="fundraisers.html">Fundraisers</a>
-      <a href="calendar.html">Calendar</a>
-      <a href="media.html">Media</a>
-      <a class="active" href="achievements.html">Achievements</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-      <a href="merch.html">Shop</a>
-      <a href="community.html">Community</a>
-    </nav>
-  </header>
+  <div id="navbar">
+    <a href="index.html">Home</a>
+    <a href="fundraisers.html">Fundraisers</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="media.html">Media</a>
+    <a class="active" href="achievements.html">Achievements</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="merch.html">Shop</a>
+    <a href="community.html">Community</a>
+  </div>
 
   <div class="page-title">🏅 Achievements</div>
 
@@ -140,6 +168,7 @@
 
   <main class="achievements-container">
     <div class="achievement-card student-of-month" id="studentMonth">
+      <div class="hover-crown">👑</div>
       <h2 class="achievement-title">🏆 Student of the Month</h2>
       <p class="achievement-desc">[Student Name] — Recognized for outstanding academic excellence, leadership, and community service.</p>
     </div>
@@ -187,11 +216,9 @@
         crown.style.animationDuration = (2 + Math.random() * 2) + "s";
         celebration.appendChild(crown);
 
-        // Remove after animation
         setTimeout(() => crown.remove(), 4000);
       }
 
-      // Hide overlay after celebration
       setTimeout(() => {
         celebration.style.display = "none";
         document.body.classList.remove("gold-glow");
