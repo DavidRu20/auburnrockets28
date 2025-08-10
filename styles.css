@@ -579,6 +579,13 @@ h1{
   color: black; /* better contrast */
 }
 
+:root[data-theme="light"] .fundraiser-title { color: var(--text) !important; }
+:root[data-theme="light"] .fundraiser-sub   { color: #37485f !important; }
+:root[data-theme="light"] .fundraiser-box   { 
+  background: var(--panel); 
+  box-shadow: var(--shadow-1); 
+  border: 1px solid var(--border);
+}
 
 /* End of file */
 /* ======================================================================= */
