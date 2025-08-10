@@ -19,6 +19,29 @@
     left: 0;
     z-index: -1;
   }
+  header {
+    background: #0d6efd;
+    padding: 10px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  }
+  nav {
+    max-width: 1000px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+  }
+  nav a:hover {
+    background: rgba(255,255,255,0.15);
+  }
   .container {
     max-width: 900px;
     margin: auto;
@@ -29,16 +52,18 @@
     margin-bottom: 30px;
   }
   .post {
-    background: rgba(255,255,255,0.06);
-    border-radius: 15px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 25px rgba(0,0,0,0.4);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.1);
   }
   .post:hover {
     transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 6px 25px rgba(0,0,0,0.6);
+    box-shadow: 0 8px 35px rgba(0,0,0,0.6);
   }
   .post h2 {
     margin-top: 0;
@@ -53,7 +78,7 @@
   }
   .post img, .post video {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-top: 15px;
     display: block;
   }
@@ -64,12 +89,12 @@
 </head>
 <body>
 
-<header style="padding:15px; background:#0d6efd; text-align:center; font-size:1.2em;">
+<header>
   <nav>
-    <a href="./" style="color:white; text-decoration:none; margin:0 10px;">Home</a>
-    <a href="./fundraisers.html" style="color:white; margin:0 10px;">Fundraisers</a>
-    <a href="./calendar.html" style="color:white; margin:0 10px;">Calendar</a>
-    <a href="./media.html" style="color:yellow; margin:0 10px;">Media</a>
+    <a href="./">Home</a>
+    <a href="./fundraisers.html">Fundraisers</a>
+    <a href="./calendar.html">Calendar</a>
+    <a href="./media.html" style="background: rgba(255,255,255,0.15);">Media</a>
   </nav>
 </header>
 
@@ -89,10 +114,10 @@
       video: ""
     },
     {
-      title: "Crumbl Cookie Fundraiser!",
+      title: "Campus Scenery",
       date: "July 15, 2025",
-      text: "Support our class fundraiser by purchasing cookies from Crumbl! Use promo code CLASS28 to help us out.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Crumbl_Cookie_Store.jpg/640px-Crumbl_Cookie_Store.jpg",
+      text: "Check out this beautiful shot of our campus — a great place to learn and grow!",
+      image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b",
       video: ""
     },
     {
@@ -183,4 +208,3 @@
 
 </body>
 </html>
-
