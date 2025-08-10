@@ -2,58 +2,99 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AHS Class of ’28 — Achievements</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AHS Achievements</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .achievements-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+
+    .achievement-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .achievement-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--blue-2);
+    }
+
+    .achievement-card p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+    }
+
+    .featured {
+      border: 2px solid var(--blue-2);
+      box-shadow: 0 0 15px var(--blue-2);
+    }
+
+    .achievement-card img {
+      max-width: 100%;
+      border-radius: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+  </style>
 </head>
 <body>
-
-  <!-- Header -->
-  <header class="glass-header" style="background-image: url('images/achievements-banner.jpg'); background-size: cover; background-position: center;">
-    <h1 class="main-title">Achievements</h1>
-    <p class="subtitle">Celebrating the Excellence of Auburn High School Students</p>
+  <header>
+    <h1 class="page-title">AHS Student Achievements</h1>
   </header>
 
-  <!-- Main Content -->
-  <main class="container">
-    
-    <!-- Student of the Month -->
-    <section class="achievement-card highlight">
-      <h2>🎉 Student of the Month</h2>
-      <div class="achievement-content">
-        <img src="images/student-placeholder.jpg" alt="Student of the Month" class="achievement-img" />
-        <div>
-          <h3>Student Name</h3>
-          <p>Short description of why they were selected. This section can include academic achievements, extracurriculars, and acts of kindness.</p>
-        </div>
-      </div>
-    </section>
+  <main class="achievements-container">
+    <!-- Featured: Student of the Month -->
+    <div class="achievement-card featured">
+      <img src="images/student-month-placeholder.jpg" alt="Student of the Month">
+      <h3>Student of the Month</h3>
+      <p><strong>Name:</strong> [Name Here]</p>
+      <p><strong>Reason:</strong> [Achievement reason goes here]</p>
+    </div>
 
-    <!-- Other Achievements -->
-    <section class="achievements-grid">
-      <div class="achievement-card">
-        <h3>🏆 Achievement 1</h3>
-        <p>Details about the student’s accomplishment.</p>
-      </div>
-      <div class="achievement-card">
-        <h3>🏆 Achievement 2</h3>
-        <p>Details about the student’s accomplishment.</p>
-      </div>
-      <div class="achievement-card">
-        <h3>🏆 Achievement 3</h3>
-        <p>Details about the student’s accomplishment.</p>
-      </div>
-      <div class="achievement-card">
-        <h3>🏆 Achievement 4</h3>
-        <p>Details about the student’s accomplishment.</p>
-      </div>
-      <div class="achievement-card">
-        <h3>🏆 Achievement 5</h3>
-        <p>Details about the student’s accomplishment.</p>
-      </div>
-    </section>
+    <!-- Blank achievements -->
+    <div class="achievement-card">
+      <img src="images/placeholder.jpg" alt="Achievement">
+      <h3>Achievement Title</h3>
+      <p>Details about this achievement will go here.</p>
+    </div>
 
+    <div class="achievement-card">
+      <img src="images/placeholder.jpg" alt="Achievement">
+      <h3>Achievement Title</h3>
+      <p>Details about this achievement will go here.</p>
+    </div>
+
+    <div class="achievement-card">
+      <img src="images/placeholder.jpg" alt="Achievement">
+      <h3>Achievement Title</h3>
+      <p>Details about this achievement will go here.</p>
+    </div>
+
+    <div class="achievement-card">
+      <img src="images/placeholder.jpg" alt="Achievement">
+      <h3>Achievement Title</h3>
+      <p>Details about this achievement will go here.</p>
+    </div>
+
+    <div class="achievement-card">
+      <img src="images/placeholder.jpg" alt="Achievement">
+      <h3>Achievement Title</h3>
+      <p>Details about this achievement will go here.</p>
+    </div>
   </main>
-
 </body>
 </html>
