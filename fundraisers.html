@@ -13,13 +13,14 @@
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: radial-gradient(ellipse at center, rgba(0,40,80,0.5) 0%, black 100%);
+    background: radial-gradient(ellipse at center, rgba(40,80,120,0.4) 0%, black 100%);
   }
 
   body {
     margin: 0;
     font-family: Arial, sans-serif;
     color: white;
+    overflow-x: hidden;
   }
 
   header {
@@ -43,7 +44,6 @@
   .fundraiser-container {
     min-height: calc(100vh - 80px);
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 2rem;
@@ -51,38 +51,16 @@
 
   .fundraiser-card {
     position: relative;
-    background: rgba(255, 245, 200, 0.12);
-    border: 2px solid rgba(255, 223, 100, 0.5);
-    border-radius: 16px;
-    padding: 2rem;
-    max-width: 500px;
-    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    border-radius: 12px;
+    width: 350px;
+    height: 350px;
     text-align: center;
     backdrop-filter: blur(6px);
-    box-shadow: 0 0 15px rgba(255, 223, 100, 0.25);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.25);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  /* More crumbs */
-  .fundraiser-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 50%;
-    width: 6px;
-    height: 6px;
-    background: #d2b48c;
-    border-radius: 50%;
-    box-shadow:
-      10px 10px #deb887,
-      -10px 15px #f5deb3,
-      15px 25px #cd853f,
-      -15px 35px #deb887,
-      20px 45px #f5deb3,
-      -20px 55px #cd853f;
-    opacity: 0;
-    pointer-events: none;
   }
 
   .fundraiser-card:hover {
@@ -90,20 +68,32 @@
     box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
   }
 
-  .fundraiser-card:hover::after {
-    animation: crumbsFall 1.2s ease-out forwards;
+  /* Crumbs animation */
+  .crumb {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #d2b48c;
+    border-radius: 50%;
+    animation: fall 1.5s linear infinite;
+    opacity: 0.9;
   }
 
-  @keyframes crumbsFall {
+  @keyframes fall {
     0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(50px); opacity: 0; }
+    100% { transform: translateY(150px); opacity: 0; }
   }
 
   .fundraiser-card h2 {
-    margin-bottom: 1rem;
-    font-size: 1.8rem;
+    margin-top: 2rem;
+    font-size: 1.6rem;
     color: #ffdd77;
     text-shadow: 0 0 4px #ffaa00;
+  }
+
+  .fundraiser-card p {
+    margin: 1rem;
+    font-size: 1rem;
   }
 
   .countdown {
@@ -138,7 +128,7 @@
 <canvas id="starfield"></canvas>
 
 <main class="fundraiser-container">
-  <div class="fundraiser-card">
+  <div class="fundraiser-card" id="fundraiser-card">
     <h2>🍪 Crumbl Cookie Fundraiser</h2>
     <p>Support AHS Class of ’28 by purchasing Crumbl Cookies! Proceeds go towards school events and activities.</p>
     <div class="countdown" id="countdown"></div>
@@ -147,6 +137,7 @@
 </main>
 
 <script>
+  /* Starfield setup */
   const canvas = document.getElementById('starfield');
   const ctx = canvas.getContext('2d');
   let stars = [];
@@ -165,7 +156,7 @@
       stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 1.2 + 0.4, // smaller stars
+        size: Math.random() * 1.2 + 0.4,
         speed: Math.random() * 0.3 + 0.1
       });
     }
@@ -173,7 +164,7 @@
 
   function drawStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'rgba(173, 216, 230, 0.85)';
+    ctx.fillStyle = 'rgba(150, 190, 255, 0.85)'; // bluish stars
     for (let star of stars) {
       ctx.beginPath();
       ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
@@ -191,16 +182,16 @@
     }
   }
 
-  function animate() {
+  function animateStars() {
     updateStars();
     drawStars();
-    requestAnimationFrame(animate);
+    requestAnimationFrame(animateStars);
   }
 
   createStars();
-  animate();
+  animateStars();
 
-  // Countdown
+  /* Countdown */
   const countdownEl = document.getElementById('countdown');
   const targetDate = new Date('September 8, 2025 00:00:00').getTime();
 
@@ -219,6 +210,26 @@
   }
   setInterval(updateCountdown, 1000);
   updateCountdown();
+
+  /* Crumbs falling from bottom */
+  const card = document.getElementById('fundraiser-card');
+
+  card.addEventListener('mouseenter', () => {
+    let crumbInterval = setInterval(() => {
+      const crumb = document.createElement('div');
+      crumb.classList.add('crumb');
+      crumb.style.left = Math.random() * (card.offsetWidth - 6) + 'px';
+      crumb.style.top = card.offsetHeight - 8 + 'px';
+      crumb.style.background = ['#d2b48c','#deb887','#f5deb3','#cd853f'][Math.floor(Math.random()*4)];
+      card.appendChild(crumb);
+      setTimeout(() => crumb.remove(), 1500);
+    }, 80);
+    card.dataset.crumbInterval = crumbInterval;
+  });
+
+  card.addEventListener('mouseleave', () => {
+    clearInterval(card.dataset.crumbInterval);
+  });
 </script>
 
 </body>
