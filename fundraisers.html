@@ -37,7 +37,38 @@
       text-align: center;
       backdrop-filter: blur(10px);
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-      animation: floatUp 1.5s ease-out;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fundraiser-card:hover {
+      transform: scale(1.05) rotate(1.5deg);
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+    }
+
+    /* Cookie crumb particles */
+    .fundraiser-card::after {
+      content: "";
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, #d2a679, transparent);
+      border-radius: 50%;
+      opacity: 0;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .fundraiser-card:hover::after {
+      animation: crumbs 0.6s ease forwards;
+    }
+
+    @keyframes crumbs {
+      0% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(40px) scale(0.5); }
     }
 
     .fundraiser-card h2 {
@@ -55,11 +86,6 @@
       margin-top: 1rem;
       font-style: italic;
       opacity: 0.8;
-    }
-
-    @keyframes floatUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -119,7 +145,7 @@
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
-    const numStars = 250; // more, but smaller
+    const numStars = 150; // larger but fewer for old look
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -134,9 +160,9 @@
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 1.2, // smaller
-          speed: 0.1 + Math.random() * 0.3, // slower
-          opacity: 0.2 + Math.random() * 0.4 // lighter look
+          size: Math.random() * 2 + 1, // bigger stars
+          speed: 0.2 + Math.random() * 0.5, // faster movement
+          opacity: 0.6 + Math.random() * 0.4 // brighter
         });
       }
     }
@@ -196,6 +222,9 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
   </script>
+
+</body>
+</html>
 
 </body>
 </html>
