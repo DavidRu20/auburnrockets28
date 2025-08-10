@@ -544,6 +544,30 @@ h1{
    background-color: rgba(0,0,0,0.85) !important;
 }
 
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: bold;
+  background: gray; /* default if no color class */
+  color: white;
+}
+
+.badge.red {
+  background: #e53935; /* bright red */
+  color: white;
+}
+
+.badge.purple {
+  background: #9c27b0; /* deep purple */
+  color: white;
+}
+
+.badge.yellow {
+  background: #fdd835; /* bright yellow */
+  color: black; /* better contrast */
+}
 
 
 /* End of file */
