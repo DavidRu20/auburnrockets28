@@ -698,3 +698,10 @@ document.addEventListener("keydown", (e)=>{
   // Friendly toast (if your toast element exists)
   try { if (typeof showToast === 'function') showToast('About page ready', 'success', 1400); } catch {}
 })();
+// Default to dark if no choice saved yet (keeps your style by default)
+(function(){
+  if (!localStorage.getItem("theme")) {
+    localStorage.setItem("theme","dark");
+    document.documentElement.setAttribute("data-theme","dark");
+  }
+})();
