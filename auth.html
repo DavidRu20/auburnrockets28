@@ -7,37 +7,33 @@
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Bigger, nicer form style */
+    /* Bigger + nicer form box */
     .auth-box {
-      width: 500px;
-      margin: 30px auto;
-      padding: 30px;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 12px;
       background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 25px rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
     .auth-box h2 {
-      margin-bottom: 15px;
-      text-align: center;
+      margin-top: 0;
     }
     .input {
       width: 100%;
       padding: 10px;
-      margin: 8px 0 16px;
-      border: none;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.2);
-      color: white;
+      margin: 6px 0 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
     .btn {
-      width: 100%;
-      padding: 10px;
-      background: #0d6efd;
+      padding: 10px 16px;
       border: none;
+      background: #0d6efd;
       color: white;
-      font-size: 16px;
-      border-radius: 8px;
+      font-weight: bold;
+      border-radius: 6px;
       cursor: pointer;
     }
     .btn:hover {
@@ -47,164 +43,122 @@
 </head>
 <body>
 
-<header class="header" role="banner">
-  <nav class="nav" aria-label="Primary">
-    <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
-      <span class="logo" aria-hidden="true">A</span>
-      AHS Class of ’28
-    </a>
-  <nav>
-  <div id="navLinks">
-    <div class="links" role="navigation">
+  <header class="header" role="banner">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+        <span class="logo" aria-hidden="true">A</span>
+        AHS Class of ’28
+      </a>
+      <div class="links" role="navigation" id="navLinks">
         <a href="./">Home</a>
-        <a href="fundraisers.html">Fundraisers</a>
-        <a href="calendar.html">Calendar</a>
+        <a href="./fundraisers.html">Fundraisers</a>
+        <a href="./calendar.html">Calendar</a>
         <a href="./media.html">Media</a>
-        <a href="achievements.html">Achievements</a>
+        <a href="./achievements.html">Achievements</a>
         <a href="./about.html">About</a>
         <a href="./contact.html">Contact</a>
         <a href="./merch.html">Shop</a>
         <a href="./community.html">Community</a>
-        <a class="active" href="./auth.html">Sign Up</a>
       </div>
-  </div>
-  </nav>
-
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu">☰</button>
     </nav>
-
-    <script>
-    fetch('/auth/check')
-      .then(res => res.json())
-      .then(data => {
-        if (data.loggedIn) {
-          document.querySelector('.links').insertAdjacentHTML('beforeend', 
-            `<span style="margin-left: 1rem;">Welcome, ${data.user.name}</span> 
-             <form action="/auth/logout" method="POST" style="display:inline;">
-               <button style="background:none; border:none; color:#f00; cursor:pointer;">Log Out</button>
-             </form>`
-          );
-        }
-      });
-    </script>
-
-    <!-- Mobile menu -->
-    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation" 
-     style="background-color:#000; color:#00008B;">
-      <a href="./" style="color:#fff;">Home</a>
-      <a href="./fundraisers.html" style="color:#fff;">Fundraisers</a>
-      <a href="./calendar.html" style="color:#fff;">Calendar</a>
-      <a href="./media.html" style="color:#fff;">Media</a>
-      <a href="./achievements.html" style="color:#fff;">Achievements</a>
-      <a href="./about.html" style="color:#fff;">About</a>
-      <a href="./contact.html" style="color:#fff;">Contact</a>
-      <a href="./merch.html" style="color:#fff;">Shop</a>
-      <a href="./community.html" style="color:#fff;">Community</a>
-      <a class="active" href="./auth.html" style="color:#fff;">Sign Up</a>
-      <div class="small" style="padding:8px 10px; opacity:.8; color:#fff;">Tap outside to close</div>
-  </div>
   </header>
-    <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
-  </nav>
-</header>
 
-<main role="main">
-  <section class="hero" aria-labelledby="aboutTitle">
-    <div class="auth-box">
-      <h2 id="aboutTitle">Sign Up</h2>
-      <input id="signupName" class="input" type="text" placeholder="Your name" required />
-      <input id="signupEmail" class="input" type="email" placeholder="you@school.org" required />
-      <input id="signupPassword" class="input" type="password" placeholder="Password" required />
-      <button class="btn" onclick="signUp()">Sign Up</button>
-    </div>
+  <main>
+    <section class="hero" aria-labelledby="aboutTitle">
+      <div class="card hover-up" style="max-width:860px; margin-inline:auto;">
+        <h1 id="aboutTitle">Sign In</h1>
+        <p class="small" style="margin-top:6px;">
+          Log in or create your student account
+        </p>
+      </div>
+    </section>
 
-    <div class="auth-box">
-      <h2>Sign In</h2>
-      <input id="loginEmail" class="input" type="email" placeholder="Email" required />
-      <input id="loginPassword" class="input" type="password" placeholder="Password" required />
-      <button class="btn" onclick="signIn()">Sign In</button>
-    </div>
-  </section>
-</main>
+    <section class="section">
+      <div class="auth-box">
+        <h2>Create Account</h2>
+        <input id="signupName" class="input" type="text" placeholder="Your name" required>
+        <input id="signupEmail" class="input" type="email" placeholder="you@school.org" required>
+        <input id="signupPassword" class="input" type="password" placeholder="Password" required>
+        <button class="btn" onclick="signUp()">Sign Up</button>
 
-<script>
-  // Check login status on page load
-  document.addEventListener('DOMContentLoaded', () => {
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
-    if (user) {
-      document.getElementById('navLinks').innerHTML += `<span style="margin-left:10px;">Welcome, ${user.name}</span>`;
-    }
-  });
+        <hr style="margin: 20px 0; opacity: 0.3;">
 
-  function signUp() {
-    const name = document.getElementById('signupName').value.trim();
-    const email = document.getElementById('signupEmail').value.trim();
-    const password = document.getElementById('signupPassword').value;
-
-    if (!name || !email || !password) {
-      alert('Please fill out all fields.');
-      return;
-    }
-
-    let users = JSON.parse(localStorage.getItem('users')) || [];
-    if (users.find(u => u.email === email)) {
-      alert('Account already exists with this email.');
-      return;
-    }
-
-    users.push({ name, email, password });
-    localStorage.setItem('users', JSON.stringify(users));
-    alert('Account created successfully! You can now sign in.');
-  }
-
-  function signIn() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    let users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find(u => u.email === email && u.password === password);
-
-    if (!user) {
-      alert('Invalid email or password.');
-      return;
-    }
-
-    localStorage.setItem('loggedInUser', JSON.stringify(user));
-    alert(`Welcome back, ${user.name}!`);
-    location.reload(); // Refresh to update nav bar
-  }
-</script>
+        <h2>Sign In</h2>
+        <input id="signinEmail" class="input" type="email" placeholder="you@school.org" required>
+        <input id="signinPassword" class="input" type="password" placeholder="Password" required>
+        <button class="btn" onclick="signIn()">Sign In</button>
+      </div>
+    </section>
+  </main>
 
   <script>
-(function() {
-  document.addEventListener('DOMContentLoaded', () => {
-    const navLinks = document.getElementById('navLinks');
-    if (!navLinks) return; // in case page doesn't have navLinks
+    // Save account to localStorage
+    function signUp() {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pass = document.getElementById('signupPassword').value;
 
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
-
-    if (user) {
-      // Ensure rocket points exist for this user
-      let rocketPoints = localStorage.getItem('rocketPoints_' + user.email);
-      if (rocketPoints === null) {
-        rocketPoints = 0;
-        localStorage.setItem('rocketPoints_' + user.email, rocketPoints);
+      if (!name || !email || !pass) {
+        alert('Please fill in all fields.');
+        return;
       }
 
-      navLinks.innerHTML += `
-        <span style="margin-left:15px;">
-          Welcome, ${user.name} |
-          <a href="./account.html" style="color:inherit;text-decoration:underline;">My Account</a> |
-          Rocket Points: <span id="rocketPoints">${rocketPoints}</span>
-        </span>
-      `;
-    } else {
-      navLinks.innerHTML += `
-        <a href="./login.html" style="margin-left:15px;">Sign In</a>
-      `;
+      let accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      if (accounts[email]) {
+        alert('An account with this email already exists.');
+        return;
+      }
+
+      accounts[email] = { name: name, password: pass, rocketPoints: 0 };
+      localStorage.setItem('accounts', JSON.stringify(accounts));
+
+      localStorage.setItem('loggedInUser', email);
+      updateNav();
+      alert('Account created & signed in!');
     }
-  });
-})();
-</script>
+
+    // Sign in from localStorage
+    function signIn() {
+      const email = document.getElementById('signinEmail').value.trim();
+      const pass = document.getElementById('signinPassword').value;
+
+      let accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+      if (!accounts[email] || accounts[email].password !== pass) {
+        alert('Invalid email or password.');
+        return;
+      }
+
+      localStorage.setItem('loggedInUser', email);
+      updateNav();
+      alert('Signed in successfully!');
+    }
+
+    // Update nav to show account + rocket points
+    function updateNav() {
+      const nav = document.getElementById('navLinks');
+      const email = localStorage.getItem('loggedInUser');
+      let html = `
+        <a href="./">Home</a>
+        <a href="./fundraisers.html">Fundraisers</a>
+        <a href="./calendar.html">Calendar</a>
+        <a href="./media.html">Media</a>
+        <a href="./achievements.html">Achievements</a>
+        <a href="./about.html">About</a>
+        <a href="./contact.html">Contact</a>
+        <a href="./merch.html">Shop</a>
+        <a href="./community.html">Community</a>
+      `;
+      if (email) {
+        let accounts = JSON.parse(localStorage.getItem('accounts') || '{}');
+        let user = accounts[email];
+        html += `<span style="margin-left:15px; font-weight:bold;">Welcome, ${user.name} | Rocket Points: ${user.rocketPoints}</span>`;
+      }
+      nav.innerHTML = html;
+    }
+
+    // Run on page load
+    updateNav();
+  </script>
 </body>
 </html>
