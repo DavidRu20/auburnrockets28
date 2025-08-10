@@ -8,12 +8,12 @@
   <link rel="stylesheet" href="styles.css" />
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: white;
-      overflow-x: hidden;
-      background: black;
-    }
+  margin: 0;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+  color: var(--text);
+  background: transparent;
+}
     canvas {
       position: fixed;
       top: 0;
@@ -201,94 +201,109 @@
 
   <canvas id="starfield"></canvas>
 
-  <script>
-    // Starfield
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    const numStars = 150;
+<script>
+  // Starfield (theme-aware)
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  const numStars = 150;
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      createStars();
-    }
-    function createStars() {
-      stars = [];
-      for (let i = 0; i < numStars; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: Math.random() * 1.2,
-          alpha: Math.random()
-        });
-      }
-    }
-    function drawStars() {
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, '#000005'); 
-      gradient.addColorStop(0.5, '#010618'); 
-      gradient.addColorStop(1, '#000005'); 
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(180, 200, 255, ${star.alpha})`;
-        ctx.fill();
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    createStars();
+  }
+
+  function createStars() {
+    stars = [];
+    for (let i = 0; i < numStars; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.2,
+        alpha: Math.random()
       });
     }
-    function animateStars() {
-      stars.forEach(star => {
-        star.y += 0.1;
-        if (star.y > canvas.height) {
-          star.y = 0;
-          star.x = Math.random() * canvas.width;
-        }
-      });
-    }
-    function render() {
-      drawStars();
-      animateStars();
-      requestAnimationFrame(render);
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    render();
+  }
 
-    // Countdown for Crumbl
-    const countdownEl = document.getElementById('countdown1');
-    const targetDate = new Date('September 8, 2025 00:00:00').getTime();
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
-      if (distance < 0) {
-        countdownEl.textContent = "Ended";
-        return;
+  // THEME-AWARE draw
+  function drawStars() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+
+    const topColor    = isLight ? '#eaf2ff' : '#000005';
+    const midColor    = isLight ? '#f7fbff' : '#010618';
+    const bottomColor = isLight ? '#ffffff' : '#000005';
+    const starColor   = isLight ? 'rgba(60, 90, 140, ' : 'rgba(180, 200, 255, ';
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0,   topColor);
+    gradient.addColorStop(0.5, midColor);
+    gradient.addColorStop(1,   bottomColor);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    stars.forEach(star => {
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `${starColor}${star.alpha})`;
+      ctx.fill();
+    });
+  }
+
+  function animateStars() {
+    stars.forEach(star => {
+      star.y += 0.1;
+      if (star.y > canvas.height) {
+        star.y = 0;
+        star.x = Math.random() * canvas.width;
       }
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    });
+  }
+
+  function render() {
+    drawStars();
+    animateStars();
+    requestAnimationFrame(render);
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  render();
+
+  // ---------------- Countdown for Crumbl ----------------
+  const countdownEl = document.getElementById('countdown1');
+  const targetDate = new Date('September 8, 2025 00:00:00').getTime();
+
+  function updateCountdown() {
+    const now = Date.now();
+    const distance = targetDate - now;
+    if (distance < 0) {
+      countdownEl.textContent = "Ended";
+      return;
     }
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
 
-    // Goal Bar with Rocket
-    let currentAmount = 0; // Change this to update progress
-    let goalAmount = 10000; // Change goal here
+  // ---------------- Goal Bar with Rocket ----------------
+  let currentAmount = 0;   // Change this to update progress
+  let goalAmount = 10000;  // Change goal here
 
-    function updateGoalBar() {
-      const rocket = document.getElementById('rocket');
-      const goalText = document.getElementById('goalText');
-      const percentage = Math.min(currentAmount / goalAmount, 1) * 100;
-      rocket.style.left = `calc(${percentage}% - 10px)`;
-      goalText.textContent = `$${currentAmount.toLocaleString()} / $${goalAmount.toLocaleString()}`;
-    }
+  function updateGoalBar() {
+    const rocket = document.getElementById('rocket');
+    const goalText = document.getElementById('goalText');
+    const percentage = Math.min(currentAmount / goalAmount, 1) * 100;
+    rocket.style.left = `calc(${percentage}% - 10px)`;
+    goalText.textContent = `$${currentAmount.toLocaleString()} / $${goalAmount.toLocaleString()}`;
+  }
 
-    updateGoalBar();
-  </script>
+  updateGoalBar();
+</script>
   <script src="script.js?v=14"></script>
 </body>
 </html>
