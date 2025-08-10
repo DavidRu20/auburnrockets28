@@ -7,80 +7,105 @@
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Starfield canvas */
-    #starfield {
+    body {
+      margin: 0;
+      color: white;
+      font-family: sans-serif;
+      background: black;
+      overflow-x: hidden;
+    }
+
+    /* NAV BAR matches index page */
+    .header {
+      position: relative;
+      z-index: 10;
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+    }
+    .brand {
+      font-size: 1.5rem;
+      color: white;
+      text-decoration: none;
+    }
+    .links a {
+      color: white;
+      margin: 0 0.5rem;
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    /* STARFIELD */
+    canvas.starfield {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: black;
+      z-index: 0;
     }
 
+    /* Fundraiser Card */
     .fundraiser-container {
-      min-height: calc(100vh - 80px);
+      position: relative;
+      z-index: 1;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
+      min-height: calc(100vh - 80px);
       padding: 2rem;
-      color: white;
     }
-
     .fundraiser-card {
       background: rgba(255, 255, 255, 0.08);
-      border-radius: 1rem;
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
       padding: 2rem;
+      text-align: center;
       max-width: 500px;
       width: 100%;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
       position: relative;
       overflow: visible;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
     .fundraiser-card:hover {
-      transform: scale(1.05) rotate(1.5deg);
-      box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+      transform: scale(1.03);
+      box-shadow: 0 0 30px rgba(255,255,255,0.2);
     }
-
-    /* Countdown styling */
     .fundraiser-card h2 {
-      margin-bottom: 1rem;
+      margin-top: 0;
       font-size: 1.8rem;
     }
-
     .countdown {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       margin: 1rem 0;
-      font-weight: bold;
     }
-
-    .promo {
+    .promo-code {
       margin-top: 1rem;
-      font-style: italic;
+      font-size: 1rem;
       opacity: 0.8;
     }
 
-    /* Crumb particles */
+    /* Crumbs */
     .crumb {
       position: absolute;
       width: 8px;
       height: 8px;
-      background: radial-gradient(circle, #d2a679, transparent);
+      background: radial-gradient(circle, #d2a679, #b08b5c);
       border-radius: 50%;
       pointer-events: none;
       opacity: 0;
-      z-index: 10;
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER / NAV -->
+  <!-- ============================ HEADER / NAV ============================ -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -91,50 +116,34 @@
         <a href="index.html">Home</a>
         <a class="active" href="./fundraisers.html">Fundraisers</a>
         <a href="calendar.html">Calendar</a>
-        <a href="./media.html">Media</a>
-        <a href="./achievements.html">Achievements</a>
-        <a href="./about.html">About</a>
-        <a href="./contact.html">Contact</a>
-        <a href="./merch.html">Shop</a>
-        <a href="./admin.html">Admin</a>
+        <a href="media.html">Media</a>
+        <a href="achievements.html">Achievements</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="merch.html">Shop</a>
+        <a href="admin.html">Admin</a>
       </div>
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
-
-    <!-- Mobile menu -->
-    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-      <a href="./">Home</a>
-      <a class="active" href="./fundraisers.html">Fundraisers</a>
-      <a href="./calendar.html">Calendar</a>
-      <a href="./media.html">Media</a>
-      <a href="./achievements.html">Achievements</a>
-      <a href="./about.html">About</a>
-      <a href="./contact.html">Contact</a>
-      <a href="./merch.html">Shop</a>
-      <a href="./admin.html">Admin</a>
-      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
-    </div>
   </header>
 
-  <!-- Starfield Background -->
-  <canvas id="starfield"></canvas>
+  <!-- Starfield -->
+  <canvas class="starfield" id="starfield"></canvas>
 
-  <!-- Fundraiser Content -->
+  <!-- ============================ MAIN CONTENT ============================ -->
   <main class="fundraiser-container">
-    <div class="fundraiser-card" id="cookie-card">
+    <div class="fundraiser-card">
       <h2>🍪 Crumbl Cookie Fundraiser</h2>
-      <p>Support AHS Class of ’28 by purchasing Crumbl Cookies! Proceeds go towards school events and activities.</p>
-      <div class="countdown" id="countdown"></div>
-      <div class="promo">Promo Code: <span id="promo-code">[Coming Soon]</span></div>
+      <p class="countdown" id="countdown">Loading countdown...</p>
+      <div class="promo-code">Promo Code: <span id="promo">[Coming Soon]</span></div>
     </div>
   </main>
 
-  <!-- Starfield Script -->
   <script>
+    // STARFIELD
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
-    const numStars = 150;
+    const numStars = 150; // lighter
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -149,17 +158,16 @@
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2 + 1,
-          speed: 0.2 + Math.random() * 0.5,
-          opacity: 0.6 + Math.random() * 0.4
+          size: Math.random() * 1.5,
+          speed: 0.2 + Math.random() * 0.3
         });
       }
     }
 
     function drawStars() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
       for (let star of stars) {
-        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
@@ -184,63 +192,56 @@
 
     createStars();
     animateStars();
-  </script>
 
-  <!-- Countdown Script -->
-  <script>
+    // COUNTDOWN TIMER
     const countdownEl = document.getElementById('countdown');
     const targetDate = new Date('September 8, 2025 00:00:00').getTime();
 
     function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
+      const now = Date.now();
+      const diff = targetDate - now;
 
-      if (distance <= 0) {
-        countdownEl.textContent = "Fundraiser Day is Here!";
+      if (diff <= 0) {
+        countdownEl.textContent = 'The fundraiser is here!';
         return;
       }
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
       countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
-
     setInterval(updateCountdown, 1000);
     updateCountdown();
-  </script>
 
-  <!-- Crumb Burst Effect -->
-  <script>
-    const cookieCard = document.getElementById('cookie-card');
+    // CRUMB EXPLOSION EFFECT
+    const card = document.querySelector('.fundraiser-card');
 
-    cookieCard.addEventListener('mouseenter', () => {
-      for (let i = 0; i < 8; i++) {
+    card.addEventListener('mouseenter', () => {
+      for (let i = 0; i < 12; i++) {
         const crumb = document.createElement('div');
         crumb.classList.add('crumb');
-        cookieCard.appendChild(crumb);
+        card.appendChild(crumb);
 
-        // Random direction
-        const angle = Math.random() * 2 * Math.PI;
+        const angle = Math.random() * Math.PI * 2;
         const distance = 40 + Math.random() * 30;
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
 
-        // Start position (center-ish of card)
-        crumb.style.left = "50%";
-        crumb.style.top = "50%";
+        crumb.style.left = '50%';
+        crumb.style.top = '50%';
         crumb.style.opacity = 1;
+        crumb.style.transform = `translate(-50%, -50%)`;
+        crumb.style.transition = `transform 0.6s ease-out, opacity 0.6s ease-out`;
 
-        // Animate
-        setTimeout(() => {
-          crumb.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+        requestAnimationFrame(() => {
+          crumb.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) scale(${0.5 + Math.random()})`;
           crumb.style.opacity = 0;
-        }, 10);
+        });
 
-        // Remove after animation
-        setTimeout(() => {
-          crumb.remove();
-        }, 600);
+        setTimeout(() => crumb.remove(), 600);
       }
     });
   </script>
