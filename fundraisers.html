@@ -73,9 +73,16 @@
     }
     /* Raking Leaves */
     .leaves:hover {
-      transform: translateY(-10px) rotate(9deg);
-      box-shadow: 0 0 40px rgba(255, 140, 0, 0.7);
-      background: rgba(255, 140, 0, 0.15);
+    transform: translateY(-6px) rotate(3deg) skewX(2deg);
+    box-shadow: 0 0 30px rgba(255, 140, 0, 0.5);
+    background: rgba(255, 140, 0, 0.15);
+    animation: leaf-sway 0.6s ease-in-out infinite alternate;
+  }
+
+    @keyframes leaf-sway {
+      0%   { transform: translateY(-6px) rotate(3deg) skewX(2deg); }
+      50%  { transform: translateY(-8px) rotate(-4deg) skewX(-1deg); }
+      100% { transform: translateY(-6px) rotate(3deg) skewX(2deg); }
     }
     /* Mystery */
     .mystery:hover {
