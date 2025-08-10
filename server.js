@@ -25,17 +25,19 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-// Create account or log in
+// Sign up & login
 app.post('/auth', async (req, res) => {
   const { mode, name, email, password } = req.body;
-  if (!email || !password) return res.send('Missing fields');
+
+  if (!email || !password) return res.send('Missing email or password');
 
   if (mode === 'signup') {
-    if (!name) return res.send('Name is required for signup');
+    if (!name) return res.send('Name is required');
     const hashed = await bcrypt.hash(password, 10);
     try {
-      await User.create({ name, email, password: hashed });
-      res.send('Account created, you can log in now!');
+      const user = await User.create({ name, email, password: hashed });
+      req.session.userId = user._id;
+      res.redirect('/welcome.html'); // Redirect to a logged-in page
     } catch (err) {
       res.send('Error: Email already in use');
     }
@@ -45,11 +47,11 @@ app.post('/auth', async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.send('Incorrect password');
     req.session.userId = user._id;
-    res.send('Login successful');
+    res.redirect('/welcome.html');
   }
 });
 
-// Check login status
+// Check login
 app.get('/auth/check', async (req, res) => {
   if (!req.session.userId) return res.json({ loggedIn: false });
   const user = await User.findById(req.session.userId).select('name email');
@@ -58,7 +60,7 @@ app.get('/auth/check', async (req, res) => {
 
 // Logout
 app.post('/auth/logout', (req, res) => {
-  req.session.destroy(() => res.send('Logged out'));
+  req.session.destroy(() => res.redirect('/'));
 });
 
 app.listen(3000, () => console.log('Server running at http://localhost:3000'));
