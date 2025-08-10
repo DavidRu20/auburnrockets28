@@ -4,205 +4,182 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Media</title>
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#000" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Global Styles */
+    /* --- NAV BAR --- */
     body {
       margin: 0;
+      font-family: system-ui, sans-serif;
       background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      line-height: 1.5;
+      color: white;
+      overflow-x: hidden;
     }
-
-    /* Starfield Canvas */
-    canvas#starfield {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
-    }
-
-    /* Nav Bar — same styling as other pages */
-    .header {
+    header {
       background: #000;
-      padding: 0.5rem 1rem;
-      border-bottom: 2px solid #222;
-    }
-    .nav {
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .brand {
+    header .brand {
+      font-size: 1.3rem;
       color: white;
       text-decoration: none;
-      font-size: 1.2rem;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-    }
-    .brand .logo {
-      background: white;
-      color: black;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 8px;
       font-weight: bold;
     }
-    .links {
-      display: flex;
-      flex-wrap: nowrap;
-    }
-    .links a {
+    header .links a {
       color: white;
+      margin: 0 10px;
       text-decoration: none;
-      margin-left: 1rem;
-      font-size: 1rem;
-      padding: 0.3rem 0.5rem;
-      transition: background 0.2s ease;
-      border-radius: 4px;
+      font-weight: 500;
     }
-    .links a:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-    .links a.active {
+    header .links a.active {
       text-decoration: underline;
     }
+    header .menu-btn {
+      display: none;
+    }
 
-    /* Media Page Layout */
-    .media-container {
+    /* --- STARFIELD --- */
+    #starfield {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: black;
+    }
+
+    /* --- MEDIA PAGE STYLING --- */
+    main {
       max-width: 900px;
-      margin: 80px auto;
-      padding: 0 1rem;
+      margin: auto;
+      padding: 20px;
     }
     .post {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,0.05);
       border-radius: 12px;
-      padding: 1.2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .post:hover {
       transform: translateY(-4px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
     }
     .post h2 {
       margin-top: 0;
-      color: #ffd700;
-      font-size: 1.4rem;
-    }
-    .post p {
-      margin-bottom: 0.5rem;
-      font-size: 1rem;
     }
     .post img, .post video {
       max-width: 100%;
       border-radius: 8px;
-      margin-top: 0.5rem;
-    }
-    .post video {
-      background: #000;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
+  <!-- ============================ HEADER / NAV ============================ -->
+  <header>
+    <a class="brand" href="./">AHS Class of ’28</a>
+    <div class="links">
+      <a href="./">Home</a>
+      <a href="fundraisers.html">Fundraisers</a>
+      <a href="calendar.html">Calendar</a>
+      <a class="active" href="./media.html">Media</a>
+      <a href="achievements.html">Achievements</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a href="./merch.html">Shop</a>
+      <a href="./community.html">Community</a>
+    </div>
+  </header>
+
   <!-- Starfield Canvas -->
   <canvas id="starfield"></canvas>
 
-  <!-- Navigation -->
-  <header class="header" role="banner">
-    <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
-        <span class="logo" aria-hidden="true">A</span>
-        AHS Class of ’28
-      </a>
-      <div class="links" role="navigation">
-        <a href="./">Home</a>
-        <a href="fundraisers.html">Fundraisers</a>
-        <a href="calendar.html">Calendar</a>
-        <a class="active" href="./media.html">Media</a>
-        <a href="achievements.html">Achievements</a>
-        <a href="./about.html">About</a>
-        <a href="./contact.html">Contact</a>
-        <a href="./merch.html">Shop</a>
-        <a href="./community.html">Community</a>
-      </div>
-    </nav>
-  </header>
+  <main>
+    <h1>Media Updates</h1>
 
-  <!-- Main Media Content -->
-  <main class="media-container">
-    <!-- Post 1 -->
-    <article class="post">
-      <h2>📢 First Day of School Announced</h2>
-      <p>Mark your calendars! The first day of school will be <strong>August 27th</strong>. We can’t wait to see all of you back in the halls, ready for an exciting year filled with learning, growth, and new opportunities.</p>
-    </article>
+    <div class="post">
+      <h2>📢 First Day of School — August 27th!</h2>
+      <p>Mark your calendars! The first day of school is August 27th. Get ready for an amazing year.</p>
+    </div>
 
-    <!-- Post 2 -->
-    <article class="post">
-      <h2>📸 Random Picture Post</h2>
-      <p>Here’s a candid shot from our recent gathering — just one of many moments that bring us together as a class!</p>
-      <img src="https://picsum.photos/800/400" alt="Random event photo">
-    </article>
+    <div class="post">
+      <h2>📸 Random Photo</h2>
+      <p>Here’s a random shot from around school grounds.</p>
+      <img src="https://picsum.photos/800/400" alt="Random school-related image">
+    </div>
 
-    <!-- Post 3 -->
-    <article class="post">
-      <h2>🎥 Video Update</h2>
-      <p>Relive the excitement from our latest fundraiser event with this short recap video. Thank you to everyone who participated and supported!</p>
+    <div class="post">
+      <h2>🎥 Sample Video Post</h2>
+      <p>Check out this sample video clip.</p>
       <video controls>
         <source src="sample-video.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
-    </article>
+    </div>
   </main>
 
-  <!-- Starfield Animation Script -->
   <script>
+    // === STARFIELD ANIMATION ===
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
 
-    function resizeCanvas() {
+    function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function initStars(count) {
       stars = [];
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < count; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2,
-          speed: Math.random() * 0.5 + 0.2
+          z: Math.random() * canvas.width,
+          size: Math.random() * 1.5 + 0.5
         });
       }
     }
+    initStars(600);
 
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-      stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fill();
-        star.y += star.speed;
-        if (star.y > canvas.height) {
-          star.y = 0;
+    function animate() {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < stars.length; i++) {
+        let star = stars[i];
+        star.z -= 2;
+        if (star.z <= 0) {
           star.x = Math.random() * canvas.width;
+          star.y = Math.random() * canvas.height;
+          star.z = canvas.width;
         }
-      });
-      requestAnimationFrame(drawStars);
-    }
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    drawStars();
+        let k = 128.0 / star.z;
+        let sx = star.x * k + canvas.width / 2;
+        let sy = star.y * k + canvas.height / 2;
+
+        if (sx < 0 || sx >= canvas.width || sy < 0 || sy >= canvas.height) continue;
+
+        let size = (1 - star.z / canvas.width) * star.size;
+        let shade = 200 + Math.random() * 55;
+        ctx.fillStyle = `rgb(${shade},${shade},${shade})`;
+        ctx.beginPath();
+        ctx.arc(sx, sy, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
   </script>
 
 </body>
