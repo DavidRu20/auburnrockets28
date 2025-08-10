@@ -136,6 +136,40 @@
     renderCalendar(currentDate);
   </script>
 
+  <script>
+  const holidays = {
+    "2025-06-17": "Last Day of School",
+    "2024-08-28": "First Day of School",
+    "2024-09-02": "Labor Day",
+    "2025-02-17": "Presidents' Day",
+
+
+  };
+
+  function renderCalendar(date) {
+
+    for (let day = 1; day <= totalDays; day++) {
+      const cell = document.createElement("div");
+      cell.classList.add("day");
+      const dateKey = new Date(year, month, day).toISOString().split("T")[0];
+
+      if (dateKey === Object.keys(holidays)[0]) cell.classList.add("first-day");
+      if (dateKey === Object.keys(holidays)[1]) cell.classList.add("last-day");
+
+      if (holidays[dateKey]) {
+        const dot = document.createElement("div");
+        dot.classList.add("dot");
+        cell.appendChild(dot);
+        cell.title = holidays[dateKey];
+      }
+
+      calendarGrid.appendChild(cell);
+    }
+  }
+
+  renderCalendar(currentDate);
+</script>
+
   <style>
 
     .calendar {
