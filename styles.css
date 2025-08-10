@@ -357,22 +357,7 @@ h1{
   border-radius: 2px;
 }
 
-.day.holiday {
-  position: relative;
-  background: rgba(255, 215, 0, 0.15);
-  border-radius: 8px;
-}
 
-.day.first-day {
-  background: linear-gradient(135deg, var(--blue-2), #fff);
-  font-weight: bold;
-}
-
-.day.last-day {
-  background: linear-gradient(135deg, #ff4d4d, #ff7a7a);
-  color: #fff;
-  font-weight: bold;
-}
 
 /* End of file */
 /* ======================================================================= */
