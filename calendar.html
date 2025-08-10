@@ -5,112 +5,118 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css?v=19" />
+  <link rel="stylesheet" href="styles.css?v=20" />
   <style>
-    /* --- Page-specific styles (don’t force dark/light) --- */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, sans-serif; color: var(--text); background: transparent; overflow-x: hidden; line-height: 1.4; }
+    /* ---------- Layout shell (matches your screenshot) ---------- */
+    body { color: var(--text); background: transparent; overflow-x: hidden; }
+    #starfield{ position: fixed; inset: 0; z-index:-1; }
 
-    /* Starfield canvas sits behind content */
-    #starfield { position: fixed; inset: 0; z-index: -1; }
+    main{
+      display: grid;
+      grid-template-columns: 360px 1fr;     /* LEFT = sidebar, RIGHT = calendar */
+      gap: 28px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
 
-    /* Header tweaks (uses your global variables) */
-    header.header { position: sticky; top: 0; z-index: 100; backdrop-filter: blur(6px); }
-    :root[data-theme="dark"]  header.header { background: rgba(0,0,0,0.8); }
-    :root[data-theme="light"] header.header { background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.86)); border-bottom: 1px solid var(--border); }
+    /* ---------- Sidebar (Upcoming Holidays) ---------- */
+    .sidebar{
+      position: sticky; top: 96px;         /* sits under header */
+      height: calc(100vh - 120px);
+      overflow: auto;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      box-shadow: var(--shadow-1);
+    }
+    :root[data-theme="light"] .sidebar{
+      background: var(--panel);
+      border: 1px solid var(--border);
+    }
+    .sidebar h2{
+      font-size: 1.5rem; margin-bottom: 12px;
+    }
+    .countdown-item{
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    :root[data-theme="light"] .countdown-item{ background: rgba(0,0,0,.04); }
 
-    /* Layout */
-    main { display: flex; gap: 20px; padding: 20px; justify-content: center; flex-wrap: wrap; }
+    /* ---------- Calendar card ---------- */
+    .calendar-wrap{
+      background: rgba(255,255,255,0.05);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: var(--shadow-1);
+    }
+    :root[data-theme="light"] .calendar-wrap{
+      background: var(--panel);
+      border: 1px solid var(--border);
+    }
 
-    /* Countdown list */
-    .countdown-list { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; flex: 1 1 260px; max-width: 340px; }
-    :root[data-theme="light"] .countdown-list { background: var(--panel); border: 1px solid var(--border); box-shadow: var(--shadow-1); }
-    .countdown-item { margin-bottom: 12px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.08); }
-    :root[data-theme="light"] .countdown-item { background: rgba(0,0,0,.04); }
+    .calendar-header{
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .calendar-title{
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: .3px;
+    }
+    .nav-btn{
+      height: 44px; width: 44px;
+      border: 0; border-radius: 12px;
+      background: #0d6efd; color: #fff;
+      cursor: pointer; font-size: 1.2rem;
+    }
 
-    /* Calendar */
-    .calendar { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; flex: 1 1 700px; }
-    :root[data-theme="light"] .calendar { background: var(--panel); border: 1px solid var(--border); box-shadow: var(--shadow-1); }
-    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .calendar-header button { background: #0d6efd; color: #fff; border: 0; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-    .day-name { text-align: center; font-weight: 600; opacity: .85; }
-    .day { background: rgba(255,255,255,0.08); border-radius: 12px; min-height: 90px; display: flex; flex-direction: column; padding: 8px; font-size: 1.05rem; transition: transform .2s ease, background .2s ease; }
-    :root[data-theme="light"] .day { background: rgba(0,0,0,.04); }
-    .day:hover { transform: scale(1.03); background: rgba(255,255,255,0.15); }
-    :root[data-theme="light"] .day:hover { background: rgba(0,0,0,.08); }
-    .day.today { background: #0d6efd; color: #fff; font-weight: bold; }
-    .day.event { background: rgba(0,255,255,0.2); border: 1px solid cyan; }
-    .day.break { background: rgba(255,165,0,0.2); border: 1px solid orange; }
-    .event-label { font-size: .7em; margin-top: auto; opacity: .8; }
-    .empty { background: transparent !important; border: 0; }
-    /* === Calendar layout overrides (spread it out) === */
-main{
-  max-width: 1400px;   /* wider page */
-  margin: 0 auto;
-  padding: 24px;
-  gap: 24px;
-}
+    /* Grid like the screenshot: big cells, comfy gaps */
+    .calendar-grid{
+      display: grid;
+      grid-template-columns: repeat(7, minmax(160px,1fr));
+      gap: 16px;
+    }
+    .day-name{
+      text-align:center; font-weight:600; opacity:.9; padding: 6px 0;
+    }
+    .day{
+      background: rgba(255,255,255,0.08);
+      border-radius: 16px;
+      min-height: 140px;
+      padding: 12px;
+      display:flex; flex-direction:column;
+      transition: transform .15s ease, background .15s ease;
+    }
+    :root[data-theme="light"] .day{ background: rgba(0,0,0,.04); }
+    .day:hover{ transform: scale(1.02); }
+    .day.today{ background:#0d6efd; color:#fff; font-weight:700; }
+    .day.event{ background: rgba(0,255,255,.18); border:1px solid cyan; }
+    .day.break{ background: rgba(255,165,0,.18); border:1px solid orange; }
+    .event-label{ margin-top:auto; font-size:.75rem; opacity:.9; }
+    .empty{ background: transparent !important; border:0; }
 
-/* make the left sidebar a bit wider */
-.countdown-list{
-  flex: 0 0 340px;
-  max-width: 360px;
-}
-
-/* bigger calendar cells + larger gaps */
-.calendar{
-  flex: 1 1 900px;
-  padding: 24px;
-  border-radius: 24px;
-}
-.calendar-grid{
-  grid-template-columns: repeat(7, minmax(160px, 1fr));
-  gap: 16px;
-}
-.day{
-  min-height: 140px;
-  border-radius: 16px;
-  padding: 12px;
-  font-size: 1.05rem;
-}
-
-/* nicer header spacing/buttons */
-.calendar-header{
-  margin-bottom: 18px;
-}
-.calendar-header button{
-  padding: 10px 14px;
-  font-size: 1.1rem;
-  border-radius: 10px;
-}
-
-/* keep it comfortable on medium screens */
-@media (max-width: 1200px){
-  .calendar-grid{ grid-template-columns: repeat(7, minmax(130px, 1fr)); }
-  .day{ min-height: 120px; }
-}
-
-/* phone sizing */
-@media (max-width: 780px){
-  main{ padding: 16px; gap: 16px; }
-  .countdown-list{ flex: 1 1 100%; max-width: 100%; }
-  .calendar{ flex: 1 1 100%; }
-  .calendar-grid{ grid-template-columns: repeat(7, minmax(90px, 1fr)); gap: 8px; }
-  .day{ min-height: 88px; padding: 8px; font-size: 1rem; }
-}
+    /* Mobile stack */
+    @media (max-width: 900px){
+      main{ grid-template-columns: 1fr; gap: 16px; padding: 16px; }
+      .sidebar{ position: static; height:auto; }
+      .calendar-grid{ grid-template-columns: repeat(7, minmax(90px,1fr)); gap: 8px; }
+      .day{ min-height: 90px; padding: 8px; }
+    }
   </style>
 </head>
 <body>
-  <!-- Background -->
   <canvas id="starfield"></canvas>
 
-  <!-- Header / Nav (only Calendar is active here) -->
+  <!-- Header / Nav (Calendar active) -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
-        <span class="logo" aria-hidden="true">A</span> AHS Class of ’28
-      </a>
+      <a class="brand" href="./"><span class="logo" aria-hidden="true">A</span> AHS Class of ’28</a>
       <div class="links" role="navigation">
         <a href="./">Home</a>
         <a href="./fundraisers.html">Fundraisers</a>
@@ -138,32 +144,30 @@ main{
     </div>
   </header>
 
-  <!-- Main -->
+  <!-- Main layout: LEFT = sidebar, RIGHT = calendar -->
   <main>
-    <div class="countdown-list" id="holidayCountdowns"></div>
+    <aside class="sidebar" id="holidayCountdowns">
+      <h2>Upcoming Holidays</h2>
+      <!-- items injected by JS -->
+    </aside>
 
-    <div class="calendar">
+    <section class="calendar-wrap">
       <div class="calendar-header">
-        <button id="prevMonth" type="button" aria-label="Previous month">‹</button>
-        <h2 id="calendarMonth" aria-live="polite"></h2>
-        <button id="nextMonth" type="button" aria-label="Next month">›</button>
+        <button id="prevMonth" class="nav-btn" type="button" aria-label="Previous month">‹</button>
+        <h2 id="calendarMonth" class="calendar-title" aria-live="polite">Loading…</h2>
+        <button id="nextMonth" class="nav-btn" type="button" aria-label="Next month">›</button>
       </div>
 
       <div class="calendar-grid" id="calendarGrid">
-        <div class="day-name">Sun</div>
-        <div class="day-name">Mon</div>
-        <div class="day-name">Tue</div>
-        <div class="day-name">Wed</div>
-        <div class="day-name">Thu</div>
-        <div class="day-name">Fri</div>
-        <div class="day-name">Sat</div>
+        <div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div>
+        <div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>
+        <!-- days injected by JS -->
       </div>
-    </div>
+    </section>
   </main>
 
-  <!-- Scripts -->
   <script>
-    /* ===== Mobile menu ===== */
+    /* Mobile menu (same pattern as other pages) */
     (function(){
       const btn = document.getElementById('menuBtn');
       const menu = document.getElementById('mobileMenu');
@@ -175,85 +179,53 @@ main{
       });
       document.addEventListener('click', e=>{
         if (!menu.classList.contains('hidden') && !menu.contains(e.target) && e.target !== btn){
-          btn.setAttribute('aria-expanded','false');
-          menu.classList.add('hidden');
+          btn.setAttribute('aria-expanded','false'); menu.classList.add('hidden');
         }
       });
     })();
 
-    /* ===== Starfield (theme-aware) ===== */
+    /* Minimal, theme-aware starfield just for this page */
     (function(){
       const cvs = document.getElementById('starfield');
       const ctx = cvs.getContext('2d', { alpha: false });
-      let stars = [];
+      let stars=[];
       function resize(){
-        cvs.width = innerWidth;
-        cvs.height = innerHeight;
+        cvs.width = innerWidth; cvs.height = innerHeight;
         stars = Array.from({length: 200}, ()=>({
-          x: Math.random()*cvs.width,
-          y: Math.random()*cvs.height,
-          size: Math.random()*2,
-          speed: Math.random()*0.3
+          x: Math.random()*cvs.width, y: Math.random()*cvs.height,
+          r: Math.random()*1.6, v: Math.random()*0.3+0.05
         }));
       }
       addEventListener('resize', resize); resize();
-
-      function draw(){
-        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      (function tick(){
+        const isLight = document.documentElement.getAttribute('data-theme')==='light';
         const g = ctx.createLinearGradient(0,0,0,cvs.height);
-        if (isLight){
-          g.addColorStop(0,   '#eaf2ff');
-          g.addColorStop(0.5, '#f7fbff');
-          g.addColorStop(1,   '#ffffff');
-        } else {
-          g.addColorStop(0,   '#0b0e1a');
-          g.addColorStop(1,   '#000000');
-        }
-        ctx.fillStyle = g;
-        ctx.fillRect(0,0,cvs.width,cvs.height);
-
-        ctx.fillStyle = isLight ? 'rgba(60,90,140,0.8)' : 'rgba(180,200,255,0.8)';
-        stars.forEach(s=>{
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-          ctx.fill();
-          s.y += s.speed;
-          if (s.y > cvs.height){ s.y = 0; s.x = Math.random()*cvs.width; }
-        });
-
-        requestAnimationFrame(draw);
-      }
-      draw();
+        if(isLight){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
+        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
+        ctx.fillStyle = g; ctx.fillRect(0,0,cvs.width,cvs.height);
+        ctx.fillStyle = isLight ? 'rgba(60,90,140,.85)' : 'rgba(180,200,255,.85)';
+        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; } }
+        requestAnimationFrame(tick);
+      })();
     })();
 
-    /* ===== Events (sample) ===== */
+    /* Sample events (you can swap to your data file later) */
     const events = {
       "2025-08-27": { type: "event", label: "First Day of School" },
       "2025-09-01": { type: "break", label: "Labor Day" },
+      "2025-10-13": { type: "break", label: "Indigenous Peoples’ Day" },
       "2025-11-11": { type: "break", label: "Veterans Day" },
       "2025-11-26": { type: "break", label: "Thanksgiving Break" },
       "2025-11-27": { type: "break", label: "Thanksgiving Break" },
       "2025-11-28": { type: "break", label: "Thanksgiving Break" },
-      "2025-12-22": { type: "break", label: "Winter Break" },
       "2025-12-23": { type: "break", label: "Winter Break" },
       "2025-12-24": { type: "break", label: "Winter Break" },
       "2025-12-25": { type: "break", label: "Winter Break" },
-      "2025-12-26": { type: "break", label: "Winter Break" },
-      "2025-12-29": { type: "break", label: "Winter Break" },
-      "2025-12-30": { type: "break", label: "Winter Break" },
-      "2025-12-31": { type: "break", label: "Winter Break" },
-      "2026-01-01": { type: "break", label: "Winter Break" },
-      "2026-01-19": { type: "break", label: "MLK Day" },
-      "2026-02-16": { type: "break", label: "Presidents Day" },
-      "2026-04-13": { type: "break", label: "Spring Break" },
-      "2026-04-14": { type: "break", label: "Spring Break" },
-      "2026-04-15": { type: "break", label: "Spring Break" },
-      "2026-04-16": { type: "break", label: "Spring Break" },
-      "2026-04-17": { type: "break", label: "Spring Break" },
+      "2026-01-01": { type: "break", label: "New Year’s Day" },
       "2026-06-12": { type: "event", label: "Last Day of School" }
     };
 
-    /* ===== Calendar render ===== */
+    /* Calendar render */
     (function(){
       const grid = document.getElementById("calendarGrid");
       const monthLabel = document.getElementById("calendarMonth");
@@ -261,34 +233,29 @@ main{
       const nextBtn = document.getElementById("nextMonth");
       let current = new Date();
 
-      function renderCalendar(date){
-        const y = date.getFullYear();
-        const m = date.getMonth();
-        monthLabel.textContent = date.toLocaleString("default", { month: "long", year: "numeric" });
+      function render(date){
+        const y = date.getFullYear(), m = date.getMonth();
+        monthLabel.textContent = date.toLocaleString("default", { month:"long", year:"numeric" });
 
-        // remove previous days
+        // clear old days
         grid.querySelectorAll(".day:not(.day-name)").forEach(el => el.remove());
 
-        const first = new Date(y, m, 1);
-        const last  = new Date(y, m+1, 0);
-        const startDay = first.getDay();
-        const total = last.getDate();
+        const first = new Date(y,m,1), last = new Date(y,m+1,0);
+        const start = first.getDay(), total = last.getDate();
 
-        for (let i=0; i<startDay; i++){
-          const empty = document.createElement("div");
-          empty.className = "day empty";
-          grid.appendChild(empty);
+        for(let i=0;i<start;i++){
+          const e = document.createElement("div"); e.className="day empty"; grid.appendChild(e);
         }
 
         const today = new Date(); today.setHours(0,0,0,0);
 
-        for (let d=1; d<=total; d++){
+        for(let d=1; d<=total; d++){
           const cell = document.createElement("div");
           cell.className = "day";
           cell.textContent = d;
 
           const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-          if (events[key]) {
+          if (events[key]){
             cell.classList.add(events[key].type);
             const lbl = document.createElement("div");
             lbl.className = "event-label";
@@ -296,45 +263,46 @@ main{
             cell.appendChild(lbl);
           }
 
-          const thisDay = new Date(y, m, d); thisDay.setHours(0,0,0,0);
+          const thisDay = new Date(y,m,d); thisDay.setHours(0,0,0,0);
           if (+thisDay === +today) cell.classList.add("today");
 
           grid.appendChild(cell);
         }
       }
 
-      prevBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()-1); renderCalendar(current); });
-      nextBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()+1); renderCalendar(current); });
-      renderCalendar(current);
+      prevBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()-1); render(current); });
+      nextBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()+1); render(current); });
+      render(current);
     })();
 
-    /* ===== Upcoming holidays countdown ===== */
+    /* Sidebar countdowns */
     (function(){
       const wrap = document.getElementById("holidayCountdowns");
       function update(){
-        wrap.innerHTML = "<h2 style='margin-bottom:10px;'>Upcoming Holidays</h2>";
+        // wipe old items except the heading
+        wrap.querySelectorAll(".countdown-item").forEach(n=>n.remove());
+
         const now = new Date();
         Object.keys(events)
-          .map(d => ({ date: new Date(d), ...events[d] }))
+          .map(d => ({ date:new Date(d), ...events[d] }))
           .filter(e => e.date >= now)
-          .sort((a,b) => a.date - b.date)
+          .sort((a,b)=> a.date - b.date)
           .slice(0, 8)
-          .forEach(e => {
+          .forEach(e=>{
             const diff = e.date - now;
             const days = Math.floor(diff / (1000*60*60*24));
-            const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+            const hours= Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
             const item = document.createElement("div");
             item.className = "countdown-item";
-            item.innerHTML = `<h3>${e.label}</h3><p>${days} days, ${hours} hours</p>`;
+            item.innerHTML = `<div style="font-weight:700;">${e.label}</div><div style="opacity:.8">${days} days, ${hours} hours</div>`;
             wrap.appendChild(item);
           });
       }
       update();
-      setInterval(update, 60*1000); // refresh every minute
+      setInterval(update, 60*1000);
     })();
   </script>
 
-  <!-- Global site script (theme toggle, transitions, etc.) -->
-  <script src="script.js?v=19"></script>
+  <script src="script.js?v=20"></script>
 </body>
 </html>
