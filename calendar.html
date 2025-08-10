@@ -44,6 +44,61 @@
     .day.break { background: rgba(255,165,0,0.2); border: 1px solid orange; }
     .event-label { font-size: .7em; margin-top: auto; opacity: .8; }
     .empty { background: transparent !important; border: 0; }
+    /* === Calendar layout overrides (spread it out) === */
+main{
+  max-width: 1400px;   /* wider page */
+  margin: 0 auto;
+  padding: 24px;
+  gap: 24px;
+}
+
+/* make the left sidebar a bit wider */
+.countdown-list{
+  flex: 0 0 340px;
+  max-width: 360px;
+}
+
+/* bigger calendar cells + larger gaps */
+.calendar{
+  flex: 1 1 900px;
+  padding: 24px;
+  border-radius: 24px;
+}
+.calendar-grid{
+  grid-template-columns: repeat(7, minmax(160px, 1fr));
+  gap: 16px;
+}
+.day{
+  min-height: 140px;
+  border-radius: 16px;
+  padding: 12px;
+  font-size: 1.05rem;
+}
+
+/* nicer header spacing/buttons */
+.calendar-header{
+  margin-bottom: 18px;
+}
+.calendar-header button{
+  padding: 10px 14px;
+  font-size: 1.1rem;
+  border-radius: 10px;
+}
+
+/* keep it comfortable on medium screens */
+@media (max-width: 1200px){
+  .calendar-grid{ grid-template-columns: repeat(7, minmax(130px, 1fr)); }
+  .day{ min-height: 120px; }
+}
+
+/* phone sizing */
+@media (max-width: 780px){
+  main{ padding: 16px; gap: 16px; }
+  .countdown-list{ flex: 1 1 100%; max-width: 100%; }
+  .calendar{ flex: 1 1 100%; }
+  .calendar-grid{ grid-template-columns: repeat(7, minmax(90px, 1fr)); gap: 8px; }
+  .day{ min-height: 88px; padding: 8px; font-size: 1rem; }
+}
   </style>
 </head>
 <body>
