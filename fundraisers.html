@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Fundraisers</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       margin: 0;
@@ -34,17 +33,23 @@
       opacity: 0.85;
     }
     .fundraiser-box {
-      background: rgba(255, 215, 0, 0.08);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
       border-radius: 20px;
-      padding: 30px;
-      max-width: 400px;
+      padding: 40px 30px;
+      max-width: 420px;
       margin: 0 auto;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+      border: 2px solid rgba(255, 215, 0, 0.3);
     }
     .fundraiser-box:hover {
-      transform: rotate3d(1, 1, 0, 6deg) scale(1.05);
-      box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+      transform: perspective(800px) rotateY(6deg) rotateX(3deg) scale(1.05);
+      box-shadow: 0 0 50px rgba(255, 215, 0, 0.7);
+    }
+    .fundraiser-box h2 {
+      margin-top: 0;
+      font-size: 1.8rem;
     }
     .countdown {
       font-size: 1.5rem;
@@ -53,11 +58,36 @@
     }
     .promo {
       margin-top: 20px;
-      font-size: 1.1rem;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 10px;
+      font-size: 1.2rem;
+      background: rgba(255, 215, 0, 0.1);
+      padding: 12px;
       border-radius: 10px;
-      min-height: 30px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: #ffd700;
+    }
+    /* Nav styles */
+    .header {
+      background: rgba(0,0,0,0.85);
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .links a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    .links a.active {
+      color: #ffd700;
+    }
+    .menu-btn, .mobile-menu {
+      display: none;
     }
   </style>
 </head>
@@ -79,21 +109,7 @@
         <a href="./merch.html">Shop</a>
         <a href="./admin.html">Admin</a>
       </div>
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu">☰</button>
     </nav>
-
-    <div id="mobileMenu" class="mobile-menu hidden">
-      <a href="./">Home</a>
-      <a class="active" href="./fundraisers.html">Fundraisers</a>
-      <a href="./calendar.html">Calendar</a>
-      <a href="./media.html">Media</a>
-      <a href="./achievements.html">Achievements</a>
-      <a href="./about.html">About</a>
-      <a href="./contact.html">Contact</a>
-      <a href="./merch.html">Shop</a>
-      <a href="./admin.html">Admin</a>
-      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
-    </div>
   </header>
 
   <main class="section">
@@ -103,7 +119,7 @@
       <h2>Crumbl Cookie Fundraiser</h2>
       <p>Help support the Class of 2028 by purchasing delicious Crumbl Cookies!</p>
       <div class="countdown" id="countdown"></div>
-      <div class="promo"></div>
+      <div class="promo">Promo code: <strong>____</strong></div>
     </div>
   </main>
 
@@ -179,7 +195,7 @@
       const distance = targetDate - now;
 
       if (distance < 0) {
-        countdownEl.textContent = "Fundraiser Ended";
+        countdownEl.textContent = "Fundraiser Starts";
         return;
       }
 
@@ -196,4 +212,3 @@
   </script>
 </body>
 </html>
-
