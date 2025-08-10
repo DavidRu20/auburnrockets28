@@ -51,45 +51,65 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: -1;
-      background: radial-gradient(ellipse at center, rgba(10,20,40,1) 0%, rgba(0,0,0,1) 100%);
+      background: radial-gradient(ellipse at center, rgba(5,10,20,1) 0%, rgba(0,0,0,1) 100%);
     }
 
-    /* Fundraiser box */
+    /* Main content */
     .fundraiser-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding-top: 120px; /* space for nav */
+      padding-top: 120px;
+      padding-bottom: 50px;
+      gap: 2rem;
     }
 
+    .intro-text {
+      max-width: 700px;
+      text-align: center;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      opacity: 0.85;
+    }
+
+    /* Fundraiser grid */
+    .fundraiser-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 20px;
+    }
+
+    /* Fundraiser card */
     .fundraiser-card {
       position: relative;
-      width: 300px;
-      height: 300px;
-      background: rgba(50, 50, 50, 0.85);
+      width: 100%;
+      height: 350px;
+      background: rgba(40, 40, 40, 0.9);
       border-radius: 15px;
-      padding: 20px;
+      padding: 25px;
       text-align: center;
       box-shadow: 0 0 15px rgba(255,215,0,0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
       overflow: hidden;
     }
 
     .fundraiser-card:hover {
-      transform: scale(1.05);
+      transform: perspective(800px) rotateY(5deg) rotateX(3deg) scale(1.03);
       box-shadow: 0 0 25px rgba(255,215,0,0.8);
     }
 
     .fundraiser-title {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       margin-bottom: 1rem;
     }
 
     .fundraiser-date {
       font-size: 1.1rem;
       margin-bottom: 1rem;
+      opacity: 0.85;
     }
 
     .countdown {
@@ -101,24 +121,6 @@
       margin-top: 1rem;
       font-size: 1rem;
       opacity: 0.8;
-    }
-
-    /* Crumb animation */
-    .crumb {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: #d2b48c;
-      border-radius: 50%;
-      animation: fall 3.5s ease-out forwards;
-      opacity: 0.9;
-      pointer-events: none;
-    }
-
-    @keyframes fall {
-      0%   { transform: translate(0, 0); opacity: 1; }
-      70%  { opacity: 0.8; }
-      100% { transform: translate(var(--drift), 320px); opacity: 0; }
     }
   </style>
 </head>
@@ -146,11 +148,33 @@
 
   <!-- MAIN CONTENT -->
   <main class="fundraiser-container">
-    <div class="fundraiser-card" id="cookieCard">
-      <h2 class="fundraiser-title">🍪 Crumbl Cookie Fundraiser</h2>
-      <div class="fundraiser-date">Ends September 8</div>
-      <div class="countdown" id="countdown"></div>
-      <div class="promo-code">Promo Code: <span id="promo">[Coming Soon]</span></div>
+    <div class="intro-text">
+      Welcome to the Class of 2028 Fundraisers page! Here, you’ll find our current and upcoming events 
+      to support our activities and initiatives. Your contributions help us achieve our goals while 
+      bringing the community together. Check back often for updates!
+    </div>
+
+    <div class="fundraiser-grid">
+      <div class="fundraiser-card">
+        <h2 class="fundraiser-title">🍪 Crumbl Cookie Fundraiser</h2>
+        <div class="fundraiser-date">Ends September 8</div>
+        <div class="countdown" id="countdown1"></div>
+        <div class="promo-code">Promo Code: <span>[Coming Soon]</span></div>
+      </div>
+
+      <div class="fundraiser-card">
+        <h2 class="fundraiser-title">🎁 Holiday Raffle</h2>
+        <div class="fundraiser-date">Starts November 15</div>
+        <div class="countdown">Stay tuned!</div>
+        <div class="promo-code">Tickets available soon</div>
+      </div>
+
+      <div class="fundraiser-card">
+        <h2 class="fundraiser-title">🏀 Basketball Concession Stand</h2>
+        <div class="fundraiser-date">Every Home Game</div>
+        <div class="countdown">Ongoing</div>
+        <div class="promo-code">Support your team!</div>
+      </div>
     </div>
   </main>
 
@@ -159,7 +183,7 @@
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
-    const numStars = 250;
+    const numStars = 200;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -174,14 +198,14 @@
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 1.5,
-          speed: 0.2 + Math.random() * 0.4
+          size: Math.random() * 1.2,
+          speed: 0.1 + Math.random() * 0.3
         });
       }
     }
 
     function drawStars() {
-      ctx.fillStyle = 'rgba(10,20,40,0.8)';
+      ctx.fillStyle = 'rgba(5,10,20,1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'white';
       for (let star of stars) {
@@ -211,42 +235,24 @@
     animateStars();
 
     /* Countdown */
-    const countdownEl = document.getElementById('countdown');
-    const targetDate = new Date("September 8, 2025 00:00:00").getTime();
-
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
-      if (distance < 0) {
-        countdownEl.innerHTML = "Fundraiser Ended";
-        return;
-      }
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    function startCountdown(id, endDate) {
+      const el = document.getElementById(id);
+      const targetDate = new Date(endDate).getTime();
+      setInterval(() => {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+        if (distance < 0) {
+          el.innerHTML = "Fundraiser Ended";
+          return;
+        }
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        el.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }, 1000);
     }
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-
-    /* Crumb animation */
-    const card = document.getElementById('cookieCard');
-    card.addEventListener('mouseenter', () => {
-      card.crumbInterval = setInterval(() => {
-        const crumb = document.createElement('div');
-        crumb.classList.add('crumb');
-        crumb.style.left = Math.random() * (card.offsetWidth - 6) + 'px';
-        crumb.style.top = (card.offsetHeight - 6) + 'px';
-        crumb.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
-        crumb.style.background = ['#d2b48c','#deb887','#f5deb3','#cd853f'][Math.floor(Math.random()*4)];
-        card.appendChild(crumb);
-        setTimeout(() => crumb.remove(), 3500);
-      }, 50);
-    });
-    card.addEventListener('mouseleave', () => {
-      clearInterval(card.crumbInterval);
-    });
+    startCountdown("countdown1", "September 8, 2025 00:00:00");
   </script>
 </body>
 </html>
