@@ -7,13 +7,16 @@
   <meta name="theme-color" content="#000000" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Starfield background */
+    /* Global Styles */
     body {
       margin: 0;
-      background: black;
-      color: white;
+      background-color: #000;
+      color: #fff;
       font-family: Arial, sans-serif;
+      line-height: 1.5;
     }
+
+    /* Starfield Canvas */
     canvas#starfield {
       position: fixed;
       top: 0;
@@ -21,16 +24,16 @@
       z-index: -1;
     }
 
-    /* Nav Bar */
+    /* Nav Bar — same styling as other pages */
     .header {
       background: #000;
       padding: 0.5rem 1rem;
+      border-bottom: 2px solid #222;
     }
     .nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: nowrap;
     }
     .brand {
       color: white;
@@ -52,21 +55,27 @@
       margin-right: 8px;
       font-weight: bold;
     }
+    .links {
+      display: flex;
+      flex-wrap: nowrap;
+    }
     .links a {
       color: white;
       text-decoration: none;
       margin-left: 1rem;
       font-size: 1rem;
+      padding: 0.3rem 0.5rem;
+      transition: background 0.2s ease;
+      border-radius: 4px;
+    }
+    .links a:hover {
+      background: rgba(255, 255, 255, 0.1);
     }
     .links a.active {
       text-decoration: underline;
     }
-    .links {
-      display: flex;
-      flex-wrap: nowrap;
-    }
 
-    /* Media posts */
+    /* Media Page Layout */
     .media-container {
       max-width: 900px;
       margin: 80px auto;
@@ -75,8 +84,8 @@
     .post {
       background: rgba(255, 255, 255, 0.08);
       border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
+      padding: 1.2rem;
+      margin-bottom: 2rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
@@ -87,14 +96,19 @@
     .post h2 {
       margin-top: 0;
       color: #ffd700;
+      font-size: 1.4rem;
+    }
+    .post p {
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
     }
     .post img, .post video {
       max-width: 100%;
       border-radius: 8px;
       margin-top: 0.5rem;
     }
-    .post p {
-      margin-bottom: 0.5rem;
+    .post video {
+      background: #000;
     }
   </style>
 </head>
@@ -103,14 +117,13 @@
   <!-- Starfield Canvas -->
   <canvas id="starfield"></canvas>
 
-  <!-- NAV -->
+  <!-- Navigation -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
         <span class="logo" aria-hidden="true">A</span>
         AHS Class of ’28
       </a>
-
       <div class="links" role="navigation">
         <a href="./">Home</a>
         <a href="fundraisers.html">Fundraisers</a>
@@ -125,22 +138,25 @@
     </nav>
   </header>
 
-  <!-- Media Content -->
+  <!-- Main Media Content -->
   <main class="media-container">
+    <!-- Post 1 -->
     <article class="post">
       <h2>📢 First Day of School Announced</h2>
-      <p>Mark your calendars! The first day of school will be <strong>August 27th</strong>. Get ready for an amazing year, Class of ’28!</p>
+      <p>Mark your calendars! The first day of school will be <strong>August 27th</strong>. We can’t wait to see all of you back in the halls, ready for an exciting year filled with learning, growth, and new opportunities.</p>
     </article>
 
+    <!-- Post 2 -->
     <article class="post">
       <h2>📸 Random Picture Post</h2>
-      <p>Here’s a snapshot from our recent class meetup!</p>
+      <p>Here’s a candid shot from our recent gathering — just one of many moments that bring us together as a class!</p>
       <img src="https://picsum.photos/800/400" alt="Random event photo">
     </article>
 
+    <!-- Post 3 -->
     <article class="post">
       <h2>🎥 Video Update</h2>
-      <p>Watch this short video recap from our last fundraiser event.</p>
+      <p>Relive the excitement from our latest fundraiser event with this short recap video. Thank you to everyone who participated and supported!</p>
       <video controls>
         <source src="sample-video.mp4" type="video/mp4">
         Your browser does not support the video tag.
@@ -148,13 +164,13 @@
     </article>
   </main>
 
-  <!-- Starfield Script -->
+  <!-- Starfield Animation Script -->
   <script>
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
 
-    function resize() {
+    function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       stars = [];
@@ -171,22 +187,24 @@
     function drawStars() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'white';
-      for (let s of stars) {
+      stars.forEach(star => {
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
-        s.y += s.speed;
-        if (s.y > canvas.height) {
-          s.y = 0;
-          s.x = Math.random() * canvas.width;
+        star.y += star.speed;
+        if (star.y > canvas.height) {
+          star.y = 0;
+          star.x = Math.random() * canvas.width;
         }
-      }
+      });
       requestAnimationFrame(drawStars);
     }
 
-    window.addEventListener('resize', resize);
-    resize();
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
     drawStars();
   </script>
+
 </body>
 </html>
+
