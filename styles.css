@@ -6,7 +6,62 @@
    - Mobile-first, responsive, accessible
    - prefers-reduced-motion respected
    ========================================================================== */
+/* ===== AHS THEME TOKENS ===== */
+:root {
+  /* dark (default) */
+  --bg: #0a0d14;
+  --bg-2: #0c111a;
+  --text: #f5f7fb;
+  --muted: #a9b3c6;
+  --card: rgba(255,255,255,0.06);
+  --card-border: rgba(255,255,255,0.10);
+  --shadow: 0 10px 30px rgba(0,0,0,.45);
 
+  --accent: #2b7bff;           /* links / buttons */
+  --accent-strong: #0962ff;
+
+  /* status / chips */
+  --badge-live: #ff355b;       /* bright red-pink */
+  --badge-upcoming: #1ec28b;   /* teal-green */
+  --badge-past: #8892a6;       /* gray */
+
+  /* utility */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+
+  /* hero heading gradient */
+  --hero-grad-start: #8ec5ff;
+  --hero-grad-end:   #2b7bff;
+
+  /* progress bar */
+  --progress-track: rgba(255,255,255,0.12);
+  --progress-fill:  linear-gradient(90deg,#60a5ff,#2b7bff);
+}
+
+/* Light theme overrides set by <html data-theme="light"> */
+html[data-theme="light"] {
+  --bg: #f6f9ff;
+  --bg-2: #ffffff;
+  --text: #0e1420;
+  --muted: #5b6a83;
+  --card: rgba(255,255,255,0.85);
+  --card-border: rgba(16,24,40,0.10);
+  --shadow: 0 12px 30px rgba(16,24,40,.10);
+
+  --accent: #1864ff;
+  --accent-strong: #1254d6;
+
+  --badge-live: #e11d48;        /* stay clearly red in light */
+  --badge-upcoming: #059669;
+  --badge-past: #6b7280;
+
+  --hero-grad-start: #2b7bff;   /* stronger so it doesn’t fade on white */
+  --hero-grad-end:   #0b49e6;
+
+  --progress-track: rgba(16,24,40,0.10);
+  --progress-fill:  linear-gradient(90deg,#2b7bff,#0b49e6);
+}
 /* -------------------------- CSS Reset / Base ----------------------------- */
 <link rel="stylesheet" href="styles.css">
 *, *::before, *::after { box-sizing: border-box; }
