@@ -705,3 +705,104 @@ document.addEventListener("keydown", (e)=>{
     document.documentElement.setAttribute("data-theme","dark");
   }
 })();
+/* =======================================================================
+   AHS — MOUSE PARTICLES (add-on; leaves your existing code untouched)
+   - Soft, low-contrast particles that trail the pointer
+   - Disabled if prefers-reduced-motion is on
+   - Lives on its own <canvas> (pointer-events: none)
+   ======================================================================= */
+(function AHS_mouseParticles(){
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  Object.assign(canvas.style, {
+    position: "fixed",
+    inset: "0",
+    zIndex: "0",               // starfield uses -1; this sits above it but under content
+    pointerEvents: "none",
+    mixBlendMode: "screen",    // gentle glow on dark; subtle on light
+  });
+  document.body.appendChild(canvas);
+
+  let W = 0, H = 0;
+  let particles = [];
+  const MAX = 80;             // total particles
+  const TRAIL = 6;            // how many spawn per move burst
+
+  function resize(){
+    W = canvas.width = innerWidth;
+    H = canvas.height = innerHeight;
+  }
+  resize(); addEventListener("resize", resize);
+
+  // Particle factory
+  function make(x, y){
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 0.7 + 0.2;
+    return {
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 0.2,
+      r: Math.random()*1.8 + 0.8,
+      life: 1,                 // 1 -> 0 fades out
+      hue: 210 + Math.random()*25  // blue-ish
+    };
+  }
+
+  let mouseX = W/2, mouseY = H/2;
+  let burstCooldown = 0;
+
+  function spawnBurst(x, y){
+    for (let i=0;i<TRAIL;i++){
+      if (particles.length >= MAX) particles.shift();
+      particles.push(make(x, y));
+    }
+  }
+
+  addEventListener("pointermove", e=>{
+    mouseX = e.clientX; mouseY = e.clientY;
+    burstCooldown++;
+    if (burstCooldown % 2 === 0) spawnBurst(mouseX, mouseY);
+  }, { passive:true });
+
+  // gentle idle drift so it never feels “dead”
+  setInterval(()=> spawnBurst(mouseX, mouseY), 450);
+
+  // Theme-aware color (light/dark)
+  function particleColor(hue, alpha){
+    // slightly brighter on light theme
+    const light = document.documentElement.getAttribute("data-theme") === "light";
+    const a = light ? alpha*0.9 : alpha*0.7;
+    return `hsla(${hue}, 85%, ${light? 40: 72}%, ${a})`;
+  }
+
+  (function tick(){
+    ctx.clearRect(0,0,W,H);
+
+    // draw + update
+    for (let i=particles.length-1; i>=0; i--){
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.012;            // gravity
+      p.life -= 0.016;          // fade speed
+
+      if (p.life <= 0 || p.x< -10 || p.x> W+10 || p.y> H+10){
+        particles.splice(i,1);
+        continue;
+      }
+
+      const a = Math.max(0, p.life);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = particleColor(p.hue, a);
+      ctx.shadowBlur = 12 * a;
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    requestAnimationFrame(tick);
+  })();
+})();
