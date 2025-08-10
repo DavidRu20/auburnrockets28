@@ -7,124 +7,61 @@
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Starfield background */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       color: white;
       overflow-x: hidden;
-      background: radial-gradient(ellipse at bottom, rgba(0, 10, 30, 1) 0%, rgba(0, 0, 0, 1) 100%);
+      background: black;
     }
-
-    canvas#starfield {
+    canvas {
       position: fixed;
       top: 0;
       left: 0;
       z-index: -1;
     }
-
-    /* Fundraiser content */
-    main.section {
-      padding: 40px 0;
+    .section {
+      padding: 60px 20px;
       text-align: center;
     }
-
-    .section-title {
-      font-size: 3em;
-      margin-bottom: 0.3em;
-    }
-
-    .section-sub {
-      font-size: 1.2em;
-      opacity: 0.8;
-      margin-bottom: 40px;
-    }
-
-    .fundraiser-box {
-      width: 350px;
-      margin: 0 auto;
-      padding: 25px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      backdrop-filter: blur(8px);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-    }
-
-    .fundraiser-box:hover {
-      transform: rotate(-2deg) scale(1.03);
-      box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
-    }
-
     .fundraiser-title {
-      font-size: 1.8em;
+      font-size: 3rem;
       margin-bottom: 10px;
-      color: #FFD700;
     }
-
+    .fundraiser-sub {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0.85;
+    }
+    .fundraiser-box {
+      background: rgba(255, 215, 0, 0.08);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 400px;
+      margin: 0 auto;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    }
+    .fundraiser-box:hover {
+      transform: rotate3d(1, 1, 0, 6deg) scale(1.05);
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+    }
     .countdown {
-      font-size: 1.4em;
-      margin: 10px 0 20px 0;
+      font-size: 1.5rem;
+      margin-top: 10px;
+      font-weight: bold;
     }
-
-    .promo-code {
-      margin-top: 15px;
-      font-size: 1.2em;
-      background: rgba(255,255,255,0.1);
+    .promo {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.1);
       padding: 10px;
       border-radius: 10px;
-      display: inline-block;
-    }
-
-    /* Nav styles from earlier version */
-    .header {
-      background: #000;
-      padding: 10px 0;
-      border-bottom: 2px solid #0d6efd;
-    }
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1100px;
-      margin: auto;
-      padding: 0 15px;
-    }
-    .nav .brand {
-      font-size: 1.5em;
-      text-decoration: none;
-      color: white;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-    }
-    .nav .brand .logo {
-      background: #0d6efd;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 8px;
-      color: white;
-    }
-    .nav .links a {
-      margin-left: 15px;
-      text-decoration: none;
-      color: white;
-      transition: color 0.2s;
-    }
-    .nav .links a:hover {
-      color: #0d6efd;
-    }
-    .nav .links a.active {
-      border-bottom: 2px solid #0d6efd;
+      min-height: 30px;
     }
   </style>
 </head>
 <body>
-
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -142,88 +79,107 @@
         <a href="./merch.html">Shop</a>
         <a href="./admin.html">Admin</a>
       </div>
+      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu">☰</button>
     </nav>
+
+    <div id="mobileMenu" class="mobile-menu hidden">
+      <a href="./">Home</a>
+      <a class="active" href="./fundraisers.html">Fundraisers</a>
+      <a href="./calendar.html">Calendar</a>
+      <a href="./media.html">Media</a>
+      <a href="./achievements.html">Achievements</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a href="./merch.html">Shop</a>
+      <a href="./admin.html">Admin</a>
+      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
+    </div>
   </header>
 
-  <canvas id="starfield"></canvas>
-
   <main class="section">
-    <h1 class="section-title">Fundraiser</h1>
-    <p class="section-sub">Help support the Class of 2028 by joining our current fundraiser!</p>
-
+    <h1 class="fundraiser-title">FUNDRAISER</h1>
+    <p class="fundraiser-sub">Support our class by participating in our latest fundraiser!</p>
     <div class="fundraiser-box">
-      <div class="fundraiser-title">Crumbl Cookie Fundraiser</div>
+      <h2>Crumbl Cookie Fundraiser</h2>
+      <p>Help support the Class of 2028 by purchasing delicious Crumbl Cookies!</p>
       <div class="countdown" id="countdown"></div>
-      <div class="promo-code">Promo Code</div>
+      <div class="promo"></div>
     </div>
   </main>
 
-  <footer class="footer" style="text-align:center; padding:20px; opacity:0.7;">
-    Auburn High School • Class of 2028 • Fundraisers
-  </footer>
+  <canvas id="starfield"></canvas>
 
   <script>
-    // Starfield
-    const canvas = document.getElementById("starfield");
-    const ctx = canvas.getContext("2d");
+    // Starfield setup
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
     let stars = [];
+    const numStars = 150;
+
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      createStars();
     }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
 
-    function initStars() {
+    function createStars() {
       stars = [];
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < numStars; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 1.5,
-          speed: Math.random() * 0.5 + 0.2
+          radius: Math.random() * 1.2,
+          alpha: Math.random()
         });
       }
     }
 
     function drawStars() {
-      ctx.fillStyle = "rgba(0, 20, 40, 1)";
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, '#000005'); 
+      gradient.addColorStop(0.5, '#020820'); 
+      gradient.addColorStop(1, '#000005'); 
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      stars.forEach(s => {
+
+      stars.forEach(star => {
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(100,150,255,0.8)";
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(180, 200, 255, ${star.alpha})`;
         ctx.fill();
       });
     }
 
-    function updateStars() {
-      stars.forEach(s => {
-        s.y += s.speed;
-        if (s.y > canvas.height) {
-          s.y = 0;
-          s.x = Math.random() * canvas.width;
+    function animateStars() {
+      stars.forEach(star => {
+        star.y += 0.1;
+        if (star.y > canvas.height) {
+          star.y = 0;
+          star.x = Math.random() * canvas.width;
         }
       });
     }
 
-    function animateStars() {
+    function render() {
       drawStars();
-      updateStars();
-      requestAnimationFrame(animateStars);
+      animateStars();
+      requestAnimationFrame(render);
     }
 
-    initStars();
-    animateStars();
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    render();
 
     // Countdown
+    const countdownEl = document.getElementById('countdown');
+    const targetDate = new Date('September 8, 2025 00:00:00').getTime();
+
     function updateCountdown() {
-      const targetDate = new Date("September 8, 2025 00:00:00").getTime();
       const now = new Date().getTime();
       const distance = targetDate - now;
 
-      if (distance <= 0) {
-        document.getElementById("countdown").innerText = "Fundraiser has ended!";
+      if (distance < 0) {
+        countdownEl.textContent = "Fundraiser Ended";
         return;
       }
 
@@ -232,13 +188,11 @@
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      document.getElementById("countdown").innerText =
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
     setInterval(updateCountdown, 1000);
     updateCountdown();
   </script>
-
 </body>
 </html>
