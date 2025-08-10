@@ -9,12 +9,13 @@
     /* ===== RESET & BASE ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial, sans-serif;
-      background: radial-gradient(ellipse at bottom, #0b0e1a 0%, #000 100%);
-      color: white;
-      overflow-x: hidden;
-      line-height: 1.4;
-    }
+  font-family: Arial, sans-serif;
+  /* hand control to global theme vars */
+  color: var(--text);
+  background: transparent;
+  overflow-x: hidden;
+  line-height: 1.4;
+}
     a { color: inherit; text-decoration: none; }
     h1, h2, h3 { font-weight: 600; }
 
@@ -206,8 +207,8 @@
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    <link rel="stylesheet" href="styles.css">
   </style>
+  <link rel="stylesheet" href="styles.css?v=18">
 </head>
 <body>
   <!-- ===== STARFIELD ===== -->
@@ -228,7 +229,7 @@
         <a href="./about.html">About</a>
         <a href="./contact.html">Contact</a>
         <a href="./merch.html">Shop</a>
-         <a class="active" href="./community.html">Community</a>
+         <a href="./community.html">Community</a>
       </div>
       <button id="menuBtn" class="menu-btn" aria-expanded="false">☰</button>
     </nav>
@@ -241,7 +242,7 @@
       <a href="./about.html">About</a>
       <a href="./contact.html">Contact</a>
       <a href="./merch.html">Shop</a>
-       <a class="active" href="./community.html">Community</a>
+       <a href="./community.html">Community</a>
       <div class="small" style="padding-top:8px;opacity:.8;">Tap outside to close</div>
     </div>
   </header>
@@ -268,40 +269,72 @@
   </main>
 
   <script>
-    /* ===== MOBILE MENU ===== */
-    const menuBtn = document.getElementById("menuBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
+   <script>
+  /* ===== MOBILE MENU ===== */
+  const menuBtn = document.getElementById("menuBtn");
+  const mobileMenu = document.getElementById("mobileMenu");
+  if (menuBtn && mobileMenu) {
     menuBtn.addEventListener("click", () => {
       const isHidden = mobileMenu.classList.toggle("hidden");
-      menuBtn.setAttribute("aria-expanded", !isHidden);
+      menuBtn.setAttribute("aria-expanded", String(!isHidden));
+    });
+    document.addEventListener("click", (e) => {
+      if (!mobileMenu.classList.contains("hidden") &&
+          !mobileMenu.contains(e.target) &&
+          e.target !== menuBtn) {
+        menuBtn.setAttribute("aria-expanded", "false");
+        mobileMenu.classList.add("hidden");
+      }
+    });
+  }
+
+  /* ===== STARFIELD (theme-aware) ===== */
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d', { alpha: false }); // paints full bg
+  let stars = [];
+
+  function resizeCanvas() {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    stars = Array.from({length: 200}, () => ({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      size: Math.random()*2,
+      speed: Math.random()*0.3
+    }));
+  }
+  addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function drawStars() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+
+    // background wash
+    const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    if (isLight) {
+      g.addColorStop(0,   '#eaf2ff');
+      g.addColorStop(0.5, '#f7fbff');
+      g.addColorStop(1,   '#ffffff');
+    } else {
+      g.addColorStop(0,   '#0b0e1a');
+      g.addColorStop(1,   '#000000');
+    }
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // stars
+    ctx.fillStyle = isLight ? 'rgba(60,90,140,0.8)' : 'rgba(180,200,255,0.8)';
+    stars.forEach(s => {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+      ctx.fill();
+      s.y += s.speed;
+      if (s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
     });
 
-    /* ===== STARFIELD ===== */
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    for (let i = 0; i < 200; i++) {
-      stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*2, speed: Math.random()*0.3 });
-    }
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(100,150,255,0.8)";
-      stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI*2);
-        ctx.fill();
-        star.y += star.speed;
-        if (star.y > canvas.height) { star.y = 0; star.x = Math.random() * canvas.width; }
-      });
-      requestAnimationFrame(drawStars);
-    }
-    drawStars();
+    requestAnimationFrame(drawStars);
+  }
+  drawStars();
 
     /* ===== EVENTS ===== */
     const events = {
