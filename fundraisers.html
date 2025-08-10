@@ -90,28 +90,32 @@
       font-weight: bold;
     }
 
-    /* Money goal bar styles */
+    /* Goal Bar Styles */
     .goal-container {
-      max-width: 800px;
-      margin: 40px auto 0;
-      padding: 20px;
+      margin-top: 50px;
       text-align: center;
     }
-    .goal-text {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-    }
     .goal-bar {
-      background: rgba(255,255,255,0.2);
+      position: relative;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 20px;
       overflow: hidden;
-      height: 25px;
+      margin: 10px auto;
+      width: 80%;
+      border: 2px solid rgba(255,255,255,0.3);
     }
-    .goal-fill {
-      background: linear-gradient(90deg, #ffd700, #ff8c00);
-      height: 100%;
-      width: 0%;
-      transition: width 0.5s ease;
+    .rocket {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: left 0.5s ease;
+      font-size: 1.5rem;
+    }
+    .goal-text {
+      margin-top: 8px;
+      font-size: 1rem;
+      color: #ffd700;
     }
   </style>
 </head>
@@ -131,7 +135,7 @@
         <a href="./about.html">About</a>
         <a href="./contact.html">Contact</a>
         <a href="./merch.html">Shop</a>
-       <a class="active" href="./community.html">Community</a>
+        <a class="active" href="./community.html">Community</a>
       </div>
     </nav>
   </header>
@@ -165,14 +169,13 @@
       </div>
     </div>
 
-    <!-- Money Goal Bar -->
+    <!-- Goal Progress Bar -->
     <div class="goal-container">
-      <div class="goal-text">Raised: $<span id="currentAmount">0</span> / $<span id="goalAmount">10000</span></div>
       <div class="goal-bar">
-        <div class="goal-fill" id="goalFill"></div>
+        <div class="rocket" id="rocket">🚀</div>
       </div>
+      <div class="goal-text" id="goalText">$0 / $10,000</div>
     </div>
-
   </main>
 
   <canvas id="starfield"></canvas>
@@ -251,21 +254,18 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    // Money Goal Bar Logic
-    const currentAmountEl = document.getElementById('currentAmount');
-    const goalAmountEl = document.getElementById('goalAmount');
-    const goalFillEl = document.getElementById('goalFill');
-
-    let currentAmount = 0;  // change this to update the raised amount
-    let goalAmount = 10000; // change this to set the goal
+    // Goal Bar with Rocket
+    let currentAmount = 0; // Change this to update progress
+    let goalAmount = 10000; // Change goal here
 
     function updateGoalBar() {
-      currentAmountEl.textContent = currentAmount.toLocaleString();
-      goalAmountEl.textContent = goalAmount.toLocaleString();
-      let percentage = (currentAmount / goalAmount) * 100;
-      if (percentage > 100) percentage = 100;
-      goalFillEl.style.width = percentage + '%';
+      const rocket = document.getElementById('rocket');
+      const goalText = document.getElementById('goalText');
+      const percentage = Math.min(currentAmount / goalAmount, 1) * 100;
+      rocket.style.left = `calc(${percentage}% - 10px)`;
+      goalText.textContent = `$${currentAmount.toLocaleString()} / $${goalAmount.toLocaleString()}`;
     }
+
     updateGoalBar();
   </script>
 </body>
