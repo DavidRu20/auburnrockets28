@@ -1,64 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AHS Achievements</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      background: black;
-      color: white;
-      overflow-x: hidden;
-    }
-    main.achievements-container {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      max-width: 1000px;
-      margin: auto;
-      padding: 2rem;
-    }
-    .achievement-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 0 20px rgba(0, 200, 255, 0.2);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .achievement-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 0 25px rgba(0, 200, 255, 0.4);
-    }
-    .achievement-title {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: var(--blue-1);
-    }
-    .achievement-desc {
-      font-size: 1rem;
-      opacity: 0.9;
-    }
-    .student-of-month {
-      border: 2px solid var(--blue-2);
-      box-shadow: 0 0 25px rgba(0, 170, 255, 0.5);
-    }
-    .starfield {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: transparent;
-      pointer-events: none;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AHS Class of ’28</title>
+  <meta name="theme-color" content="#0d6efd" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Exact same nav from index.html -->
- <header class="header" role="banner">
+
+  <!-- ============================ HEADER / NAV ============================ -->
+  <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
         <span class="logo" aria-hidden="true">A</span>
