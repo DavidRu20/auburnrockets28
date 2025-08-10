@@ -33,34 +33,59 @@
       margin-bottom: 40px;
       opacity: 0.85;
     }
+    .fundraiser-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      justify-items: center;
+    }
     .fundraiser-box {
       background: rgba(255, 255, 255, 0.07);
       backdrop-filter: blur(8px);
-      border: 2px solid rgba(255, 215, 0, 0.3);
       border-radius: 20px;
       padding: 30px;
-      max-width: 420px;
-      margin: 0 auto;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
-      perspective: 1000px;
+      width: 100%;
+      max-width: 350px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+      text-align: center;
     }
-    .fundraiser-box:hover {
+    /* Crumbl Cookie */
+    .crumbl:hover {
       transform: rotate3d(1, 1, 0, 8deg) scale(1.05);
-      box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+      box-shadow: 0 0 40px rgba(255, 215, 0, 0.7);
+      background: rgba(255, 215, 0, 0.15);
+    }
+    /* Panera Bread */
+    .panera:hover {
+      transform: scale(1.08) rotate(-3deg);
+      box-shadow: 0 0 40px rgba(0, 255, 150, 0.7);
+      background: rgba(0, 255, 150, 0.15);
+    }
+    /* Raking Leaves */
+    .leaves:hover {
+      transform: translateY(-10px) rotate(2deg);
+      box-shadow: 0 0 40px rgba(255, 140, 0, 0.7);
+      background: rgba(255, 140, 0, 0.15);
+    }
+    /* Mystery */
+    .mystery:hover {
+      transform: rotateY(180deg);
+      box-shadow: 0 0 40px rgba(150, 0, 255, 0.7);
+      background: rgba(150, 0, 255, 0.15);
     }
     .countdown {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       margin-top: 10px;
       font-weight: bold;
     }
     .promo {
       margin-top: 20px;
       font-size: 1.1rem;
-      background: rgba(255, 215, 0, 0.15);
+      background: rgba(255, 255, 255, 0.15);
       padding: 12px;
       border-radius: 10px;
-      border: 1px solid rgba(255, 215, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.4);
       color: #ffd700;
       font-weight: bold;
     }
@@ -84,40 +109,43 @@
         <a href="./merch.html">Shop</a>
         <a href="./admin.html">Admin</a>
       </div>
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
-
-    <!-- Mobile menu -->
-    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-      <a class="active" href="./">Home</a>
-      <a href="./fundraisers.html">Fundraisers</a>
-      <a href="./calendar.html">Calendar</a>
-      <a href="./media.html">Media</a>
-      <a href="./achievements.html">Achievements</a>
-      <a href="./about.html">About</a>
-      <a href="./contact.html">Contact</a>
-      <a href="./merch.html">Shop</a>
-      <a href="./admin.html">Admin</a>
-      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
-    </div>
   </header>
-
 
   <main class="section">
     <h1 class="fundraiser-title">FUNDRAISER</h1>
-    <p class="fundraiser-sub">Support our class by participating in our latest fundraiser!</p>
-    <div class="fundraiser-box">
-      <h2>🍪Crumbl Cookie Fundraiser</h2>
-      <p>Help support the Class of 2028 by purchasing delicious Crumbl Cookies!</p>
-      <div class="countdown" id="countdown"></div>
-      <div class="promo">Promo Code: _____</div>
+    <p class="fundraiser-sub">Support our class by participating in our latest fundraisers!</p>
+
+    <div class="fundraiser-grid">
+      <div class="fundraiser-box crumbl">
+        <h2>🍪 Crumbl Cookie</h2>
+        <p>Help support the Class of 2028 by purchasing delicious Crumbl Cookies!</p>
+        <div class="countdown" id="countdown1"></div>
+        <div class="promo">Promo Code: _____</div>
+      </div>
+      <div class="fundraiser-box panera">
+        <h2>🥖 Panera Bread</h2>
+        <p>Enjoy fresh food while helping our fundraiser!</p>
+        <div class="countdown">?</div>
+        <div class="promo">Promo Code: _____</div>
+      </div>
+      <div class="fundraiser-box leaves">
+        <h2>🍂 Raking Leaves</h2>
+        <p>Sign up to help with raking leaves and raise funds.</p>
+        <div class="countdown">?</div>
+      </div>
+      <div class="fundraiser-box mystery">
+        <h2>❓ Mystery Fundraiser</h2>
+        <p>Details coming soon...</p>
+        <div class="countdown">?</div>
+      </div>
     </div>
   </main>
 
   <canvas id="starfield"></canvas>
 
   <script>
-    // Starfield setup
+    // Starfield
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
@@ -128,7 +156,6 @@
       canvas.height = window.innerHeight;
       createStars();
     }
-
     function createStars() {
       stars = [];
       for (let i = 0; i < numStars; i++) {
@@ -140,15 +167,13 @@
         });
       }
     }
-
     function drawStars() {
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
       gradient.addColorStop(0, '#000005'); 
-      gradient.addColorStop(0.5, '#020820'); 
+      gradient.addColorStop(0.5, '#010618'); 
       gradient.addColorStop(1, '#000005'); 
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       stars.forEach(star => {
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
@@ -156,7 +181,6 @@
         ctx.fill();
       });
     }
-
     function animateStars() {
       stars.forEach(star => {
         star.y += 0.1;
@@ -166,38 +190,31 @@
         }
       });
     }
-
     function render() {
       drawStars();
       animateStars();
       requestAnimationFrame(render);
     }
-
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
     render();
 
-    // Countdown
-    const countdownEl = document.getElementById('countdown');
+    // Countdown for Crumbl
+    const countdownEl = document.getElementById('countdown1');
     const targetDate = new Date('September 8, 2025 00:00:00').getTime();
-
     function updateCountdown() {
       const now = new Date().getTime();
       const distance = targetDate - now;
-
       if (distance < 0) {
-        countdownEl.textContent = "Fundraiser Ended";
+        countdownEl.textContent = "Ended";
         return;
       }
-
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
       countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
-
     setInterval(updateCountdown, 1000);
     updateCountdown();
   </script>
