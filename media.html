@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#000000" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Starfield background (copied from original) */
+    /* Starfield background */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -40,10 +40,19 @@
     .post h2 {
       margin-top: 0;
     }
-    .post img, .post video {
+    /* Improved image & video styling */
+    .post img, 
+    .post video {
       width: 100%;
-      border-radius: 8px;
+      border-radius: 12px;
       margin-top: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .post img:hover, 
+    .post video:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.8);
     }
     .date {
       font-size: 0.9em;
@@ -56,7 +65,7 @@
   <!-- Starfield Canvas -->
   <canvas id="starfield"></canvas>
 
-  <!-- Nav Bar (exact copy from your original) -->
+  <!-- Nav Bar -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -87,7 +96,7 @@
       <a href="./about.html">About</a>
       <a href="./contact.html">Contact</a>
       <a href="./merch.html">Shop</a>
-       <a class="active" href="./community.html">Community</a>
+      <a class="active" href="./community.html">Community</a>
       <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
     </div>
   </header>
@@ -117,11 +126,12 @@
   </main>
 
   <script>
-    // Starfield JS (exact same logic from original)
+    // Starfield matching fundraiser page style
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
-    let numStars = 150;
+    const numStars = 200; // more stars
+    const speed = 2.5; // faster for more depth
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -132,23 +142,23 @@
 
     for (let i = 0; i < numStars; i++) {
       stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        z: Math.random() * canvas.width
+        x: Math.random() * canvas.width - canvas.width / 2,
+        y: Math.random() * canvas.height - canvas.height / 2,
+        z: Math.random() * canvas.width,
       });
     }
 
     function drawStars() {
-      ctx.fillStyle = 'black';
+      ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = 'white';
+      ctx.fillStyle = "white";
       for (let i = 0; i < numStars; i++) {
         let star = stars[i];
-        star.z -= 2;
+        star.z -= speed;
         if (star.z <= 0) {
-          star.x = Math.random() * canvas.width;
-          star.y = Math.random() * canvas.height;
+          star.x = Math.random() * canvas.width - canvas.width / 2;
+          star.y = Math.random() * canvas.height - canvas.height / 2;
           star.z = canvas.width;
         }
         let k = 128.0 / star.z;
@@ -156,7 +166,7 @@
         let py = star.y * k + canvas.height / 2;
 
         if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
-          let size = (1 - star.z / canvas.width) * 2;
+          let size = (1 - star.z / canvas.width) * 3; // slightly bigger
           ctx.beginPath();
           ctx.arc(px, py, size, 0, Math.PI * 2);
           ctx.fill();
