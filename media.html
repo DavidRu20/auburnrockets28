@@ -3,72 +3,121 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AHS Class of ’28 – Media</title>
+  <title>Media - AHS Class of ’28</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Starfield background */
+    /* Nav bar styles from your original code */
+    .header {
+      background: #000;
+      color: white;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+    }
+    .brand {
+      font-size: 1.2rem;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    .brand .logo {
+      font-weight: bold;
+      font-size: 1.4rem;
+      margin-right: 8px;
+    }
+    .links {
+      display: flex;
+      gap: 1rem;
+    }
+    .links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .links a.active {
+      text-decoration: underline;
+    }
+    .menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: #000;
+      padding: 1rem;
+    }
+    .mobile-menu a {
+      color: white;
+      padding: 0.5rem 0;
+      text-decoration: none;
+    }
+    .hidden {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .links {
+        display: none;
+      }
+      .menu-btn {
+        display: block;
+      }
+      .mobile-menu {
+        display: flex;
+      }
+    }
+
+    /* Media page styles */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: black;
       color: white;
-      overflow-x: hidden;
     }
-    canvas#starfield {
+    .starfield {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
+      background: black;
       z-index: -1;
     }
-    /* Nav bar overrides for black theme */
-    .header {
-      background-color: #000;
-      color: #fff;
-    }
-    .nav .links a {
-      color: white;
-      text-decoration: none;
-      padding: 8px 14px;
-    }
-    .nav .links a:hover {
-      background: rgba(255,255,255,0.1);
-      border-radius: 6px;
-    }
-    /* Media posts */
     .media-container {
       max-width: 900px;
-      margin: 120px auto 40px auto;
-      padding: 0 16px;
+      margin: 2rem auto;
+      padding: 0 1rem;
     }
     .post {
       background: rgba(255,255,255,0.05);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s ease;
     }
     .post:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.7);
-    }
-    .post h2 {
-      margin-top: 0;
+      transform: scale(1.02);
     }
     .post img, .post video {
       width: 100%;
       border-radius: 10px;
-      margin-top: 10px;
+      margin-top: 0.5rem;
     }
-    .date {
-      font-size: 0.9rem;
+    .post-date {
       opacity: 0.8;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- ============================ HEADER / NAV ============================ -->
+  <!-- HEADER / NAV -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -106,96 +155,84 @@
     </div>
   </header>
 
-  <!-- ============================ STARFIELD ============================ -->
-  <canvas id="starfield"></canvas>
+  <!-- STARFIELD BACKGROUND -->
+  <canvas class="starfield" id="starfield"></canvas>
 
-  <!-- ============================ MEDIA CONTENT ============================ -->
+  <!-- MEDIA CONTENT -->
   <main class="media-container">
     <div class="post">
       <h2>School Starts August 27th!</h2>
-      <p class="date">Posted August 1, 2025</p>
-      <p>We’re excited to welcome everyone back! Get ready for another amazing year at AHS.</p>
+      <p class="post-date">Posted on August 1, 2025</p>
+      <p>We’re excited to welcome everyone back for the new school year starting August 27th! Make sure to mark your calendars.</p>
     </div>
 
     <div class="post">
-      <h2>Random Picture</h2>
-      <p class="date">Posted August 2, 2025</p>
-      <img src="https://picsum.photos/800/400" alt="Random scenery">
-      <p>Just sharing something cool for today.</p>
+      <h2>Random Fun Picture</h2>
+      <p class="post-date">Posted on August 3, 2025</p>
+      <img src="https://picsum.photos/800/400" alt="Random picture" />
     </div>
 
     <div class="post">
-      <h2>Welcome Video</h2>
-      <p class="date">Posted August 3, 2025</p>
+      <h2>Welcome Back Video</h2>
+      <p class="post-date">Posted on August 5, 2025</p>
       <video controls>
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+        <source src="sample-video.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
-      <p>Check out this quick welcome back video!</p>
     </div>
   </main>
 
   <script>
+    // Mobile nav toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
     // Starfield animation
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
+    let w, h;
 
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    function initStars(count) {
+    function init() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
       stars = [];
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < 150; i++) {
         stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          z: Math.random() * canvas.width
+          x: Math.random() * w,
+          y: Math.random() * h,
+          z: Math.random() * w
         });
       }
     }
 
-    function moveStars() {
-      for (let i = 0; i < stars.length; i++) {
-        stars[i].z -= 0.5;
-        if (stars[i].z <= 0) {
-          stars[i].x = Math.random() * canvas.width;
-          stars[i].y = Math.random() * canvas.height;
-          stars[i].z = canvas.width;
-        }
-      }
-    }
-
-    function drawStars() {
-      ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-      for (let i = 0; i < stars.length; i++) {
-        let k = 128.0 / stars[i].z;
-        let x = stars[i].x * k + canvas.width / 2;
-        let y = stars[i].y * k + canvas.height / 2;
-        if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
-          let size = (1 - stars[i].z / canvas.width) * 3;
+    function animate() {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "white";
+      for (let star of stars) {
+        star.z -= 2;
+        if (star.z <= 0) star.z = w;
+        let k = 128.0 / star.z;
+        let px = star.x * k + w / 2;
+        let py = star.y * k + h / 2;
+        if (px >= 0 && px <= w && py >= 0 && py <= h) {
+          let size = (1 - star.z / w) * 2;
           ctx.beginPath();
-          ctx.arc(x, y, size, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(173, 216, 230, 0.8)';
+          ctx.arc(px, py, size, 0, Math.PI * 2);
           ctx.fill();
         }
       }
-    }
-
-    function animate() {
-      moveStars();
-      drawStars();
       requestAnimationFrame(animate);
     }
 
-    initStars(400);
+    window.addEventListener('resize', init);
+    init();
     animate();
   </script>
+
 </body>
 </html>
