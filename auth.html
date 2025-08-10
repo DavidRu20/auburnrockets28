@@ -12,21 +12,6 @@
     .btn:hover { background: #0b5ed7; }
   </style>
 
-  <script>
-  fetch('/auth/check')
-    .then(res => res.json())
-    .then(data => {
-      if (data.loggedIn) {
-        document.querySelector('.links').insertAdjacentHTML('beforeend', 
-          `<span style="margin-left: 1rem;">Welcome, ${data.user.name}</span> 
-           <form action="/auth/logout" method="POST" style="display:inline;">
-             <button style="background:none; border:none; color:#f00; cursor:pointer;">Log Out</button>
-           </form>`
-        );
-      }
-    });
-  </script>
-
 </head>
 <body>
 
@@ -50,6 +35,21 @@
       </div>
       <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
+
+    <script>
+    fetch('/auth/check')
+      .then(res => res.json())
+      .then(data => {
+        if (data.loggedIn) {
+          document.querySelector('.links').insertAdjacentHTML('beforeend', 
+            `<span style="margin-left: 1rem;">Welcome, ${data.user.name}</span> 
+             <form action="/auth/logout" method="POST" style="display:inline;">
+               <button style="background:none; border:none; color:#f00; cursor:pointer;">Log Out</button>
+             </form>`
+          );
+        }
+      });
+    </script>
 
     <!-- Mobile menu -->
     <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
