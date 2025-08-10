@@ -1,200 +1,283 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AHS Class of ’28 — Achievements</title>
-  <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    /* Base styling */
-    body {
-      background: #000;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AHS Class of ’28 — Achievements</title>
+<meta name="theme-color" content="#0d6efd" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  body {
+    background: #000;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
 
-    /* Main layout */
-    .achievements-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 30px;
-      padding: 120px 40px;
-      position: relative;
-      z-index: 1;
-      max-width: 1400px;
-      margin: auto;
-    }
+  /* Header & Nav (kept the same as your original) */
+  .header {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    background: black;
+    z-index: 10;
+    padding: 0.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #111;
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  .brand {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    margin-right: 2rem;
+    font-size: 1.3rem;
+  }
+  .links a {
+    color: white;
+    margin-right: 1rem;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+  .links a.active {
+    color: #4dc3ff;
+  }
+  .menu-btn {
+    display: none;
+  }
 
-    /* Glass card style */
-    .achievement-card {
-      background: rgba(255, 255, 255, 0.07);
-      border-radius: 20px;
-      padding: 40px 25px;
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 0 25px rgba(0, 150, 255, 0.4);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      min-height: 220px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+  /* Starfield */
+  .starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.15;
+  }
 
-    .achievement-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 0 35px rgba(0, 150, 255, 0.8);
-    }
+  /* Achievements header box */
+  .achievements-header {
+    position: relative;
+    padding-top: 120px;
+    text-align: center;
+    background: linear-gradient(90deg, rgba(77,195,255,0.2), rgba(0,0,0,0.2));
+    padding-bottom: 40px;
+    z-index: 1;
+  }
+  .achievements-header h1 {
+    font-size: 3rem;
+    color: #4dc3ff;
+    text-shadow: 0 0 15px rgba(77,195,255,0.7);
+    animation: fadeInDown 1.5s ease forwards;
+  }
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-    .achievement-title {
-      font-size: 1.6rem;
-      color: #4dc3ff;
-      margin-bottom: 15px;
-      text-shadow: 0 0 5px rgba(77, 195, 255, 0.6);
-    }
+  /* Grid layout */
+  .achievements-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 30px;
+    padding: 40px;
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: auto;
+  }
 
-    .achievement-desc {
-      font-size: 1.05rem;
-      opacity: 0.9;
-      line-height: 1.5;
-    }
+  /* Card styling */
+  .achievement-card {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    padding: 40px 25px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 25px rgba(0, 150, 255, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .achievement-card.revealed {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.6s ease;
+  }
+  .achievement-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 0 35px rgba(0, 150, 255, 0.8);
+  }
 
-    /* Special card for Student of the Month */
-    .student-of-month {
-      box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-      border: 1px solid rgba(255, 215, 0, 0.5);
-    }
-    .student-of-month .achievement-title {
-      color: gold;
-      text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
-    }
+  /* Titles */
+  .achievement-title {
+    font-size: 1.6rem;
+    color: #4dc3ff;
+    margin-bottom: 15px;
+    text-shadow: 0 0 5px rgba(77, 195, 255, 0.6);
+  }
+  .achievement-desc {
+    font-size: 1.05rem;
+    opacity: 0.9;
+    line-height: 1.5;
+  }
 
-    /* Starfield styling */
-    .starfield {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      opacity: 0.15;
-    }
-  </style>
+  /* Student of the Month special */
+  .student-of-month {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+  }
+  .student-of-month .achievement-title {
+    color: gold;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+  }
+  .student-of-month.active {
+    animation: goldenPulse 1.5s infinite alternate;
+  }
+  @keyframes goldenPulse {
+    from { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
+    to { box-shadow: 0 0 50px rgba(255, 215, 0, 1); }
+  }
+
+  /* Confetti */
+  .confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: gold;
+    animation: fall 3s linear forwards;
+    opacity: 0.8;
+  }
+  @keyframes fall {
+    to { transform: translateY(400px) rotate(360deg); opacity: 0; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- Header / Nav -->
-  <header class="header" role="banner">
-    <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
-        <span class="logo" aria-hidden="true">A</span>
-        AHS Class of ’28
-      </a>
-      <div class="links" role="navigation">
-        <a href="index.html">Home</a>
-        <a href="./fundraisers.html">Fundraisers</a>
-        <a href="calendar.html">Calendar</a>
-        <a href="./media.html">Media</a>
-        <a class="active" href="./achievements.html">Achievements</a>
-        <a href="./about.html">About</a>
-        <a href="./contact.html">Contact</a>
-        <a href="./merch.html">Shop</a>
-        <a href="./community.html">Community</a>
-      </div>
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
-    </nav>
-  </header>
-
-  <!-- Starfield -->
-  <canvas class="starfield" id="starfield"></canvas>
-
-  <!-- Achievements -->
-  <main class="achievements-container">
-    <div class="achievement-card student-of-month">
-      <h2 class="achievement-title">🏆 Student of the Month</h2>
-      <p class="achievement-desc">[Student Name] — Recognized for outstanding academic excellence, leadership, and community service.</p>
+<header class="header" role="banner">
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="./">AHS Class of ’28</a>
+    <div class="links" role="navigation">
+      <a href="index.html">Home</a>
+      <a href="./fundraisers.html">Fundraisers</a>
+      <a href="calendar.html">Calendar</a>
+      <a href="./media.html">Media</a>
+      <a class="active" href="./achievements.html">Achievements</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a href="./merch.html">Shop</a>
+      <a href="./community.html">Community</a>
     </div>
+    <button id="menuBtn" class="menu-btn">☰</button>
+  </nav>
+</header>
 
-    <div class="achievement-card">
-      <h2 class="achievement-title">Achievement 1</h2>
-      <p class="achievement-desc">Details coming soon...</p>
-    </div>
+<canvas class="starfield" id="starfield"></canvas>
 
-    <div class="achievement-card">
-      <h2 class="achievement-title">Achievement 2</h2>
-      <p class="achievement-desc">Details coming soon...</p>
-    </div>
+<section class="achievements-header">
+  <h1>Achievements</h1>
+</section>
 
-    <div class="achievement-card">
-      <h2 class="achievement-title">Achievement 3</h2>
-      <p class="achievement-desc">Details coming soon...</p>
-    </div>
+<main class="achievements-container">
+  <div class="achievement-card student-of-month" id="studentCard">
+    <h2 class="achievement-title">🏆 Student of the Month</h2>
+    <p class="achievement-desc">[Student Name] — Recognized for outstanding academic excellence, leadership, and community service.</p>
+  </div>
+  <div class="achievement-card"><h2 class="achievement-title">Achievement 1</h2><p class="achievement-desc">Details coming soon...</p></div>
+  <div class="achievement-card"><h2 class="achievement-title">Achievement 2</h2><p class="achievement-desc">Details coming soon...</p></div>
+  <div class="achievement-card"><h2 class="achievement-title">Achievement 3</h2><p class="achievement-desc">Details coming soon...</p></div>
+  <div class="achievement-card"><h2 class="achievement-title">Achievement 4</h2><p class="achievement-desc">Details coming soon...</p></div>
+  <div class="achievement-card"><h2 class="achievement-title">Achievement 5</h2><p class="achievement-desc">Details coming soon...</p></div>
+</main>
 
-    <div class="achievement-card">
-      <h2 class="achievement-title">Achievement 4</h2>
-      <p class="achievement-desc">Details coming soon...</p>
-    </div>
-
-    <div class="achievement-card">
-      <h2 class="achievement-title">Achievement 5</h2>
-      <p class="achievement-desc">Details coming soon...</p>
-    </div>
-  </main>
-
-  <script>
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    const numStars = 200;
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+<script>
+  /* Starfield same as before */
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  const numStars = 200;
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  function createStars() {
+    stars = [];
+    for (let i = 0; i < numStars; i++) {
+      stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 1.4, speed: 0.2 + Math.random() * 0.5 });
     }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    function createStars() {
-      stars = [];
-      for (let i = 0; i < numStars; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 1.4,
-          speed: 0.2 + Math.random() * 0.5
-        });
+  }
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'white';
+    for (let star of stars) {
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  function updateStars() {
+    for (let star of stars) {
+      star.y -= star.speed;
+      if (star.y < 0) {
+        star.y = canvas.height;
+        star.x = Math.random() * canvas.width;
       }
     }
+  }
+  function animateStars() {
+    updateStars();
+    drawStars();
+    requestAnimationFrame(animateStars);
+  }
+  createStars();
+  animateStars();
 
-    function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-      for (let star of stars) {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
+  /* Scroll reveal */
+  const cards = document.querySelectorAll('.achievement-card');
+  const revealOnScroll = () => {
+    const trigger = window.innerHeight * 0.85;
+    cards.forEach(card => {
+      const top = card.getBoundingClientRect().top;
+      if (top < trigger) card.classList.add('revealed');
+    });
+  };
+  window.addEventListener('scroll', revealOnScroll);
+  revealOnScroll();
+
+  /* Student of the Month click celebration */
+  const studentCard = document.getElementById('studentCard');
+  studentCard.addEventListener('click', () => {
+    studentCard.classList.add('active');
+    for (let i = 0; i < 40; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = (Math.random() * 100) + '%';
+      confetti.style.backgroundColor = Math.random() > 0.5 ? 'gold' : '#ffec8b';
+      confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+      studentCard.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 3000);
     }
-
-    function updateStars() {
-      for (let star of stars) {
-        star.y -= star.speed;
-        if (star.y < 0) {
-          star.y = canvas.height;
-          star.x = Math.random() * canvas.width;
-        }
-      }
-    }
-
-    function animate() {
-      updateStars();
-      drawStars();
-      requestAnimationFrame(animate);
-    }
-
-    createStars();
-    animate();
-  </script>
+    setTimeout(() => studentCard.classList.remove('active'), 3000);
+  });
+</script>
 </body>
 </html>
