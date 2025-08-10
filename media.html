@@ -1,123 +1,109 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Media - AHS Class of ’28</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AHS Class of ’28 — Media</title>
+  <meta name="theme-color" content="#000000" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Nav bar styles from your original code */
+    /* Starfield background */
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    canvas#starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    /* Nav Bar */
     .header {
       background: #000;
-      color: white;
+      padding: 0.5rem 1rem;
     }
     .nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.75rem 1rem;
+      flex-wrap: nowrap;
     }
     .brand {
-      font-size: 1.2rem;
       color: white;
       text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: bold;
       display: flex;
       align-items: center;
     }
     .brand .logo {
-      font-weight: bold;
-      font-size: 1.4rem;
-      margin-right: 8px;
-    }
-    .links {
+      background: white;
+      color: black;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
       display: flex;
-      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      font-weight: bold;
     }
     .links a {
       color: white;
       text-decoration: none;
-      font-weight: 500;
+      margin-left: 1rem;
+      font-size: 1rem;
     }
     .links a.active {
       text-decoration: underline;
     }
-    .menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-    .mobile-menu {
-      display: none;
-      flex-direction: column;
-      background: #000;
-      padding: 1rem;
-    }
-    .mobile-menu a {
-      color: white;
-      padding: 0.5rem 0;
-      text-decoration: none;
-    }
-    .hidden {
-      display: none;
-    }
-    @media (max-width: 768px) {
-      .links {
-        display: none;
-      }
-      .menu-btn {
-        display: block;
-      }
-      .mobile-menu {
-        display: flex;
-      }
+    .links {
+      display: flex;
+      flex-wrap: nowrap;
     }
 
-    /* Media page styles */
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: black;
-      color: white;
-    }
-    .starfield {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: black;
-      z-index: -1;
-    }
+    /* Media posts */
     .media-container {
       max-width: 900px;
-      margin: 2rem auto;
+      margin: 80px auto;
       padding: 0 1rem;
     }
     .post {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       padding: 1rem;
       margin-bottom: 1.5rem;
-      transition: transform 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .post:hover {
-      transform: scale(1.02);
+      transform: translateY(-4px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    }
+    .post h2 {
+      margin-top: 0;
+      color: #ffd700;
     }
     .post img, .post video {
-      width: 100%;
-      border-radius: 10px;
+      max-width: 100%;
+      border-radius: 8px;
       margin-top: 0.5rem;
     }
-    .post-date {
-      opacity: 0.8;
-      font-size: 0.9rem;
+    .post p {
+      margin-bottom: 0.5rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER / NAV -->
+  <!-- Starfield Canvas -->
+  <canvas id="starfield"></canvas>
+
+  <!-- NAV -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -136,103 +122,71 @@
         <a href="./merch.html">Shop</a>
         <a href="./community.html">Community</a>
       </div>
-
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
-
-    <!-- Mobile menu -->
-    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-      <a href="./">Home</a>
-      <a href="./fundraisers.html">Fundraisers</a>
-      <a href="./calendar.html">Calendar</a>
-      <a class="active" href="./media.html">Media</a>
-      <a href="./achievements.html">Achievements</a>
-      <a href="./about.html">About</a>
-      <a href="./contact.html">Contact</a>
-      <a href="./merch.html">Shop</a>
-      <a href="./community.html">Community</a>
-      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
-    </div>
   </header>
 
-  <!-- STARFIELD BACKGROUND -->
-  <canvas class="starfield" id="starfield"></canvas>
-
-  <!-- MEDIA CONTENT -->
+  <!-- Media Content -->
   <main class="media-container">
-    <div class="post">
-      <h2>School Starts August 27th!</h2>
-      <p class="post-date">Posted on August 1, 2025</p>
-      <p>We’re excited to welcome everyone back for the new school year starting August 27th! Make sure to mark your calendars.</p>
-    </div>
+    <article class="post">
+      <h2>📢 First Day of School Announced</h2>
+      <p>Mark your calendars! The first day of school will be <strong>August 27th</strong>. Get ready for an amazing year, Class of ’28!</p>
+    </article>
 
-    <div class="post">
-      <h2>Random Fun Picture</h2>
-      <p class="post-date">Posted on August 3, 2025</p>
-      <img src="https://picsum.photos/800/400" alt="Random picture" />
-    </div>
+    <article class="post">
+      <h2>📸 Random Picture Post</h2>
+      <p>Here’s a snapshot from our recent class meetup!</p>
+      <img src="https://picsum.photos/800/400" alt="Random event photo">
+    </article>
 
-    <div class="post">
-      <h2>Welcome Back Video</h2>
-      <p class="post-date">Posted on August 5, 2025</p>
+    <article class="post">
+      <h2>🎥 Video Update</h2>
+      <p>Watch this short video recap from our last fundraiser event.</p>
       <video controls>
         <source src="sample-video.mp4" type="video/mp4">
         Your browser does not support the video tag.
       </video>
-    </div>
+    </article>
   </main>
 
+  <!-- Starfield Script -->
   <script>
-    // Mobile nav toggle
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-
-    // Starfield animation
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
-    let w, h;
 
-    function init() {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
       stars = [];
-      for (let i = 0; i < 150; i++) {
+      for (let i = 0; i < 200; i++) {
         stars.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          z: Math.random() * w
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2,
+          speed: Math.random() * 0.5 + 0.2
         });
       }
     }
 
-    function animate() {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "white";
-      for (let star of stars) {
-        star.z -= 2;
-        if (star.z <= 0) star.z = w;
-        let k = 128.0 / star.z;
-        let px = star.x * k + w / 2;
-        let py = star.y * k + h / 2;
-        if (px >= 0 && px <= w && py >= 0 && py <= h) {
-          let size = (1 - star.z / w) * 2;
-          ctx.beginPath();
-          ctx.arc(px, py, size, 0, Math.PI * 2);
-          ctx.fill();
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'white';
+      for (let s of stars) {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fill();
+        s.y += s.speed;
+        if (s.y > canvas.height) {
+          s.y = 0;
+          s.x = Math.random() * canvas.width;
         }
       }
-      requestAnimationFrame(animate);
+      requestAnimationFrame(drawStars);
     }
 
-    window.addEventListener('resize', init);
-    init();
-    animate();
+    window.addEventListener('resize', resize);
+    resize();
+    drawStars();
   </script>
-
 </body>
 </html>
