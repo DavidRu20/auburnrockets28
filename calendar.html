@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css" />
   <style>
     /* Starfield background */
     body {
       margin: 0;
-      background: radial-gradient(ellipse at bottom, #0d1b2a 0%, #000 100%);
+      background: black;
       color: white;
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       overflow-x: hidden;
     }
     canvas#starfield {
@@ -22,29 +21,29 @@
       z-index: -1;
     }
 
-    /* Header / nav stays same as other pages */
-    .header {
-      background: rgba(0,0,0,0.85);
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+    /* Layout */
+    .section {
+      padding: 2rem;
     }
-
-    /* Countdown box */
-    .countdown-box {
-      background: rgba(0,0,0,0.6);
-      padding: 20px;
-      border: 2px solid var(--primary, #0d6efd);
-      border-radius: 8px;
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+    h1.section-title {
       text-align: center;
-      margin-bottom: 20px;
-      max-width: 300px;
+      margin-bottom: 0.5rem;
+    }
+    p.section-sub {
+      text-align: center;
+      opacity: 0.85;
+      margin-bottom: 2rem;
     }
 
     /* Calendar */
     .calendar {
       padding: 20px;
       border: 2px solid rgba(255,255,255,0.2);
-      border-radius: 8px;
+      border-radius: 12px;
       background: rgba(0,0,0,0.5);
       max-width: 900px;
       margin: auto;
@@ -53,26 +52,31 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 12px;
+      gap: 8px;
     }
     .day-name {
       font-weight: bold;
       text-align: center;
       opacity: 0.85;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
     }
     .day {
-      padding: 16px 0;
-      text-align: center;
-      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 80px;
+      font-size: 1.1rem;
+      border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.15);
       transition: transform 0.2s ease, background 0.2s ease;
+      background: rgba(255,255,255,0.05);
     }
     .day.today {
       background: var(--primary, #0d6efd);
@@ -90,91 +94,95 @@
       background: transparent;
       border: none;
     }
+    .desc {
+      font-size: 0.65rem;
+      opacity: 0.8;
+      margin-top: 4px;
+      text-align: center;
+    }
 
-    /* Layout for main */
-    main.section {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      padding: 20px;
+    /* Countdown */
+    .countdown-box {
+      margin-top: 2rem;
+      text-align: center;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.5);
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .countdown-time {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 600px) {
+      .day {
+        height: 60px;
+        font-size: 1rem;
+      }
+      .desc {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Starfield -->
   <canvas id="starfield"></canvas>
 
-  <header class="header" role="banner">
-    <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./">
-        <span class="logo">A</span>
-        AHS Class of ’28
-      </a>
-      <div class="links">
-        <a href="./">Home</a>
-        <a href="./fundraisers.html">Fundraisers</a>
-        <a class="active" href="./calendar.html">Calendar</a>
-        <a href="./media.html">Media</a>
-        <a href="./achievements.html">Achievements</a>
-        <a href="./about.html">About</a>
-        <a href="./contact.html">Contact</a>
-        <a href="./merch.html">Shop</a>
-       <a href="./community.html">Community</a>
-      </div>
-    </nav>
-  </header>
-
   <main class="section">
-    <!-- Countdown -->
-    <div class="countdown-box">
-      <h2>Next Event</h2>
-      <p>First Day of School — Aug 27, 2025</p>
-      <div id="countdown"></div>
-    </div>
+    <div class="container">
+      <h1 class="section-title">Event Calendar</h1>
+      <p class="section-sub">School events, fundraisers, and no-school days.</p>
 
-    <!-- Calendar -->
-    <div class="calendar">
-      <div class="calendar-header">
-        <button id="prevMonth" class="btn small">‹</button>
-        <h2 id="calendarMonth">August 2025</h2>
-        <button id="nextMonth" class="btn small">›</button>
+      <div class="calendar">
+        <div class="calendar-header">
+          <button id="prevMonth" class="btn small">‹</button>
+          <h2 id="calendarMonth"></h2>
+          <button id="nextMonth" class="btn small">›</button>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid">
+          <div class="day-name">Sun</div>
+          <div class="day-name">Mon</div>
+          <div class="day-name">Tue</div>
+          <div class="day-name">Wed</div>
+          <div class="day-name">Thu</div>
+          <div class="day-name">Fri</div>
+          <div class="day-name">Sat</div>
+        </div>
       </div>
-      <div class="calendar-grid">
-        <div class="day-name">Sun</div>
-        <div class="day-name">Mon</div>
-        <div class="day-name">Tue</div>
-        <div class="day-name">Wed</div>
-        <div class="day-name">Thu</div>
-        <div class="day-name">Fri</div>
-        <div class="day-name">Sat</div>
+
+      <div class="countdown-box">
+        <div>Countdown to next event:</div>
+        <div class="countdown-time" id="countdown">Loading...</div>
       </div>
     </div>
   </main>
 
-  <footer class="footer">
-    <div class="container small">Auburn High School • Class of 2028 • Calendar</div>
-  </footer>
-
   <script>
-    // ===== Calendar Rendering =====
-    const calendarGrid = document.querySelector(".calendar-grid");
+    const calendarGrid = document.getElementById("calendarGrid");
     const monthLabel = document.getElementById("calendarMonth");
     const prevMonthBtn = document.getElementById("prevMonth");
     const nextMonthBtn = document.getElementById("nextMonth");
 
-    const holidays = [
-      { month: 7, day: 27, name: "First Day of School" }, // August = month 7
-    ];
-
     let currentDate = new Date();
+    const holidays = {
+      "2025-08-27": "First Day of School",
+      "2025-09-01": "Labor Day",
+      "2025-11-27": "Thanksgiving",
+      "2025-12-25": "Christmas Day"
+    };
 
     function renderCalendar(date) {
       const year = date.getFullYear();
       const month = date.getMonth();
       monthLabel.textContent = date.toLocaleString("default", { month: "long", year: "numeric" });
 
-      calendarGrid.querySelectorAll(".day").forEach(d => d.remove());
+      document.querySelectorAll(".day").forEach(d => d.remove());
 
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
@@ -192,17 +200,19 @@
         cell.classList.add("day");
         cell.textContent = day;
 
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        if (holidays[dateStr]) {
+          cell.classList.add("holiday");
+          const desc = document.createElement("div");
+          desc.classList.add("desc");
+          desc.textContent = holidays[dateStr];
+          cell.appendChild(desc);
+        }
+
         const today = new Date();
         if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
           cell.classList.add("today");
         }
-
-        holidays.forEach(holiday => {
-          if (holiday.day === day && holiday.month === month) {
-            cell.classList.add("holiday");
-            cell.title = holiday.name;
-          }
-        });
 
         calendarGrid.appendChild(cell);
       }
@@ -218,62 +228,53 @@
       renderCalendar(currentDate);
     });
 
-    renderCalendar(currentDate);
-
-    // ===== Countdown =====
     function updateCountdown() {
-      const eventDate = new Date(2025, 7, 27);
       const now = new Date();
-      const diff = eventDate - now;
-
-      if (diff <= 0) {
-        document.getElementById("countdown").textContent = "Event is here!";
-        return;
+      const upcomingDates = Object.keys(holidays).map(d => new Date(d));
+      const futureDates = upcomingDates.filter(d => d >= now);
+      futureDates.sort((a,b) => a - b);
+      if (futureDates.length > 0) {
+        const diff = futureDates[0] - now;
+        const days = Math.floor(diff / (1000*60*60*24));
+        const hours = Math.floor((diff / (1000*60*60)) % 24);
+        const minutes = Math.floor((diff / (1000*60)) % 60);
+        document.getElementById("countdown").textContent =
+          `${days}d ${hours}h ${minutes}m until ${holidays[futureDates[0].toISOString().split("T")[0]]}`;
+      } else {
+        document.getElementById("countdown").textContent = "No upcoming events.";
       }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      document.getElementById("countdown").textContent =
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
-    setInterval(updateCountdown, 1000);
+    renderCalendar(currentDate);
     updateCountdown();
+    setInterval(updateCountdown, 60000);
 
-    // ===== Starfield =====
+    // Starfield script
     const canvas = document.getElementById("starfield");
     const ctx = canvas.getContext("2d");
     let stars = [];
-
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      stars = Array.from({ length: 200 }, () => ({
+      stars = Array.from({ length: 150 }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5,
-        alpha: Math.random(),
-        speed: Math.random() * 0.5
+        size: Math.random() * 2,
+        speed: Math.random() * 0.5 + 0.2
       }));
     }
-
     function drawStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(173,216,230,0.8)";
-      stars.forEach(star => {
-        ctx.globalAlpha = star.alpha;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = "rgba(150,180,255,0.8)";
+      stars.forEach(s => {
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
         ctx.fill();
-        star.y += star.speed;
-        if (star.y > canvas.height) star.y = 0;
+        s.y += s.speed;
+        if (s.y > canvas.height) s.y = 0;
       });
       requestAnimationFrame(drawStars);
     }
-
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
     drawStars();
