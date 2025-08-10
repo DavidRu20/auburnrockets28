@@ -6,7 +6,13 @@
   <title>AHS Class of ’28 — Fundraisers</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 80px);
+      padding: 20px;
+    }
     .fundraiser-card {
       background: rgba(255, 255, 255, 0.07);
       border-radius: 20px;
@@ -16,7 +22,7 @@
       box-shadow: 0 0 25px rgba(0, 150, 255, 0.4);
       text-align: center;
       max-width: 600px;
-      margin: 50px auto;
+      width: 100%;
       opacity: 0;
       transform: translateY(40px);
       transition: opacity 0.8s ease, transform 0.8s ease;
@@ -40,6 +46,14 @@
       font-weight: bold;
       color: #00d4ff;
       margin-top: 15px;
+    }
+    .promo-code {
+      margin-top: 25px;
+      font-size: 1.1rem;
+      color: white;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
     }
   </style>
 </head>
@@ -73,11 +87,14 @@
     <h2>🍪 Crumbl Cookie Fundraiser</h2>
     <p>Help support the Class of ’28 by grabbing your favorite cookies! Every purchase helps fund class events and activities.</p>
     <div class="countdown" id="countdown">Loading countdown...</div>
+    <div class="promo-code">
+      Promo Code: <span style="color: #00d4ff;">(Coming Soon)</span>
+    </div>
   </div>
 </main>
 
 <script>
-
+  // Starfield background
   const canvas = document.getElementById('starfield');
   const ctx = canvas.getContext('2d');
   let stars = [];
@@ -104,7 +121,7 @@
 
   function drawStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; // slightly dimmer stars
     for (let star of stars) {
       ctx.beginPath();
       ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
@@ -131,7 +148,7 @@
   createStars();
   animateStars();
 
-
+  // Countdown logic
   const countdownEl = document.getElementById('countdown');
   const targetDate = new Date('September 8, 2025 00:00:00').getTime();
 
@@ -155,7 +172,7 @@
   setInterval(updateCountdown, 1000);
   updateCountdown();
 
-
+  // Fade in animation
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -164,6 +181,9 @@
 
   observer.observe(document.getElementById('fundraiser'));
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
