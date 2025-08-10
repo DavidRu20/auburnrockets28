@@ -59,34 +59,30 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 120px;
+      padding-top: 140px;
       padding-bottom: 50px;
       gap: 2rem;
     }
 
-    .intro-text {
-      max-width: 700px;
+    /* Page heading */
+    .page-heading {
       text-align: center;
-      font-size: 1.2rem;
-      line-height: 1.6;
-      opacity: 0.85;
     }
-
-    /* Fundraiser grid */
-    .fundraiser-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 2rem;
-      width: 100%;
-      max-width: 1200px;
-      padding: 0 20px;
+    .page-heading h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+    .page-heading p {
+      font-size: 1.2rem;
+      opacity: 0.85;
     }
 
     /* Fundraiser card */
     .fundraiser-card {
       position: relative;
-      width: 100%;
-      height: 350px;
+      width: 90%;
+      max-width: 500px;
+      height: 400px;
       background: rgba(40, 40, 40, 0.9);
       border-radius: 15px;
       padding: 25px;
@@ -148,33 +144,16 @@
 
   <!-- MAIN CONTENT -->
   <main class="fundraiser-container">
-    <div class="intro-text">
-      Welcome to the Class of 2028 Fundraisers page! Here, you’ll find our current and upcoming events 
-      to support our activities and initiatives. Your contributions help us achieve our goals while 
-      bringing the community together. Check back often for updates!
+    <div class="page-heading">
+      <h1>FUNDRAISERS</h1>
+      <p>Support the Class of 2028 — every purchase makes a difference!</p>
     </div>
 
-    <div class="fundraiser-grid">
-      <div class="fundraiser-card">
-        <h2 class="fundraiser-title">🍪 Crumbl Cookie Fundraiser</h2>
-        <div class="fundraiser-date">Ends September 8</div>
-        <div class="countdown" id="countdown1"></div>
-        <div class="promo-code">Promo Code: <span>[Coming Soon]</span></div>
-      </div>
-
-      <div class="fundraiser-card">
-        <h2 class="fundraiser-title">🎁 Holiday Raffle</h2>
-        <div class="fundraiser-date">Starts November 15</div>
-        <div class="countdown">Stay tuned!</div>
-        <div class="promo-code">Tickets available soon</div>
-      </div>
-
-      <div class="fundraiser-card">
-        <h2 class="fundraiser-title">🏀 Basketball Concession Stand</h2>
-        <div class="fundraiser-date">Every Home Game</div>
-        <div class="countdown">Ongoing</div>
-        <div class="promo-code">Support your team!</div>
-      </div>
+    <div class="fundraiser-card">
+      <h2 class="fundraiser-title">🍪 Crumbl Cookie Fundraiser</h2>
+      <div class="fundraiser-date">Ends September 8</div>
+      <div class="countdown" id="countdown1"></div>
+      <div class="promo-code">Promo Code: <span>[Coming Soon]</span></div>
     </div>
   </main>
 
