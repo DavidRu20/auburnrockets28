@@ -279,6 +279,15 @@ h1{
   box-shadow: 0 0 12px var(--blue-2);
 }
 
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.table {
+  min-width: 400px; /* Prevent table from getting too squished */
+}
+
 /* ------------------------------- Forms ---------------------------------- */
 .form{ display:grid; gap: 12px; }
 .input, .select, .textarea{
