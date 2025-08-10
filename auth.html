@@ -171,5 +171,36 @@
   }
 </script>
 
+  <script>
+(function() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.getElementById('navLinks');
+    if (!navLinks) return; // in case page doesn't have navLinks
+
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+
+    if (user) {
+      // Ensure rocket points exist for this user
+      let rocketPoints = localStorage.getItem('rocketPoints_' + user.email);
+      if (rocketPoints === null) {
+        rocketPoints = 0;
+        localStorage.setItem('rocketPoints_' + user.email, rocketPoints);
+      }
+
+      navLinks.innerHTML += `
+        <span style="margin-left:15px;">
+          Welcome, ${user.name} |
+          <a href="./account.html" style="color:inherit;text-decoration:underline;">My Account</a> |
+          Rocket Points: <span id="rocketPoints">${rocketPoints}</span>
+        </span>
+      `;
+    } else {
+      navLinks.innerHTML += `
+        <a href="./login.html" style="margin-left:15px;">Sign In</a>
+      `;
+    }
+  });
+})();
+</script>
 </body>
 </html>
