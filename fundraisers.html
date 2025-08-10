@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AHS Class of ’28 — Fundraisers</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+
+    .fundraiser-card {
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 20px;
+      padding: 40px 25px;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 25px rgba(0, 150, 255, 0.4);
+      text-align: center;
+      max-width: 600px;
+      margin: 50px auto;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fundraiser-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fundraiser-card h2 {
+      font-size: 2rem;
+      color: white;
+      margin-bottom: 15px;
+    }
+    .fundraiser-card p {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 20px;
+    }
+    .countdown {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00d4ff;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header" role="banner">
+  <nav class="nav">
+    <a class="brand" href="./">
+      <span class="logo">A</span>
+      AHS Class of ’28
+    </a>
+    <div class="links">
+      <a href="./index.html">Home</a>
+      <a class="active" href="./fundraisers.html">Fundraisers</a>
+      <a href="./calendar.html">Calendar</a>
+      <a href="./media.html">Media</a>
+      <a href="./achievements.html">Achievements</a>
+      <a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a>
+      <a href="./merch.html">Shop</a>
+      <a href="./admin.html">Admin</a>
+    </div>
+    <button id="menuBtn" class="menu-btn">☰</button>
+  </nav>
+</header>
+
+<canvas class="starfield" id="starfield"></canvas>
+
+<main>
+  <div class="fundraiser-card" id="fundraiser">
+    <h2>🍪 Crumbl Cookie Fundraiser</h2>
+    <p>Help support the Class of ’28 by grabbing your favorite cookies! Every purchase helps fund class events and activities.</p>
+    <div class="countdown" id="countdown">Loading countdown...</div>
+  </div>
+</main>
+
+<script>
+
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  const numStars = 150;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function createStars() {
+    stars = [];
+    for (let i = 0; i < numStars; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2,
+        speed: 0.1 + Math.random() * 0.3
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    for (let star of stars) {
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function updateStars() {
+    for (let star of stars) {
+      star.y -= star.speed;
+      if (star.y < 0) {
+        star.y = canvas.height;
+        star.x = Math.random() * canvas.width;
+      }
+    }
+  }
+
+  function animateStars() {
+    updateStars();
+    drawStars();
+    requestAnimationFrame(animateStars);
+  }
+
+  createStars();
+  animateStars();
+
+
+  const countdownEl = document.getElementById('countdown');
+  const targetDate = new Date('September 8, 2025 00:00:00').getTime();
+
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance < 0) {
+      countdownEl.textContent = "Fundraiser ended!";
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+
+  observer.observe(document.getElementById('fundraiser'));
+</script>
+
+</body>
+</html>
