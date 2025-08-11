@@ -1,17 +1,31 @@
-<!doctype html>
+<<!doctype html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Study Hub — AHS Class of ’28</title>
   <meta name="theme-color" content="#0d6efd" />
-  <!-- your global styles -->
-  <link rel="stylesheet" href="styles.css?v=23" />
-  <!-- small page-specific styles (I’ll add more in study.css next step) -->
+  <!-- Global site styles -->
+  <link rel="stylesheet" href="styles.css?v=24" />
+
   <style>
-    /* --- Study page layout only (keeps your core theme intact) --- */
+    /* ====== FIXES so nothing is cut off ====== */
+    html, body { height: 100%; }
+    body { overflow-x: hidden; }
+    .page-wrap {                                /* wrapper for the whole page content */
+      min-height: calc(100vh - 72px);          /* viewport minus header height */
+      display: block;
+      padding-bottom: 32px;                    /* breathing room above footer/bottom */
+    }
+    /* Make sure starfield sits behind everything and fills the screen */
+    #starfield {
+      position: fixed; inset: 0; z-index: -1; display: block;
+      width: 100vw; height: 100vh;
+    }
+
+    /* ====== Study Hub layout (keeps your vibe) ====== */
     .study-hero {
-      padding: 36px 18px 12px;
+      padding: 42px 18px 12px;
       text-align: center;
     }
     .study-hero h1 {
@@ -23,14 +37,17 @@
     }
     .study-hero .sub { color: var(--muted); margin-top: 6px; }
 
-    .study-wrap { max-width: 1200px; margin: 0 auto; padding: 10px 18px 40px; }
+    .study-wrap { max-width: 1200px; margin: 0 auto; padding: 12px 18px 40px; }
+
+    /* Toolbar */
     .toolbar {
-      display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin: 12px 0 18px;
+      display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; margin: 14px 0 18px;
     }
     @media (max-width:720px){ .toolbar { grid-template-columns: 1fr; } }
+
     .search {
-      display:flex; gap:10px; align-items:center; border:1px solid var(--border); border-radius:14px;
-      background: var(--panel); box-shadow: var(--inner-1); padding: 8px 10px;
+      display:flex; gap:10px; align-items:center; border:1px solid var(--card-border); border-radius:14px;
+      background: var(--card); box-shadow: var(--inner-1); padding: 8px 10px;
     }
     .search input {
       flex:1; background: transparent; border:0; outline:0; color: var(--text);
@@ -39,20 +56,25 @@
       display:flex; gap:8px; overflow:auto; -webkit-overflow-scrolling:touch;
     }
     .chip {
-      padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border);
-      background: var(--panel); color: var(--text); font-weight: 800; white-space: nowrap;
+      padding: 8px 12px; border-radius: 999px; border: 1px solid var(--card-border);
+      background: var(--card); color: var(--text); font-weight: 800; white-space: nowrap;
       transition: transform var(--t-fast), background var(--t-fast);
     }
     .chip.active { background: linear-gradient(135deg, var(--blue), var(--blue-2)); color:#fff; border-color: transparent; }
     .chip:active { transform: scale(.98); }
 
+    /* Two-column layout */
+    .two-col { display:grid; grid-template-columns: 1.25fr .75fr; gap: 18px; }
+    @media (max-width: 980px){ .two-col{ grid-template-columns: 1fr; } }
+
+    /* Subject grid/cards */
     .subject-grid { display:grid; gap: 16px; grid-template-columns: repeat(3, minmax(0,1fr)); }
-    @media (max-width: 980px){ .subject-grid{ grid-template-columns: repeat(2,1fr);} }
-    @media (max-width: 560px){ .subject-grid{ grid-template-columns: 1fr; } }
+    @media (max-width: 1100px){ .subject-grid{ grid-template-columns: repeat(2,1fr);} }
+    @media (max-width: 640px){ .subject-grid{ grid-template-columns: 1fr; } }
 
     .subject {
       position: relative;
-      border: 1px solid var(--border);
+      border: 1px solid var(--card-border);
       border-radius: 18px;
       padding: 14px;
       background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
@@ -66,39 +88,38 @@
       display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 8px;
     }
     .subject .title { font-weight: 900; letter-spacing:.2px; }
-    .pill { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; border: 1px solid var(--border); color: var(--muted); }
+    .pill { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; border: 1px solid var(--card-border); color: var(--muted); }
     .pill.blue { color:#fff; background: linear-gradient(135deg, var(--blue), var(--blue-2)); border-color:transparent; }
     .tags { display:flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .tag { font-size: 12px; color: var(--muted); border: 1px solid var(--border); padding: 4px 8px; border-radius: 8px; }
+    .tag { font-size: 12px; color: var(--muted); border: 1px solid var(--card-border); padding: 4px 8px; border-radius: 8px; }
 
     .subgrid { display:grid; gap: 12px; grid-template-columns: repeat(2, minmax(0,1fr)); margin-top: 10px; }
     @media (max-width:720px){ .subgrid{ grid-template-columns: 1fr; } }
     .panel-link {
-      padding: 12px; border-radius: 12px; border:1px solid var(--border);
+      padding: 12px; border-radius: 12px; border:1px solid var(--card-border);
       background: var(--panel); color: var(--text); display:flex; justify-content:space-between; align-items:center;
       transition: transform var(--t-fast), background var(--t-fast);
     }
     .panel-link:hover { transform: translateY(-2px); background: var(--panel-2); }
     .panel-link small { color: var(--muted); display:block; margin-top: 2px; }
 
-    .two-col { display:grid; grid-template-columns: 1.2fr .8fr; gap: 18px; }
-    @media (max-width: 940px){ .two-col{ grid-template-columns: 1fr; } }
-
     /* Rocket AI card */
     .ai-card {
-      border: 1px solid var(--border); border-radius: 16px; padding: 14px;
+      border: 1px solid var(--card-border); border-radius: 16px; padding: 14px;
       background: var(--panel); box-shadow: var(--shadow-1); display:grid; gap: 10px;
+      position: sticky; top: 86px;          /* stays visible while scrolling */
     }
+    @media (max-width: 980px){ .ai-card{ position: static; } }
     .ai-card .row { display:grid; grid-template-columns: 1fr auto; gap:10px; }
     @media (max-width:720px){ .ai-card .row{ grid-template-columns: 1fr; } }
     .ai-card .hint { color: var(--muted); font-size: 12px; }
 
-    /* Animate in */
+    /* Smooth reveal */
     .reveal { transform: translateY(16px); opacity: 0; }
   </style>
 </head>
 <body>
-  <!-- ===== Global Header (your regular one) ===== -->
+  <!-- ===== Global Header (keep your regular header) ===== -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -136,65 +157,65 @@
     </div>
   </header>
 
-  <!-- Optional starfield (your script.js can add it globally; if this page should have it, keep this canvas) -->
+  <!-- Background -->
   <canvas id="starfield"></canvas>
 
-  <!-- ===== HERO ===== -->
-  <section class="study-hero">
-    <h1>Study Hub</h1>
-    <div class="sub">Pick a subject, search topics, and get guided tips from Rocket AI.</div>
-  </section>
+  <!-- ===== Page content ===== -->
+  <div class="page-wrap">
+    <section class="study-hero">
+      <h1>Study Hub</h1>
+      <div class="sub">Pick a subject, search topics, and get guided tips from Rocket AI.</div>
+    </section>
 
-  <div class="study-wrap two-col">
-    <!-- ========= LEFT: Subjects + results ========= -->
-    <main>
-      <!-- Toolbar: search + top-level subject pills -->
-      <div class="toolbar">
-        <div class="search" role="search">
-          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          <input id="studySearch" type="search" placeholder="Search e.g. algebra, bio, triangles, derivatives…" aria-label="Search study topics" />
+    <div class="study-wrap two-col">
+      <!-- ========= LEFT: Subjects + results ========= -->
+      <main>
+        <div class="toolbar">
+          <div class="search" role="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.49 21.49 20 15.5 14zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input id="studySearch" type="search" placeholder="Search e.g. algebra, bio, triangles, derivatives…" aria-label="Search study topics" />
+          </div>
+          <div class="filters" id="subjectChips" role="tablist" aria-label="Subjects">
+            <button class="chip active" data-subject="math" role="tab" aria-selected="true">Math</button>
+            <button class="chip" data-subject="ela" role="tab">ELA</button>
+            <button class="chip" data-subject="science" role="tab">Science</button>
+            <button class="chip" data-subject="technology" role="tab">Technology</button>
+            <button class="chip" data-subject="finearts" role="tab">Fine Arts</button>
+            <button class="chip" data-subject="languages" role="tab">Languages</button>
+            <button class="chip" data-subject="history" role="tab">History / Social Studies</button>
+          </div>
         </div>
-        <div class="filters" id="subjectChips" role="tablist" aria-label="Subjects">
-          <button class="chip active" data-subject="math" role="tab" aria-selected="true">Math</button>
-          <button class="chip" data-subject="ela" role="tab">ELA</button>
-          <button class="chip" data-subject="science" role="tab">Science</button>
-          <button class="chip" data-subject="technology" role="tab">Technology</button>
-          <button class="chip" data-subject="finearts" role="tab">Fine Arts</button>
-          <button class="chip" data-subject="languages" role="tab">Languages</button>
-          <button class="chip" data-subject="history" role="tab">History / Social Studies</button>
+
+        <div id="subjectGrid" class="subject-grid reveal" aria-live="polite">
+          <!-- Cards injected by study.js -->
         </div>
-      </div>
+      </main>
 
-      <!-- Subject cards (auto-filtered by chips/search) -->
-      <div id="subjectGrid" class="subject-grid reveal" aria-live="polite">
-        <!-- Cards injected by study.js based on DATA model -->
-      </div>
-    </main>
+      <!-- ========= RIGHT: Rocket AI (guided, no cheating) ========= -->
+      <aside class="ai-card reveal" aria-live="polite">
+        <h2>🚀 astronomers AI</h2>
+        <div class="hint">Study tips + legit resources. No answers or cheating.</div>
 
-    <!-- ========= RIGHT: Rocket AI (guided, no cheating) ========= -->
-    <aside class="ai-card reveal" aria-live="polite">
-      <h2>🚀 Rocket AI</h2>
-      <div class="hint">Tips + resources only. No answers or cheating.</div>
+        <div class="row ai-input">
+          <input id="aiQuestion" class="input" type="text" placeholder="e.g., factoring trinomials, cell respiration, thesis statements…" />
+          <button id="aiAsk" class="btn primary">Get tips</button>
+        </div>
 
-      <div class="row ai-input">
-        <input id="aiQuestion" class="input" type="text" placeholder="e.g., factoring trinomials, cell respiration, thesis statements…" />
-        <button id="aiAsk" class="btn primary">Get tips</button>
-      </div>
+        <div class="small" style="opacity:.85">Try: <code>algebra</code> • <code>geometry</code> • <code>bio</code> • <code>chem</code> • <code>thesis</code> • <code>essay</code> • <code>networking</code> • <code>python</code> • <code>spanish</code> • <code>french</code></div>
 
-      <div class="small" style="opacity:.85">Shortcuts:
-        <code>algebra</code> • <code>geometry</code> • <code>bio</code> • <code>chem</code> • <code>thesis</code> • <code>essay</code> • <code>networking</code> • <code>python</code> • <code>spanish</code> • <code>french</code>
-      </div>
-
-      <div id="aiOut" class="card-list"></div>
-    </aside>
+        <div id="aiOut" class="card-list"></div>
+      </aside>
+    </div>
   </div>
 
-  <!-- toast (already used on your site) -->
+  <!-- toast (your global toast) -->
   <div id="toast" class="toast hidden" role="status" aria-live="polite">Loaded</div>
 
-  <!-- your global behavior (menu, theme, reveals, starfield etc.) -->
-  <script src="script.js?v=23"></script>
-  <!-- study-specific behavior (I’ll send next) -->
+  <!-- your global behavior (menu, theme, reveals, starfield, etc.) -->
+  <script src="script.js?v=24"></script>
+
+  <!-- study-specific behavior (populates subjects/search/AI). 
+       Tell me “go” and I’ll send study.js next. -->
   <script src="study.js?v=1" defer></script>
 </body>
 </html>
