@@ -14,6 +14,33 @@
       <span class="logo" aria-hidden="true">A</span>
       AHS Class of ’28
     </a>
+    }
+    /* Procedural tiny stars */
+    .hero:before, .hero:after{
+      content:""; position:absolute; inset:0; background-repeat:repeat; pointer-events:none; }
+    .hero:before{ background-image:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.9) 50%, transparent 51%),
+        radial-gradient(2px 2px at 70% 60%, rgba(255,255,255,.75) 50%, transparent 51%),
+        radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.6) 50%, transparent 51%),
+        radial-gradient(1px 1px at 85% 25%, rgba(255,255,255,.8) 50%, transparent 51%),
+        radial-gradient(1px 1px at 15% 65%, rgba(255,255,255,.6) 50%, transparent 51%);
+      opacity:.8;
+    }
+    .hero:after{ background-image:
+        radial-gradient(1px 1px at 30% 20%, rgba(255,255,255,.5) 50%, transparent 51%),
+        radial-gradient(2px 2px at 55% 75%, rgba(255,255,255,.65) 50%, transparent 51%),
+        radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,.5) 50%, transparent 51%);
+      animation: twinkle 3.5s infinite ease-in-out;
+      opacity:.7;
+    }
+    @keyframes twinkle { 0%,100%{opacity:.2;} 50%{opacity:.9;} }
+
+    .card{ background: var(--card-bg); border:1px solid rgba(255,255,255,.12); border-radius:20px; padding: clamp(16px, 2.5vw, 26px); box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .hover-up{ transition: transform .2s ease, box-shadow .2s ease; }
+    .hover-up:hover{ transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,.35); }
+
+    h1{ margin: 6px 0 10px; font-size: clamp(28px, 3.3vw, 42px); }
+    .small{ font-size: .9rem; color: var(--muted); }
 
     <!-- Desktop links -->
     <div class="links" role="navigation">
