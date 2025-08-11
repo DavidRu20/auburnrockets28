@@ -69,11 +69,16 @@
 
   <!-- ============================== HERO ================================= -->
   <main role="main">
-    <section class="hero" id="home" aria-labelledby="homeTitle">
+    <section
+      class="hero"
+      id="home"
+      aria-labelledby="homeTitle"
+      data-end-of-school="2026-06-19T18:00:00-04:00"
+      >
       <div class="card hover-up" style="max-width:820px; margin-inline:auto;">
         <h1 id="homeTitle">Auburn Class of ’28</h1>
 
-        <!-- Live date/time -->
+        <!-- Live date/time (America/New_York) -->
         <p id="date" aria-live="polite">Loading date…</p>
         <p id="time" aria-live="polite">Loading time…</p>
 
@@ -96,7 +101,6 @@
             <div class="lbl">Seconds</div>
           </div>
         </div>
-
         <!-- Quick actions -->
         <div class="inline" style="justify-content:center; margin-top:16px;">
           <a class="btn primary" href="./fundraisers.html">See What’s Live</a>
@@ -174,6 +178,16 @@
 
   <!-- Toast placeholder -->
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
+<script>
+function updateDateTime() {
+  const now = new Date();
+  document.getElementById("date").textContent = now.toLocaleDateString();
+  document.getElementById("time").textContent = now.toLocaleTimeString();
+}
+
+setInterval(updateDateTime, 1000);
+updateDateTime();
+</script>
 
   <!-- scripts -->
   <script src="script.js"></script>
