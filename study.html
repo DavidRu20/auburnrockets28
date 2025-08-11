@@ -4,73 +4,112 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Study Hub</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="theme-color" content="#0d6efd" />
+  <!-- Your global styles (already in the site) -->
+  <link rel="stylesheet" href="styles.css?v=25" />
+
   <style>
-    /* ---------- Study Hub page-only polish (lean; uses your CSS vars) ---------- */
-    body { background: var(--bg); color: var(--text); }
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 18px 60px; }
+    /* ===== Study Hub — page-scoped polish (keeps your global theme) ===== */
+    .study-hero{
+      padding: 36px 18px 8px;
+      text-align:center;
+    }
+    .study-hero h1{
+      font-size: clamp(28px,3.8vw,44px);
+      margin: 0 0 6px;
+      background: linear-gradient(90deg, var(--blue-2), #fff);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+    .study-hero p{ color: var(--muted); margin: 6px 0 18px; }
 
-    /* top header from the rest of site */
-    .header { position: sticky; top:0; z-index: 100; background: linear-gradient(180deg, rgba(17,21,27,.92), rgba(17,21,27,.70)); border-bottom: 1px solid var(--border); backdrop-filter: blur(8px); }
-    .nav { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 18px; max-width:1100px; margin:0 auto; }
-    .brand { display:flex; align-items:center; gap:10px; font-weight:800; color:var(--text); }
-    .brand .logo { width:38px; height:38px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg, var(--blue), var(--blue-2)); color:#fff; font-weight:900; box-shadow:0 8px 24px rgba(13,110,253,.35); }
-    .links a { margin-left:16px; color:var(--muted); font-weight:600; }
-    .links a:hover, .links a.active { color: var(--text); }
-    .menu-btn { display:none; }
-    @media (max-width:820px){ .links{display:none;} .menu-btn{display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:12px; border:1px solid var(--border); background:var(--panel);} }
-    .mobile-menu{ position:fixed; inset:64px 10px auto 10px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border:1px solid var(--border); border-radius:20px; backdrop-filter:blur(10px); box-shadow: var(--shadow-2); padding:12px; z-index:90; }
-    .mobile-menu a{ display:block; padding:12px 10px; border-radius:10px; color:var(--text); }
-    .mobile-menu.hidden{ display:none; }
+    .study-bar{
+      display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+      margin: 8px auto 14px; padding: 0 12px;
+      max-width: 980px;
+    }
+    .study-search{
+      flex: 1 1 320px; max-width: 520px; min-width: 240px;
+      display:flex; align-items:center; gap:8px;
+      background: var(--panel); border:1px solid var(--border);
+      border-radius: 14px; padding: 10px 12px; box-shadow: var(--inner-1);
+    }
+    .study-search input{
+      outline: none; border: none; background: transparent; color: var(--text);
+      width: 100%;
+    }
+    .pill-tabs{
+      display:flex; gap:8px; overflow:auto; padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .pill-tabs::-webkit-scrollbar{ display:none; }
+    .pill{
+      white-space:nowrap; padding:8px 12px; border-radius: 999px;
+      border:1px solid var(--border); background: var(--panel);
+      color: var(--muted); font-weight:700; cursor:pointer;
+      transition: filter 160ms ease, background 160ms ease, color 160ms ease;
+    }
+    .pill:hover{ filter:brightness(1.05); color:var(--text); }
+    .pill.active{
+      color:#fff; border-color:transparent;
+      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      box-shadow: 0 10px 26px rgba(13,110,253,.30);
+    }
 
-    /* hero */
-    .page-title { text-align:center; margin:34px 0 6px; font-size: clamp(32px,4.2vw,44px); line-height:1.06;
-      background: linear-gradient(90deg, var(--blue-2), #fff); -webkit-background-clip:text; background-clip:text; color:transparent; }
-    .page-sub { text-align:center; color: var(--muted); margin-bottom: 18px; }
+    .section-wrap{ max-width: 1100px; margin: 0 auto; padding: 6px 18px 40px; }
 
-    /* search + chips row */
-    .toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; }
-    .search { display:flex; align-items:center; gap:8px; height:42px; padding:0 12px; border-radius:12px; border:1px solid var(--border); background:var(--panel); color:var(--text); width:min(520px, 92vw); }
-    .search input { flex:1; border:0; background:transparent; color:inherit; outline:none; }
-    .chips { display:flex; gap:8px; overflow:auto; padding:4px; max-width:100%; scrollbar-width:thin; }
-    .chip { white-space:nowrap; padding:8px 12px; border-radius:999px; border:1px solid var(--border); background:var(--panel); color:var(--muted); font-weight:700; cursor:pointer; transition:transform .15s ease, background .15s ease; }
-    .chip:hover{ transform: translateY(-1px); background:var(--panel-2); }
-    .chip.active{ color:#fff; background: linear-gradient(135deg, var(--blue), var(--blue-2)); border-color:transparent; }
+    .subject-block{ margin-top: 18px; }
+    .subject-header{
+      display:flex; align-items:end; justify-content:space-between; gap:10px;
+      margin: 8px 0 12px;
+    }
+    .subject-title{
+      font-size: clamp(18px,2.2vw,22px); font-weight:900; letter-spacing:.2px;
+    }
+    .subject-sub{ color: var(--muted); font-size: 13px; }
 
-    /* layout: results + AI side panel (stacks on mobile) */
-    .layout { display:grid; grid-template-columns: 1.5fr .9fr; gap:18px; align-items:start; margin-top:20px; }
-    @media (max-width: 980px){ .layout{ grid-template-columns: 1fr; } }
+    .card-grid{
+      display:grid; gap:12px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+    }
+    @media (max-width: 1020px){ .card-grid{ grid-template-columns: repeat(3,1fr);} }
+    @media (max-width: 780px){ .card-grid{ grid-template-columns: repeat(2,1fr);} }
+    @media (max-width: 520px){ .card-grid{ grid-template-columns: 1fr; } }
 
-    .panel { background: var(--panel); border:1px solid var(--border); border-radius:20px; box-shadow: var(--shadow-1); }
-    .glass { background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); backdrop-filter: blur(10px); }
-    .pad { padding:16px; }
+    .subcard{
+      border:1px solid var(--border); border-radius: 14px;
+      background: var(--panel); box-shadow: var(--shadow-1), var(--inner-1);
+      padding: 12px; display:flex; gap:10px; align-items:center;
+      transition: transform 200ms cubic-bezier(.2,.8,.2,1), outline 200ms;
+      min-height: 68px;
+    }
+    .subcard:hover{ transform: translateY(-2px); outline:1px solid rgba(255,255,255,.10); }
+    .subcard .icon{
+      width: 36px; height: 36px; border-radius: 10px; display:grid; place-items:center;
+      background: linear-gradient(135deg, var(--blue), var(--blue-2)); color:#fff; font-weight:900;
+      flex: 0 0 36px;
+    }
+    .subcard .meta{ display:grid; gap:3px; }
+    .subcard .name{ font-weight: 800; }
+    .subcard .hint{ font-size: 12px; color: var(--muted); }
 
-    .results-grid { display:grid; gap:14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    @media (max-width:680px){ .results-grid{ grid-template-columns: 1fr; } }
-    .card { border:1px solid var(--border); border-radius:16px; overflow:hidden; background:var(--panel); transition:transform .2s ease, box-shadow .2s ease; }
-    .card:hover{ transform: translateY(-3px); box-shadow: 0 18px 50px rgba(0,0,0,.35); }
-    .thumb{ aspect-ratio: 16/9; background:#000; position:relative; }
-    .thumb iframe{ width:100%; height:100%; border:0; display:block; }
-    .card-body{ padding:12px; }
-    .card-title{ font-weight:800; margin-bottom:6px; }
-    .badge { display:inline-flex; align-items:center; gap:6px; height:26px; padding:0 10px; border-radius:999px; border:1px solid var(--border); background:var(--panel-2); color:var(--muted); font-size:12px; font-weight:800; }
+    .more-row{
+      display:flex; justify-content:center; margin-top: 12px;
+    }
+    .ghost{
+      display:inline-flex; align-items:center; gap:8px; height: 40px;
+      border-radius: 12px; border:1px dashed var(--border); color: var(--text);
+      background: transparent; padding: 0 14px; font-weight:800; cursor:pointer;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+    .ghost:hover{ background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.18); }
 
-    /* Astronomers panel */
-    .ai { position:sticky; top:84px; }
-    .ai h3{ margin:6px 0 10px; }
-    .ai .prompt { display:flex; gap:8px; margin:8px 0 12px; }
-    .ai textarea{ width:100%; min-height:80px; border-radius:12px; border:1px solid var(--border); background:var(--panel); color:var(--text); padding:10px; resize:vertical; }
-    .btn { display:inline-flex; align-items:center; justify-content:center; height:40px; padding:0 14px; border-radius:12px; border:1px solid var(--border); background:var(--panel); color:var(--text); font-weight:800; }
-    .btn.primary{ background: linear-gradient(135deg, var(--blue), var(--blue-2)); color:#fff; border-color:transparent; }
-    .tips{ display:grid; gap:10px; }
-    .tip{ padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--panel-2); }
-
-    /* ensure nothing clips horizontally */
-    .wrap, .toolbar, .chips { overflow: visible; }
+    /* little fade-in */
+    .fade-in{ opacity:0; transform: translateY(8px); transition: opacity .45s ease, transform .45s ease; }
+    .fade-in.show{ opacity:1; transform:none; }
   </style>
 </head>
 <body>
-  <!-- Site header (same as rest of site, with Study + Sign Up) -->
+  <!-- ===== Site header / nav (same as the rest of your site) ===== -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -108,176 +147,245 @@
     </div>
   </header>
 
-  <main class="wrap">
-    <h1 class="page-title">Study Hub</h1>
-    <p class="page-sub">Pick a subject, search topics, and get guided tips from <strong>Astronomers</strong>.</p>
+  <!-- ===== Page hero ===== -->
+  <section class="study-hero">
+    <h1>Study Hub</h1>
+    <p>Pick a subject, then open a sub-topic. Astronomer gives tips on each subpage.</p>
 
-    <!-- search + filters -->
-    <div class="toolbar">
-      <label class="search" for="q" aria-label="Search study topics">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 21l-4.3-4.3m1.3-5.2a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input id="q" type="search" placeholder="Search e.g. algebra, bio, essays…" />
-      </label>
-      <div class="chips" id="chips" role="tablist" aria-label="Subjects">
-        <button class="chip active" data-subj="math" role="tab">Math</button>
-        <button class="chip" data-subj="ela" role="tab">ELA</button>
-        <button class="chip" data-subj="science" role="tab">Science</button>
-        <button class="chip" data-subj="technology" role="tab">Technology</button>
-        <button class="chip" data-subj="finearts" role="tab">Fine Arts</button>
-        <button class="chip" data-subj="languages" role="tab">Languages</button>
-        <button class="chip" data-subj="history" role="tab">History / Social</button>
+    <div class="study-bar">
+      <div class="study-search">
+        <span aria-hidden="true">🔎</span>
+        <input id="search" type="search" placeholder="Search e.g. algebra, bio, triangles…" />
+      </div>
+
+      <div class="pill-tabs" id="subjectTabs" role="tablist" aria-label="Subjects">
+        <!-- Pills inserted by JS -->
       </div>
     </div>
+  </section>
 
-    <!-- columns -->
-    <section class="layout">
-      <!-- results -->
-      <div class="panel glass pad">
-        <div class="results-grid" id="results">
-          <!-- Subcategories -->
-<div class="panel glass pad" id="subcatsPanel" aria-label="Subcategories">
-  <div class="flex" style="justify-content:space-between; align-items:center; margin-bottom:10px;">
-    <h3 style="margin:0;">Explore by topic</h3>
-    <button id="toggleAll" class="btn" type="button" aria-expanded="false">View all</button>
+  <!-- ===== Subject → subcategory cards ===== -->
+  <div class="section-wrap">
+    <div id="subjectBlocks"><!-- built by JS --></div>
   </div>
-  <div class="subcats-grid" id="subcats"></div>
-</div>
 
-          <!-- Cards injected by JS -->
-        </div>
-      </div>
+  <!-- Starfield (your script.js already draws this on some pages; optional here) -->
+  <canvas id="starfield"></canvas>
 
-      <!-- AI side -->
-      <aside class="panel glass pad ai" aria-label="Astronomers study helper">
-        <h3>Ask <span class="badge">Astronomers</span></h3>
-        <div class="tip" style="margin-bottom:10px;">
-          Friendly study helper: it recommends resources and tips. It won’t generate full answers or essays.
-        </div>
-        <div class="prompt">
-          <textarea id="ask" placeholder="Ask for guidance (e.g., “struggling with factoring quadratics”)."></textarea>
-        </div>
-        <div class="flex" style="justify-content:flex-end; gap:10px;">
-          <button id="aiSuggest" class="btn primary">Get Suggestions</button>
-        </div>
-        <div class="tips" id="tips" style="margin-top:12px;"></div>
-      </aside>
-    </section>
-  </main>
-
+  <!-- ===== Page JS (no libs) ===== -->
   <script>
-    /* mobile menu wire-up */
-    (function(){
-      const b = document.getElementById('menuBtn');
-      const m = document.getElementById('mobileMenu');
-      if (!b || !m) return;
-      b.addEventListener('click', ()=> {
-        const hidden = m.classList.toggle('hidden');
-        b.setAttribute('aria-expanded', String(!hidden));
+    /* ----- Data: subjects → subcategories (links point to your future pages) ----- */
+    const SUBJECTS = [
+      {
+        id: "math", name: "Math", emoji: "🧮",
+        subs: [
+          { n:"Algebra I",      k:["linear","equations","functions"], href:"study/math/algebra-1.html" },
+          { n:"Algebra II",     k:["quadratic","polynomial","exponential"], href:"study/math/algebra-2.html" },
+          { n:"Geometry",       k:["triangles","circles","proofs"], href:"study/math/geometry.html" },
+          { n:"Trigonometry",   k:["sine","cosine","tan","unit circle"], href:"study/math/trigonometry.html" },
+          { n:"Pre-Calculus",   k:["limits","series","vectors"], href:"study/math/precalculus.html" },
+          { n:"Calculus AB",    k:["derivatives","integrals"], href:"study/math/calculus-ab.html" },
+          { n:"Calculus BC",    k:["series","parametric","polar"], href:"study/math/calculus-bc.html" },
+          { n:"Statistics",     k:["probability","distributions","inference"], href:"study/math/statistics.html" },
+          { n:"SAT / ACT Math", k:["sat","act","practice"], href:"study/math/sat-act.html" },
+          { n:"Number Theory",  k:["mod","divisibility"], href:"study/math/number-theory.html" },
+          { n:"Discrete Math",  k:["graphs","combinatorics"], href:"study/math/discrete.html" },
+        ]
+      },
+      {
+        id: "ela", name: "ELA", emoji: "📚",
+        subs: [
+          { n:"Reading Strategies", k:["close reading","inference"], href:"study/ela/reading.html" },
+          { n:"Writing & Grammar",  k:["syntax","sentences"], href:"study/ela/writing.html" },
+          { n:"Rhetorical Analysis",k:["appeals","tone"], href:"study/ela/rhetorical.html" },
+          { n:"Essay Types",       k:["argument","narrative"], href:"study/ela/essays.html" },
+          { n:"Literary Devices",  k:["metaphor","symbolism"], href:"study/ela/lit-devices.html" },
+          { n:"Research & MLA",    k:["citations","works cited"], href:"study/ela/research.html" },
+        ]
+      },
+      {
+        id: "science", name: "Science", emoji: "🧪",
+        subs: [
+          { n:"Biology",         k:["cells","genetics","evolution"], href:"study/science/biology.html" },
+          { n:"Chemistry",       k:["stoichiometry","periodic"], href:"study/science/chemistry.html" },
+          { n:"Physics",         k:["motion","forces","energy"], href:"study/science/physics.html" },
+          { n:"Earth Science",   k:["geology","weather"], href:"study/science/earth.html" },
+          { n:"Environmental",   k:["ecosystems","sustainability"], href:"study/science/environmental.html" },
+          { n:"Anatomy",         k:["systems","organs"], href:"study/science/anatomy.html" },
+          { n:"AP Science Prep", k:["ap","review"], href:"study/science/ap-prep.html" },
+        ]
+      },
+      {
+        id: "tech", name: "Technology", emoji: "💻",
+        subs: [
+          { n:"CS Fundamentals", k:["computers","binary"], href:"study/tech/cs-fundamentals.html" },
+          { n:"Web (HTML/CSS)",  k:["frontend","web"], href:"study/tech/web-basics.html" },
+          { n:"JavaScript",      k:["js","dom"], href:"study/tech/javascript.html" },
+          { n:"Python",          k:["py","basics"], href:"study/tech/python.html" },
+          { n:"Data & AI Basics",k:["ml","data"], href:"study/tech/ai-basics.html" },
+          { n:"Cybersecurity",   k:["security","privacy"], href:"study/tech/cyber.html" },
+        ]
+      },
+      {
+        id: "arts", name: "Fine Arts", emoji: "🎵",
+        subs: [
+          { n:"Band",            k:["winds","percussion"], href:"study/arts/band.html" },
+          { n:"Choir",           k:["voice","harmony"], href:"study/arts/choir.html" },
+          { n:"Music Theory",    k:["intervals","chords"], href:"study/arts/music-theory.html" },
+          { n:"Studio Art",      k:["drawing","painting"], href:"study/arts/studio-art.html" },
+          { n:"Graphic Design",  k:["layout","color"], href:"study/arts/graphic-design.html" },
+        ]
+      },
+      {
+        id: "lang", name: "Languages", emoji: "🌍",
+        subs: [
+          { n:"Spanish I",  k:["present tense","vocab"], href:"study/lang/spanish-1.html" },
+          { n:"Spanish II", k:["past tense","culture"], href:"study/lang/spanish-2.html" },
+          { n:"French I",   k:["présent","vocab"], href:"study/lang/french-1.html" },
+          { n:"French II",  k:["passé composé","culture"], href:"study/lang/french-2.html" },
+        ]
+      },
+      {
+        id: "history", name: "History / Social Studies", emoji: "📜",
+        subs: [
+          { n:"World History",   k:["ancient","modern"], href:"study/history/world.html" },
+          { n:"US History",      k:["colonial","20th"], href:"study/history/us.html" },
+          { n:"Civics / Gov",    k:["constitution","branches"], href:"study/history/civics.html" },
+          { n:"Economics",       k:["supply","demand"], href:"study/history/econ.html" },
+          { n:"Geography",       k:["maps","regions"], href:"study/history/geography.html" },
+          { n:"Psychology",      k:["behavior","cognition"], href:"study/history/psych.html" },
+        ]
+      }
+    ];
+
+    /* ----- Build subject pills ----- */
+    const tabs = document.getElementById('subjectTabs');
+    SUBJECTS.forEach((s, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'pill' + (i===0 ? ' active' : '');
+      btn.textContent = s.name;
+      btn.setAttribute('data-id', s.id);
+      btn.addEventListener('click', () => activateSubject(s.id));
+      tabs.appendChild(btn);
+    });
+
+    /* ----- Build subject sections with subcategory cards ----- */
+    const blocks = document.getElementById('subjectBlocks');
+    const SHOW_FIRST = 8; // how many cards visible before “See more”
+    SUBJECTS.forEach(s => {
+      const wrap = document.createElement('section');
+      wrap.className = 'subject-block fade-in';
+      wrap.id = `block-${s.id}`;
+      wrap.innerHTML = `
+        <div class="subject-header">
+          <div>
+            <div class="subject-title">${s.emoji} ${s.name}</div>
+            <div class="subject-sub">Choose a sub-topic to open its page (Astronomer is built-in on each subpage).</div>
+          </div>
+        </div>
+        <div class="card-grid" id="grid-${s.id}"></div>
+        <div class="more-row">
+          <button class="ghost" id="more-${s.id}">See more</button>
+          <button class="ghost hidden" id="less-${s.id}">Show less</button>
+        </div>
+      `;
+      blocks.appendChild(wrap);
+
+      // render cards (hidden beyond SHOW_FIRST)
+      const grid = wrap.querySelector(`#grid-${s.id}`);
+      s.subs.forEach((sub, idx)=>{
+        const a = document.createElement('a');
+        a.className = 'subcard';
+        if (idx >= SHOW_FIRST) a.classList.add('hidden');
+        a.href = sub.href;
+        a.innerHTML = `
+          <div class="icon">☆</div>
+          <div class="meta">
+            <div class="name">${sub.n}</div>
+            <div class="hint">${sub.k.slice(0,3).join(" • ")}</div>
+          </div>
+        `;
+        grid.appendChild(a);
       });
-      document.addEventListener('click', (e)=>{
-        if (!m.classList.contains('hidden') && !m.contains(e.target) && e.target !== b) {
-          m.classList.add('hidden'); b.setAttribute('aria-expanded','false');
+
+      // wire See more / Show less
+      const moreBtn = wrap.querySelector(`#more-${s.id}`);
+      const lessBtn = wrap.querySelector(`#less-${s.id}`);
+      moreBtn.addEventListener('click', ()=>{
+        grid.querySelectorAll('.hidden').forEach(el=> el.classList.remove('hidden'));
+        moreBtn.classList.add('hidden');
+        lessBtn.classList.remove('hidden');
+      });
+      lessBtn.addEventListener('click', ()=>{
+        [...grid.children].forEach((el, i)=> { if (i >= SHOW_FIRST) el.classList.add('hidden'); });
+        lessBtn.classList.add('hidden');
+        moreBtn.classList.remove('hidden');
+        grid.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+
+    // show first section only
+    function activateSubject(id){
+      document.querySelectorAll('.pill').forEach(p=> p.classList.toggle('active', p.dataset.id===id));
+      document.querySelectorAll('.subject-block').forEach(b=>{
+        const show = b.id === `block-${id}`;
+        b.style.display = show ? '' : 'none';
+        if (show) requestAnimationFrame(()=> b.classList.add('show'));
+      });
+    }
+    activateSubject(SUBJECTS[0].id);
+
+    // search filters subcards within the active subject
+    const search = document.getElementById('search');
+    search.addEventListener('input', ()=>{
+      const q = search.value.trim().toLowerCase();
+      const activeId = document.querySelector('.pill.active')?.dataset.id;
+      const grid = document.querySelector(`#grid-${activeId}`);
+      const cards = [...grid.children];
+
+      // if empty search → restore to “SHOW_FIRST” state
+      if (!q){
+        cards.forEach((el, i)=> el.classList.toggle('hidden', i >= SHOW_FIRST));
+        document.getElementById(`more-${activeId}`).classList.toggle('hidden', cards.length <= SHOW_FIRST);
+        document.getElementById(`less-${activeId}`).classList.add('hidden');
+        return;
+      }
+
+      // filter all visible; hide non-matches
+      const matches = [];
+      const subj = SUBJECTS.find(s=>s.id===activeId);
+      cards.forEach((el, i)=>{
+        const name = subj.subs[i].n.toLowerCase();
+        const keys = (subj.subs[i].k||[]).join(" ").toLowerCase();
+        const ok = name.includes(q) || keys.includes(q);
+        el.classList.toggle('hidden', !ok);
+        if (ok) matches.push(el);
+      });
+
+      // hide / show controls
+      document.getElementById(`more-${activeId}`).classList.add('hidden');
+      document.getElementById(`less-${activeId}`).classList.add('hidden');
+    });
+
+    // basic mobile menu hookup (same IDs your site uses)
+    (function mobileMenuHook(){
+      const btn = document.getElementById("menuBtn");
+      const mm  = document.getElementById("mobileMenu");
+      if (!btn || !mm) return;
+      btn.addEventListener("click", ()=>{
+        const hidden = mm.classList.toggle("hidden");
+        btn.setAttribute("aria-expanded", !hidden);
+      });
+      document.addEventListener("click", (e)=>{
+        if (!mm.contains(e.target) && e.target !== btn && !mm.classList.contains("hidden")){
+          mm.classList.add("hidden"); btn.setAttribute("aria-expanded","false");
         }
       });
     })();
-
-    /* ----- tiny “data set” of starter videos per subject (swap with your picks) ----- */
-    const LIB = {
-      math: [
-        { t:"Algebra Basics — Variables & Expressions", y:"https://www.youtube.com/embed/QjkY8lY8d8o", tag:"Algebra" },
-        { t:"Geometry — Triangle Similarity", y:"https://www.youtube.com/embed/0kKDJxjYFMI", tag:"Geometry" },
-      ],
-      ela: [
-        { t:"How to Write a Strong Thesis", y:"https://www.youtube.com/embed/4Ov1SxkG3FA", tag:"Writing" },
-        { t:"Annotating Text Efficiently", y:"https://www.youtube.com/embed/TNf3y0Xr9sI", tag:"Reading" },
-      ],
-      science: [
-        { t:"Biology — Cell Structure Tour", y:"https://www.youtube.com/embed/URUJD5NEXC8", tag:"Biology" },
-        { t:"Chemistry — Stoichiometry Intuition", y:"https://www.youtube.com/embed/P3n4H0Y2KpQ", tag:"Chemistry" },
-      ],
-      technology: [
-        { t:"Intro to HTML/CSS (Crash)", y:"https://www.youtube.com/embed/mU6anWqZJcc", tag:"Web" },
-        { t:"What is Git & GitHub?", y:"https://www.youtube.com/embed/RGOj5yH7evk", tag:"Tools" },
-      ],
-      finearts: [
-        { t:"Band — Breathing & Tone", y:"https://www.youtube.com/embed/iv7xZ1rS4Gk", tag:"Band" },
-        { t:"Choir — Blending & Diction", y:"https://www.youtube.com/embed/3aD1u1JYI9Q", tag:"Chorus" },
-      ],
-      languages: [
-        { t:"Spanish — Present Tense Essentials", y:"https://www.youtube.com/embed/yOjSZxmpQ9k", tag:"Spanish" },
-        { t:"French — Pronunciation Tips", y:"https://www.youtube.com/embed/7i6W1Z1-8xg", tag:"French" },
-      ],
-      history: [
-        { t:"US Gov — 3 Branches Overview", y:"https://www.youtube.com/embed/0Y8N7a9yH30", tag:"Civics" },
-        { t:"World History — Industrial Revolution", y:"https://www.youtube.com/embed/xLhNP0qp38Q", tag:"World" },
-      ],
-    };
-
-    const chips = document.getElementById('chips');
-    const results = document.getElementById('results');
-    const q = document.getElementById('q');
-    let current = 'math';
-
-    function renderCards(list){
-      results.innerHTML = list.map(v => `
-        <article class="card">
-          <div class="thumb"><iframe src="${v.y}" title="${v.t}" allowfullscreen loading="lazy"></iframe></div>
-          <div class="card-body">
-            <div class="card-title">${v.t}</div>
-            <span class="badge">${v.tag}</span>
-          </div>
-        </article>
-      `).join('');
-    }
-
-    function apply(){
-      const term = (q.value || '').toLowerCase().trim();
-      const base = LIB[current] || [];
-      const list = term ? base.filter(v => v.t.toLowerCase().includes(term) || (v.tag||'').toLowerCase().includes(term)) : base;
-      renderCards(list);
-    }
-
-    chips.addEventListener('click', (e)=>{
-      const btn = e.target.closest('.chip'); if (!btn) return;
-      chips.querySelectorAll('.chip').forEach(c=> c.classList.remove('active'));
-      btn.classList.add('active');
-      current = btn.dataset.subj;
-      q.value = '';
-      apply();
-    });
-    q.addEventListener('input', apply);
-
-    // initial
-    apply();
-
-    /* -------- Astronomers: safe, non-cheaty suggestions -------- */
-    const ask = document.getElementById('ask');
-    const tips = document.getElementById('tips');
-    document.getElementById('aiSuggest').addEventListener('click', ()=>{
-      const txt = (ask.value||'').toLowerCase();
-      const bucket = current;
-      const out = [];
-
-      // gentle, study-skill style recommendations
-      if (txt.includes('quadratic') || bucket==='math') {
-        out.push("Try factoring with the AC method on simple quadratics, then switch to completing the square for tougher ones. Practice: 10 problems timed (2 min each).");
-        out.push("Watch: “Algebra Basics” and pause to copy each step. Say aloud why each step is valid.");
-      }
-      if (txt.includes('essay') || bucket==='ela') {
-        out.push("Outline first: claim → 2–3 reasons → evidence → counterclaim → conclusion. Draft topic sentences before writing paragraphs.");
-        out.push("Use a color code: green = claim, blue = evidence, orange = analysis. Check that every blue has orange after it.");
-      }
-      if (txt.includes('bio') || txt.includes('cell') || bucket==='science') {
-        out.push("Build a 1-page map: nucleus (control), ribosome (factory), mitochondria (power). Add 3 analogies you’ll remember.");
-        out.push("Study trick: 20-5-20. 20 minutes content, 5 minute drawing/recall, 20 minutes mixed questions.");
-      }
-      if (out.length === 0) {
-        out.push("Tell me the exact topic (e.g., “French passé composé verbs” or “Triangle similarity proofs”), and I’ll point you to 2 videos + a 3-step practice plan.");
-      }
-
-      tips.innerHTML = out.map(t => `<div class="tip">${t}</div>`).join('');
-    });
   </script>
-  <script src="script.js?v=18"></script>
+
+  <!-- Your global scripts (toasts, starfield, theme toggle, etc.) -->
+  <script src="script.js?v=25"></script>
 </body>
 </html>
+
