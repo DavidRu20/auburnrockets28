@@ -102,6 +102,9 @@
     .day.break{ background: rgba(255,165,0,.18); border:1px solid orange; }
     .day.half { background: rgba(13,110,253,.18); border:1px solid var(--blue-2); }
     .day.lunch{ outline: 1px dashed rgba(255,255,255,.25); }
+    /* optional styles for extra types */
+    .day.no-school { background: rgba(255, 80, 80, .18); border:1px solid rgba(255,80,80,.6); }
+    .day.holiday   { background: rgba(60, 220, 120, .18); border:1px solid rgba(60,220,120,.6); }
 
     /* stacked labels inside a day */
     .event-list { margin-top:auto; display:grid; gap:4px; }
@@ -231,17 +234,42 @@
       })();
     })();
 
-    /* ====== EVENTS (JSON only; no hardcoded seed) ====== */
-    const EVENTS_URL = 'data/calendar-events.json'; // edit this file in your repo
+    /* ====== EVENTS: robust loader (array OR object JSON) ====== */
+    // Make sure this matches your real file path & name:
+    const EVENTS_URL = 'data/calender.json'; // change to 'data/calendar-events.json' if you rename it
+
     // eventsByDate: { "YYYY-MM-DD": [ {type,label}, ... ] }
     let eventsByDate = {};
+
     function groupEvents(list){
       const by = {};
-      for(const e of list){
-        if(!by[e.date]) by[e.date] = [];
-        by[e.date].push({ type: (e.type||'event'), label: (e.label||'') });
+      for (const e of list){
+        if (!e || !e.date) continue;
+        if (!by[e.date]) by[e.date] = [];
+        by[e.date].push({ type: (e.type || 'event'), label: (e.label || '') });
       }
       return by;
+    }
+
+    // Accept array OR object-shaped JSON
+    function normalizeEvents(input){
+      if (Array.isArray(input)) return input;
+
+      const out = [];
+      if (input && typeof input === 'object'){
+        for (const [date, value] of Object.entries(input)){
+          if (Array.isArray(value)){
+            for (const v of value){
+              if (v && typeof v === 'object') out.push({ date, ...v });
+            }
+          } else if (value && typeof value === 'object'){
+            out.push({ date, ...value });
+          } else if (value != null){
+            out.push({ date, type: 'event', label: String(value) });
+          }
+        }
+      }
+      return out;
     }
 
     /* ====== CALENDAR RENDER ====== */
@@ -276,8 +304,8 @@
           const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
           const items = eventsByDate[key] || [];
           if (items.length){
-            // choose a primary style for the day (priority: event > break > half > lunch)
-            const priority = { event:4, break:3, half:2, lunch:1 };
+            // choose a primary style for the day
+            const priority = { "no-school": 5, holiday:4, event:3, break:2, half:1, lunch:0 };
             const primary = items.slice().sort((a,b)=>(priority[b.type]||0)-(priority[a.type]||0))[0];
             if (primary?.type) cell.classList.add(primary.type);
 
@@ -305,9 +333,19 @@
 
       // Load JSON, then draw
       fetch(EVENTS_URL, { cache:'no-store' })
-        .then(r => r.ok ? r.json() : [])
-        .then(list => { eventsByDate = groupEvents(Array.isArray(list)? list : []); })
-        .catch(()=>{ eventsByDate = {}; })
+        .then(r => {
+          if (!r.ok) throw new Error(`Fetch failed: ${r.status} ${r.statusText}`);
+          return r.json();
+        })
+        .then(raw => {
+          const list = normalizeEvents(raw);
+          eventsByDate = groupEvents(list);
+          console.log('[Calendar] Loaded', list.length, 'events');
+        })
+        .catch(err => {
+          console.error('[Calendar] Event load error:', err);
+          eventsByDate = {};
+        })
         .finally(()=>{ render(current); });
     })();
 
@@ -374,9 +412,12 @@
         }
       }
 
-      // call after events load
+      // call after events load (wait until we actually have events)
       const ready = setInterval(() => {
-        if (eventsByDate && Object.keys(eventsByDate).length >= 0) { update(); clearInterval(ready); }
+        if (eventsByDate && Object.keys(eventsByDate).length > 0) {
+          update();
+          clearInterval(ready);
+        }
       }, 200);
       setInterval(update, 60*1000);
     })();
@@ -385,3 +426,4 @@
   <script src="script.js?v=23"></script>
 </body>
 </html>
+
