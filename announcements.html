@@ -93,6 +93,14 @@
           btn.setAttribute('aria-expanded','false'); menu.classList.add('hidden');
         }
       });
+      // Close menu immediately when a link is tapped
+      menu.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (link){
+          btn.setAttribute('aria-expanded','false');
+          menu.classList.add('hidden');
+        }
+      });
     })();
 
     /* Starfield */
@@ -123,20 +131,33 @@
     const q = document.getElementById('q');
     let ANN = [];
 
+    // Markdown-ish to HTML (links open in a new tab)
     function mdToHTML(s){
       if(!s) return '';
       let html = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
       html = html.replace(/\n{2,}/g, '</p><p>');
       html = '<p>'+html.replace(/\n/g,'<br>')+'</p>';
       return html;
     }
 
+    // Safe date → timestamp helper for sort/format
+    function parseTimeSafe(v){
+      if (!v) return -Infinity;            // invalids go last
+      const t = new Date(v).getTime();
+      return Number.isNaN(t) ? -Infinity : t;
+    }
+
     function render(){
-      const term = (q.value||'').toLowerCase().trim();
+      const term = (q.value || '').toLowerCase().trim();
+
       const filtered = ANN
-        .filter(a => (a.title+' '+a.content).toLowerCase().includes(term))
-        .sort((a,b)=> (b.date||'').localeCompare(a.date||'')); 
+        .filter(a => {
+          const title = (a.title || '').toLowerCase();
+          const content = (a.content || '').toLowerCase();
+          return (title + ' ' + content).includes(term);
+        })
+        .sort((a, b) => parseTimeSafe(b.date) - parseTimeSafe(a.date));
 
       listEl.innerHTML = '';
       if (!filtered.length){ emptyEl.classList.remove('hidden'); return; }
@@ -152,8 +173,8 @@
 
         const meta = document.createElement('div');
         meta.className = 'ann-meta';
-        const dt = new Date(a.date);
-        meta.textContent = isFinite(dt) ? dt.toLocaleDateString() : (a.date||'');
+        const t = parseTimeSafe(a.date);
+        meta.textContent = Number.isFinite(t) ? new Date(t).toLocaleDateString() : (a.date || '');
 
         const body = document.createElement('div');
         body.className = 'ann-content';
@@ -181,10 +202,20 @@
         try { data = JSON.parse(text); }
         catch(e){ showError('JSON parse error — check commas/brackets'); return; }
 
-        if(!Array.isArray(data)){ showError('JSON must be an array: [ {title,date,content}, ... ]'); return; }
-        ANN = data;
+        if(Array.isArray(data)) ANN = data;
+        else if (data && Array.isArray(data.items)) ANN = data.items;
+        else { showError('JSON must be an array: [ {title,date,content}, ... ]'); return; }
+
+        // Skip totally empty entries
+        ANN = ANN.filter(a => a && (a.title || a.content));
+
         render();
-        q.addEventListener('input', render);
+
+        // Debounced search input for smoother typing
+        function debounce(fn, ms=120){
+          let id; return (...args)=>{ clearTimeout(id); id = setTimeout(()=>fn(...args), ms); };
+        }
+        q.addEventListener('input', debounce(render, 120));
       }catch(err){
         showError(err.message || 'Unknown error');
       }
@@ -194,5 +225,3 @@
   <script src="script.js?v=27"></script>
 </body>
 </html>
-
-
