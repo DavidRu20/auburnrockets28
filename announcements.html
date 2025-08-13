@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Announcements</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css?v=28" />
+  <link rel="stylesheet" href="styles.css?v=27" />
   <style>
     body { color: var(--text); background: transparent; overflow-x:hidden; }
     #starfield{ position: fixed; inset:0; z-index:-1; }
@@ -13,13 +13,11 @@
     .ann-list{ display:grid; gap:14px; }
     .ann.card{ padding:16px; }
     .ann-title{ font-weight:900; font-size:1.1rem; margin:0 0 6px; }
-    .ann-meta{ font-size:12px; color:var(--muted); margin-bottom:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .ann-meta{ font-size:12px; color:var(--muted); margin-bottom:10px; }
     .ann-content p{ margin: 0 0 10px; }
-    .toolbar{ display:flex; gap:10px; align-items:center; margin:12px 0 18px; flex-wrap:wrap; }
+    .toolbar{ display:flex; gap:10px; align-items:center; margin:12px 0 18px; }
     .toolbar .input{ max-width:360px; }
-    .tool-spacer{ flex:1 1 auto; }
     .empty{ text-align:center; opacity:.85; padding:24px 10px; border:1px dashed var(--border); border-radius:14px; }
-    .link-btn{ font-size:12px; opacity:.9; text-decoration:underline; }
   </style>
 </head>
 <body>
@@ -64,11 +62,8 @@
   <main>
     <h1>Announcements</h1>
 
-    <!-- Subscribe + Search toolbar -->
+    <!-- simple tools -->
     <div class="toolbar">
-      <a class="btn" href="./contact.html?subject=Subscribe%20me%20to%20Announcements">Email me updates</a>
-      <button id="dlIcs" class="btn primary" type="button">Download iCal (.ics)</button>
-      <div class="tool-spacer"></div>
       <input id="q" class="input" type="search" placeholder="Search announcements…" aria-label="Search announcements">
     </div>
 
@@ -126,15 +121,16 @@
     const listEl = document.getElementById('list');
     const emptyEl = document.getElementById('empty');
     const q = document.getElementById('q');
-    const dlIcsBtn = document.getElementById('dlIcs');
     let ANN = [];
 
     function mdToHTML(s){
+      // very tiny markdown: links + paragraphs + line breaks
       if(!s) return '';
-      let html = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-      html = html.replace(/\n{2,}/g, '</p><p>');
-      html = '<p>'+html.replace(/\n/g,'<br>')+'</p>';
+      let html = s
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); // basic escape
+      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>'); // links
+      html = html.replace(/\n{2,}/g, '</p><p>'); // paragraphs
+      html = '<p>'+html.replace(/\n/g,'<br>')+'</p>'; // single line breaks
       return html;
     }
 
@@ -143,7 +139,7 @@
       const filtered = ANN.filter(a=>{
         const hay = (a.title+' '+a.content).toLowerCase();
         return !term || hay.includes(term);
-      }).sort((a,b)=> b.date.localeCompare(a.date)); // newest first
+      }).sort((a,b)=> b.date.localeCompare(a.date)); // newest first (YYYY-MM-DD)
 
       listEl.innerHTML = '';
       if (!filtered.length){ emptyEl.classList.remove('hidden'); return; }
@@ -159,20 +155,7 @@
 
         const meta = document.createElement('div');
         meta.className = 'ann-meta';
-        const dt = new Date(a.date);
-        const dateText = isFinite(dt) ? dt.toLocaleDateString() : (a.date||'');
-        meta.textContent = dateText;
-
-        // per-announcement "Add to calendar" (single .ics)
-        const addCal = document.createElement('a');
-        addCal.href = '#';
-        addCal.className = 'link-btn';
-        addCal.textContent = 'Add to calendar';
-        addCal.addEventListener('click', (e)=>{ e.preventDefault(); downloadSingleICS(a); });
-
-        // put the link next to the date
-        meta.appendChild(document.createTextNode(' • '));
-        meta.appendChild(addCal);
+        meta.textContent = new Date(a.date).toLocaleDateString();
 
         const body = document.createElement('div');
         body.className = 'ann-content';
@@ -185,99 +168,15 @@
       });
     }
 
-    // --- iCal helpers ---
-    function icsEscape(s=''){
-      return String(s)
-        .replace(/\\/g,'\\\\')
-        .replace(/\n/g,'\\n')
-        .replace(/,/g,'\\,')
-        .replace(/;/g,'\\;');
-    }
-    function ymd(dateStr){
-      // expects YYYY-MM-DD; returns YYYYMMDD
-      const m = String(dateStr||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if(!m) return '';
-      return `${m[1]}${m[2]}${m[3]}`;
-    }
-    function nowUTC(){
-      const d = new Date();
-      const YYYY = d.getUTCFullYear();
-      const MM = String(d.getUTCMonth()+1).padStart(2,'0');
-      const DD = String(d.getUTCDate()).padStart(2,'0');
-      const hh = String(d.getUTCHours()).padStart(2,'0');
-      const mm = String(d.getUTCMinutes()).padStart(2,'0');
-      const ss = String(d.getUTCSeconds()).padStart(2,'0');
-      return `${YYYY}${MM}${DD}T${hh}${mm}${ss}Z`;
-    }
-    function buildVEVENT(a, idx=0){
-      const dt = ymd(a.date||'');
-      const uid = `${dt}-${idx}@ahs-class-of-28`;
-      const summary = icsEscape(a.title || 'Announcement');
-      const desc = icsEscape((a.content||'').replace(/\n{3,}/g,'\n\n'));
-      const url = location.href; // page URL
-      // All-day event (DTSTART only). If you want a 1-hour block, add DTEND: YYYYMMDDT...
-      return [
-        'BEGIN:VEVENT',
-        `UID:${uid}`,
-        `DTSTAMP:${nowUTC()}`,
-        dt ? `DTSTART;VALUE=DATE:${dt}` : '',
-        `SUMMARY:${summary}`,
-        desc ? `DESCRIPTION:${desc}` : '',
-        `URL:${url}`,
-        'END:VEVENT'
-      ].filter(Boolean).join('\r\n');
-    }
-    function buildICS(list){
-      const vevents = list.map(buildVEVENT);
-      return [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'PRODID:-//AHS Class of 28//Announcements//EN',
-        'CALSCALE:GREGORIAN',
-        'METHOD:PUBLISH',
-        ...vevents,
-        'END:VCALENDAR'
-      ].join('\r\n');
-    }
-    function downloadBlob(filename, text){
-      const blob = new Blob([text], {type: 'text/calendar;charset=utf-8'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click();
-      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
-    }
-    function downloadAllICS(){
-      if(!ANN.length){ alert('No announcements to export yet.'); return; }
-      const ics = buildICS(ANN);
-      downloadBlob('ahs-announcements.ics', ics);
-    }
-    function downloadSingleICS(a){
-      const ics = [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'PRODID:-//AHS Class of 28//Announcements//EN',
-        'CALSCALE:GREGORIAN',
-        'METHOD:PUBLISH',
-        buildVEVENT(a, 1),
-        'END:VCALENDAR'
-      ].join('\r\n');
-      const safe = (a.title||'announcement').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
-      downloadBlob(`${safe || 'announcement'}.ics`, ics);
-    }
-
-    // wire up buttons
-    dlIcsBtn.addEventListener('click', downloadAllICS);
     q.addEventListener('input', render);
 
-    // load JSON + render
     fetch(SOURCE, { cache:'no-store' })
       .then(r=> r.ok ? r.json() : [])
       .then(data => { ANN = Array.isArray(data) ? data : []; render(); })
       .catch(()=>{ ANN = []; render(); });
   </script>
 
-  <script src="script.js?v=28"></script>
+  <script src="script.js?v=27"></script>
 </body>
 </html>
 
