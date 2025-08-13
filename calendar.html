@@ -312,46 +312,87 @@
     })();
 
     /* ====== SIDEBAR COUNTDOWNS ====== */
-    (function(){
-      const wrap = document.getElementById("holidayCountdowns");
-      function update(){
-        wrap.querySelectorAll(".countdown-item").forEach(n=>n.remove());
+    (function () {
+  const wrap = document.getElementById("holidayCountdowns");
 
-        const now = new Date();
-        const flat = [];
-        Object.keys(eventsByDate).forEach(key => {
-          for (const item of eventsByDate[key]){
-            flat.push({ date: new Date(key), type: item.type, label: item.label });
-          }
-        });
+  // types you want to show in the "Upcoming Holidays" list:
+  // remove "event" if you don't want regular events in this list
+  const HOLIDAY_TYPES = new Set(["break", "holiday", "half", "no-school", "event"]);
 
-        flat
-          .filter(e => e.date >= now)
-          .sort((a,b)=> a.date - b.date)
-          .slice(0, 8)
-          .forEach(e=>{
-            const diff = e.date - now;
-            const days = Math.floor(diff / (1000*60*60*24));
-            const hours= Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-            const item = document.createElement("div");
-            item.className = "countdown-item";
-            item.innerHTML = `<div style="font-weight:700;">${e.label}</div><div style="opacity:.8">${days} days, ${hours} hours</div>`;
-            wrap.appendChild(item);
-          });
+  function startOfToday() {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  function fmtDiff(ms) {
+    const days  = Math.floor(ms / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    return `${days} days, ${hours} hours`;
+  }
+
+  function update() {
+    // wipe previous items, keep the <h2>
+    wrap.querySelectorAll(".countdown-item").forEach(n => n.remove());
+
+    const today0 = startOfToday();
+
+    // Flatten your events structure safely (works whether events[date] is an object or an array)
+    const upcoming = [];
+    for (const [iso, val] of Object.entries(events || {})) {
+      const list = Array.isArray(val) ? val : [val];
+      for (const ev of list) {
+        if (!ev || !ev.type) continue;
+        if (!HOLIDAY_TYPES.has(ev.type)) continue;           // <-- hide lunch/etc
+        const dt = new Date(iso);
+        if (dt >= today0) upcoming.push({ date: dt, label: ev.label, type: ev.type, iso });
       }
+    }
 
-      // refresh every minute and also when page becomes visible
-      setInterval(update, 60*1000);
-      document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) update(); });
+    // Group multiple items on the same day into one row (to avoid spam)
+    const byDay = new Map();
+    for (const e of upcoming) {
+      const key = e.iso; // keep original ISO y-m-d key
+      if (!byDay.has(key)) byDay.set(key, []);
+      byDay.get(key).push(e);
+    }
 
-      // initial update after events load
-      fetch(EVENTS_URL, { cache:'no-store' })
-        .then(r => r.ok ? r.json() : [])
-        .then(list => { eventsByDate = groupEvents(Array.isArray(list)? list : []); })
-        .catch(()=>{ eventsByDate = {}; })
-        .finally(update);
-    })();
-  </script>
+    // Sort by date ascending and take the next 8 days that have holiday items
+    const rows = [...byDay.entries()]
+      .map(([iso, list]) => ({ iso, date: list[0].date, items: list }))
+      .sort((a, b) => a.date - b.date)
+      .slice(0, 8);
+
+    if (!rows.length) {
+      const none = document.createElement("div");
+      none.className = "countdown-item";
+      none.textContent = "No upcoming holidays found.";
+      wrap.appendChild(none);
+      return;
+    }
+
+    // Render
+    for (const row of rows) {
+      const now = new Date();
+      const diff = row.date - now;
+      const item = document.createElement("div");
+      item.className = "countdown-item";
+
+      // If multiple items on the same day, join their labels with commas
+      const labels = row.items.map(i => i.label).join(", ");
+
+      item.innerHTML = `
+        <div style="font-weight:700;">${labels}</div>
+        <div style="opacity:.8">${fmtDiff(diff)}</div>
+      `;
+      wrap.appendChild(item);
+    }
+  }
+
+  update();
+  setInterval(update, 60 * 1000);
+})();
+</script>
 
   <script src="script.js?v=23"></script>
 </body>
