@@ -234,22 +234,21 @@
     /* ====== EVENTS LOADER (JSON + multiple items per day) ====== */
     const EVENTS_URL = './data/calendar-events.json';  // edit this file on GitHub
     let eventsByDate = {};                              // { "YYYY-MM-DD": [ {type,label}, ... ] }
+let events = {};
 
-    // Built-in seed so the calendar isn't empty if the JSON file is missing.
-    const seed = {
-      "2025-08-27": [{ type:"event", label:"First Day of School" }],
-      "2025-09-01": [{ type:"break", label:"Labor Day" }],
-      "2025-10-13": [{ type:"break", label:"Indigenous Peoples’ Day" }],
-      "2025-11-11": [{ type:"break", label:"Veterans Day" }],
-      "2025-11-26": [{ type:"break", label:"Thanksgiving Break" }],
-      "2025-11-27": [{ type:"break", label:"Thanksgiving Break" }],
-      "2025-11-28": [{ type:"break", label:"Thanksgiving Break" }],
-      "2025-12-23": [{ type:"break", label:"Winter Break" }],
-      "2025-12-24": [{ type:"break", label:"Winter Break" }],
-      "2025-12-25": [{ type:"break", label:"Winter Break" }],
-      "2026-01-01": [{ type:"break", label:"New Year’s Day" }],
-      "2026-06-12": [{ type:"event", label:"Last Day of School" }]
-    };
+fetch('data/calendar-events.json')
+  .then(res => res.json())
+  .then(data => {
+    events = {};
+    data.forEach(e => {
+      events[e.date] = { type: e.type, label: e.label };
+    });
+    renderCalendar();
+    updateCountdowns();
+  })
+  .catch(err => {
+    console.error("Failed to load calendar events:", err);
+  });
 
     async function loadEvents(){
       // clone seed
