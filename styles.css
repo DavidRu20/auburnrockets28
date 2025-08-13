@@ -583,65 +583,135 @@ h1{
   border-color: rgba(82,168,255,.28);
 }
 
-/* Fix Divi mobile menu colors */
-@media only screen and (max-width: 980px) {
-  /* Menu background */
-  .et_mobile_menu {
-    background-color: #000 !important; /* Black background */
-  }
-
-  /* Menu links */
-  .et_mobile_menu li a {
-    color: #fff !important; /* White text */
-  }
-
-  /* Hover state */
-  .et_mobile_menu li a:hover {
-    background-color: #333 !important; /* Dark gray hover */
-    color: #fff !important;
-  }
-
-  /* Optional: improve submenu visibility */
-  .et_mobile_menu .menu-item-has-children > a:after {
-    color: #fff !important;
-  }
-
-   background-color: rgba(0,0,0,0.85) !important;
+/* --------------------------- Footer ------------------------------------- */
+.footer{
+  text-align:center; color: var(--muted); font-size: 12px;
+  padding: 28px 0 40px; border-top: 1px solid var(--border);
+  margin-top: 40px;
 }
 
-.badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 8px;
-  font-size: 0.85em;
-  font-weight: bold;
-  background: gray; /* default if no color class */
-  color: white;
+/* -------------------------- Micro Animations ---------------------------- */
+.hover-up { transition: transform var(--t-base), opacity var(--t-base); }
+.hover-up:hover { transform: translateY(-3px); }
+
+.glow {
+  box-shadow: 0 0 0 0 rgba(13,110,253,.45);
+  animation: glow 1.8s ease-out infinite;
+}
+@keyframes glow{
+  0%{ box-shadow: 0 0 0 0 rgba(13,110,253,.35); }
+  80%{ box-shadow: 0 0 0 14px rgba(13,110,253,0); }
+  100%{ box-shadow: 0 0 0 0 rgba(13,110,253,0); }
 }
 
-.badge.red {
-  background: #e53935; /* bright red */
-  color: white;
+/* Active nav underline */
+.nav a.active{ color: #fff; position: relative; }
+.nav a.active::after{
+  content:""; position:absolute; left:0; right:0; bottom:-8px; height:2px;
+  background: linear-gradient(90deg, var(--blue), var(--blue-2));
+  border-radius: 2px;
 }
 
-.badge.purple {
-  background: #9c27b0; /* deep purple */
-  color: white;
+/* ====== Appends for Shop + Contact polish ====== */
+.product { transition: transform var(--t-base), box-shadow var(--t-base); }
+.product:hover { transform: translateY(-4px); box-shadow: 0 18px 50px rgba(0,0,0,.35); }
+.product .media-item { position: relative; overflow: hidden; }
+.product .media-item::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+  transform: translateX(-120%);
+  transition: transform 900ms cubic-bezier(.2,.8,.2,1);
+  pointer-events: none;
+}
+.product:hover .media-item::after { transform: translateX(120%); }
+
+/* Status labels used on fundraisers/home cards */
+.status {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800;
+  border: 1px solid var(--border); background: var(--panel); color: var(--muted);
+}
+.status.now {
+  background: linear-gradient(135deg, #ff3b3b, #ff7a7a);
+  color: #fff; border-color: transparent;
+  box-shadow: 0 0 0 0 rgba(255,59,59,.45);
+  animation: pulse 1.6s ease-out infinite;
+}
+.status.upcoming {
+  background: rgba(82,168,255,.14); color: var(--blue-2);
+  border-color: rgba(82,168,255,.25);
+}
+.status.past { opacity: .75; }
+
+/* ------------------------------- Tables --------------------------------- */
+.table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table {
+  width:100%; border-collapse: collapse; border-spacing: 0; font-size: 14px;
+  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  min-width: 400px;
+}
+.table th, .table td{ padding: 12px 10px; text-align:left; border-bottom: 1px solid var(--border); }
+.table th{ background: var(--panel-2); color: var(--muted); font-weight: 800; }
+.table tr:hover td{ background: rgba(255,255,255,.03); }
+@media (max-width: 560px) { .table th, .table td { white-space: nowrap; } }
+
+/* --------------------------- Section Headers ---------------------------- */
+.section { padding: 28px 0; }
+.section .section-title{ font-weight: 900; letter-spacing:.3px; margin-bottom: 12px; }
+.section .section-sub{ color: var(--muted); margin-top: -4px; margin-bottom: 12px; }
+
+/* ------------------------------ Badges ---------------------------------- */
+/* Keep your original gradient badges; remove later duplicates */
+.badge{
+  display:inline-flex; align-items:center; gap:8px; height: 28px;
+  padding: 0 10px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--panel); color: var(--muted); font-size: 12px; font-weight: 700;
+}
+.badge.blue{ color:#fff; background: linear-gradient(135deg, var(--blue), var(--blue-2)); border-color: transparent; }
+.badge.red{ color:#fff; background:linear-gradient(135deg,var(--red),var(--red-2)); border-color:transparent; }
+.badge.purple{ color:#fff; background:linear-gradient(135deg,var(--purple),var(--purple-2)); border-color:transparent; }
+.badge.yellow{ color:#000; background:linear-gradient(135deg,var(--yellow),var(--yellow-2)); border-color:transparent; }
+.badge.success{ background: rgba(46,204,113,.12); color: var(--success); }
+.badge.warn{ background: rgba(241,196,15,.12); color: var(--warn); }
+.badge.danger{ background: rgba(255,77,77,.12); color: var(--danger); }
+.badge.live{
+  color:#fff; background: linear-gradient(135deg, #ff3b3b, #ff7a7a); border-color: transparent;
+  box-shadow: 0 0 0 0 rgba(255,59,59,.5);
+  animation: pulse 1.6s ease-out infinite;
 }
 
-.badge.yellow {
-  background: #fdd835; /* bright yellow */
-  color: black; /* better contrast */
+/* ------------------------ Theme attribute overrides --------------------- */
+/* Optional theme switch (works with data-theme="light" on <html>) */
+:root[data-theme="light"]{
+  --bg:#f5f7fb; --panel:#ffffff; --panel-2:#f0f3f8;
+  --text:#0b1220; --muted:#4b5a70; --border:rgba(0,0,0,.08);
+  --blue:#0d6efd; --blue-2:#2b8cff;
+  --shadow-1: 0 6px 18px rgba(0,0,0,.08);
+  --shadow-2: 0 20px 60px rgba(0,0,0,.12);
+  --inner-1: inset 0 1px 0 rgba(255,255,255,.6);
 }
-
-:root[data-theme="light"] .fundraiser-title { color: var(--text) !important; }
-:root[data-theme="light"] .fundraiser-sub   { color: #37485f !important; }
-:root[data-theme="light"] .fundraiser-box   { 
-  background: var(--panel); 
-  box-shadow: var(--shadow-1); 
-  border: 1px solid var(--border);
+:root[data-theme="light"] body{
+  background:
+    radial-gradient(1200px 700px at 50% -15%, rgba(82,168,255,0.18), transparent 60%),
+    linear-gradient(180deg, #eef3fb, #f6f8fc 30%, #ffffff);
 }
+:root[data-theme="light"] .header{
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.80));
+  border-bottom: 1px solid var(--border);
+}
+:root[data-theme="light"] .links a{ color: var(--muted); }
+:root[data-theme="light"] .links a:hover,
+:root[data-theme="light"] .nav a.active{ color: var(--text); }
+:root[data-theme="light"] .panel.glass{
+  background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
+  backdrop-filter: blur(10px);
+}
+:root[data-theme="light"] .btn { background: var(--panel); border-color: var(--border); color: var(--text); }
+:root[data-theme="light"] .btn.primary{
+  background: linear-gradient(135deg, var(--blue), var(--blue-2));
+  color:#fff; border-color: transparent;
+}
+:root[data-theme="light"] .table th{ background: var(--panel-2); color: var(--muted); }
+:root[data-theme="light"] .table tr:hover td{ background: rgba(0,0,0,.03); }
 
 /* End of file */
-/* ======================================================================= */
-
