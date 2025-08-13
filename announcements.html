@@ -1,367 +1,387 @@
 <!doctype html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="styles.css">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Announcements • AHS Class of ’28</title>
+  <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=23" />
 
-  <!-- Page-local visuals: starfield + shooting stars -->
   <style>
-    /* ==== STARFIELD (layered) ==== */
-    .sky {
-      position: fixed;
-      inset: 0;
-      z-index: -2; /* behind everything */
-      pointer-events: none;
-      /* base space gradient to blend with your site background */
-      background:
-        radial-gradient(1200px 700px at 50% -15%, rgba(82,168,255,0.12), transparent 60%),
-        linear-gradient(180deg, #070a0f, #0b0e13 30%, #06090d);
-    }
-    /* Three star layers with different sizes/parallax speeds */
-    .sky::before,
-    .sky::after {
-      content: "";
-      position: absolute; inset: 0;
-      background-repeat: repeat;
-      animation: starParallax 120s linear infinite;
-      opacity: 0.9;
-    }
-    /* Layer 1: many tiny stars */
-    .stars-1 {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(1px 1px at 10% 20%, #ffffffcc 99%, transparent 100%),
-        radial-gradient(1px 1px at 30% 80%, #ffffffcc 99%, transparent 100%),
-        radial-gradient(1px 1px at 55% 15%, #ffffffcc 99%, transparent 100%),
-        radial-gradient(1px 1px at 80% 30%, #ffffffcc 99%, transparent 100%),
-        radial-gradient(1px 1px at 70% 70%, #ffffffcc 99%, transparent 100%),
-        radial-gradient(1px 1px at 20% 60%, #ffffffcc 99%, transparent 100%),
-        radial-gradient(1px 1px at 90% 50%, #ffffffcc 99%, transparent 100%),
-        radial-gradient(1px 1px at 40% 40%, #ffffffcc 99%, transparent 100%);
-      background-size: 600px 600px;
-      animation: starDrift1 160s linear infinite;
-      opacity: .7;
-      z-index: -2;
-    }
-    .sky::before {
-      background-image:
-        radial-gradient(1.2px 1.2px at 15% 35%, #eaf1ff 99%, transparent 100%),
-        radial-gradient(1.2px 1.2px at 45% 55%, #eaf1ff 99%, transparent 100%),
-        radial-gradient(1.2px 1.2px at 75% 25%, #eaf1ff 99%, transparent 100%),
-        radial-gradient(1.2px 1.2px at 25% 75%, #eaf1ff 99%, transparent 100%),
-        radial-gradient(1.2px 1.2px at 85% 80%, #eaf1ff 99%, transparent 100%),
-        radial-gradient(1.2px 1.2px at 55% 85%, #eaf1ff 99%, transparent 100%);
-      background-size: 900px 900px;
-      animation-duration: 200s;
-      z-index: -2;
-    }
-    .sky::after {
-      background-image:
-        radial-gradient(0.8px 0.8px at 20% 20%, #9bb0cc 99%, transparent 100%),
-        radial-gradient(0.8px 0.8px at 60% 40%, #9bb0cc 99%, transparent 100%),
-        radial-gradient(0.8px 0.8px at 35% 70%, #9bb0cc 99%, transparent 100%),
-        radial-gradient(0.8px 0.8px at 80% 60%, #9bb0cc 99%, transparent 100%),
-        radial-gradient(0.8px 0.8px at 90% 30%, #9bb0cc 99%, transparent 100%);
-      background-size: 700px 700px;
-      animation-duration: 280s;
-      z-index: -2;
-      opacity: .6;
-    }
-    @keyframes starParallax {
-      0%   { transform: translateY(0); }
-      100% { transform: translateY(200px); }
-    }
-    @keyframes starDrift1 {
-      0%   { transform: translateY(0) translateX(0); }
-      100% { transform: translateY(150px) translateX(60px); }
+    /* Page base */
+    body { color: var(--text); background: transparent; overflow-x: hidden; }
+    #starfield{ position: fixed; inset: 0; z-index:-1; }
+
+    /* ================== LAYOUT (fills page) ================== */
+    main{
+      display: grid;
+      grid-template-columns: clamp(260px, 22vw, 340px) minmax(0, 1fr); /* sidebar | calendar */
+      gap: 24px;
+      width: min(96vw, 1800px);
+      max-width: none;
+      margin-inline: auto;
+      padding: 24px clamp(12px, 2vw, 28px);
     }
 
-    /* ==== SHOOTING STARS ==== */
-    .shooting {
-      position: fixed;
-      inset: 0;
-      z-index: -1; /* above stars but still behind UI */
-      pointer-events: none;
+    /* ---------------- Sidebar ---------------- */
+    .sidebar{
+      position: sticky; top: 96px;
+      height: calc(100vh - 120px);
+      overflow: auto;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      box-shadow: var(--shadow-1);
+      width: auto; max-width: 360px;
     }
-    .shooting .meteor {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: #fff;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #fff;
-      opacity: 0;
-      /* Tail */
-      --len: 140px;
+    :root[data-theme="light"] .sidebar{
+      background: var(--panel);
+      border: 1px solid var(--border);
     }
-    .shooting .meteor::after {
-      content: "";
-      position: absolute;
-      left: -2px; top: -1px;
-      width: var(--len);
-      height: 2px;
-      background: linear-gradient(90deg, #fff, rgba(255,255,255,0));
-      transform: translateX(-100%);
-      border-radius: 2px;
+    .sidebar h2{ font-size: 1.5rem; margin-bottom: 12px; }
+    .countdown-item{
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px;
+      margin: 10px 0;
     }
-    /* We create a few meteors with different paths/delays */
-    .meteor.m1 { --len: 160px; animation: fly1 6s linear infinite 1s; }
-    .meteor.m2 { --len: 120px; animation: fly2 8s linear infinite 3.5s; }
-    .meteor.m3 { --len: 180px; animation: fly3 10s linear infinite 6s; }
-    .meteor.m4 { --len: 140px; animation: fly4 9s linear infinite 9.5s; }
-    .meteor.m5 { --len: 200px; animation: fly5 12s linear infinite 12s; }
+    :root[data-theme="light"] .countdown-item{ background: rgba(0,0,0,.04); }
 
-    @keyframes fly1 {
-      0%   { opacity: 0; transform: translate(82vw, 8vh) rotate(-35deg); }
-      5%   { opacity: 1; }
-      35%  { transform: translate(30vw, 40vh) rotate(-35deg); opacity: .9; }
-      60%  { transform: translate(5vw, 70vh) rotate(-35deg); opacity: 0; }
-      100% { opacity: 0; }
+    /* ---------------- Calendar card ---------------- */
+    .calendar-wrap{
+      background: rgba(255,255,255,0.05);
+      border-radius: 22px;
+      padding: clamp(16px, 2.2vw, 28px);
+      box-shadow: var(--shadow-1);
     }
-    @keyframes fly2 {
-      0%   { opacity: 0; transform: translate(95vw, 25vh) rotate(-40deg); }
-      6%   { opacity: 1; }
-      30%  { transform: translate(55vw, 55vh) rotate(-40deg); }
-      55%  { transform: translate(20vw, 85vh) rotate(-40deg); opacity: 0; }
-      100% { opacity: 0; }
+    :root[data-theme="light"] .calendar-wrap{
+      background: var(--panel);
+      border: 1px solid var(--border);
     }
-    @keyframes fly3 {
-      0%   { opacity: 0; transform: translate(88vw, -5vh) rotate(-30deg); }
-      5%   { opacity: 1; }
-      28%  { transform: translate(60vw, 20vh) rotate(-30deg); }
-      45%  { transform: translate(35vw, 45vh) rotate(-30deg); opacity: .7; }
-      70%  { transform: translate(10vw, 72vh) rotate(-30deg); opacity: 0; }
-      100% { opacity: 0; }
+
+    .calendar-header{
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      margin-bottom: 18px;
     }
-    @keyframes fly4 {
-      0%   { opacity: 0; transform: translate(75vw, -10vh) rotate(-28deg); }
-      10%  { opacity: 1; }
-      40%  { transform: translate(45vw, 25vh) rotate(-28deg); }
-      65%  { transform: translate(18vw, 58vh) rotate(-28deg); opacity: 0; }
-      100% { opacity: 0; }
+    .calendar-title{
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: .3px;
     }
-    @keyframes fly5 {
-      0%   { opacity: 0; transform: translate(98vw, 15vh) rotate(-33deg); }
-      8%   { opacity: 1; }
-      38%  { transform: translate(62vw, 46vh) rotate(-33deg); }
-      62%  { transform: translate(25vw, 78vh) rotate(-33deg); opacity: 0; }
-      100% { opacity: 0; }
+    .nav-btn{
+      height: 44px; width: 44px;
+      border: 0; border-radius: 12px;
+      background: #0d6efd; color: #fff;
+      cursor: pointer; font-size: 1.2rem;
+    }
+
+    /* ---------------- Month grid ---------------- */
+    .calendar-grid{
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr)); /* stretch evenly */
+      gap: 14px;
+    }
+    .day-name{
+      text-align:center; font-weight:600; opacity:.9; padding: 6px 0;
+    }
+    .day{
+      background: rgba(255,255,255,0.08);
+      border-radius: 16px;
+      min-height: clamp(110px, 12vw, 180px);
+      padding: 12px;
+      display:flex; flex-direction:column;
+      transition: transform .15s ease, background .15s ease;
+    }
+    :root[data-theme="light"] .day{ background: rgba(0,0,0,.04); }
+    .day:hover{ transform: scale(1.02); }
+    .day.today{ background:#0d6efd; color:#fff; font-weight:700; }
+    .day.event{ background: rgba(0,255,255,.18); border:1px solid cyan; }
+    .day.break{ background: rgba(255,165,0,.18); border:1px solid orange; }
+    .day.half { background: rgba(13,110,253,.18); border:1px solid var(--blue-2); }
+    .day.lunch{ outline: 1px dashed rgba(255,255,255,.25); }
+
+    /* stacked labels inside a day */
+    .event-list { margin-top:auto; display:grid; gap:4px; }
+    .event-chip {
+      font-size:.75rem; opacity:.95;
+      padding:3px 6px; border-radius:8px; width:fit-content;
+      background: rgba(255,255,255,.09);
+    }
+    .day.today .event-chip { background: rgba(0,0,0,.18); }
+
+    .empty{ background: transparent !important; border:0; }
+
+    /* ---------------- Mobile stack ---------------- */
+    @media (max-width: 900px){
+      main{ grid-template-columns: 1fr; gap: 16px; padding: 16px; width: 100%; }
+      .sidebar{ position: static; height:auto; max-width:none; }
+      .calendar-grid{ grid-template-columns: repeat(7, minmax(0,1fr)); gap: 8px; }
+      .day{ min-height: clamp(80px, 12vw, 120px); padding: 8px; }
     }
   </style>
 </head>
 <body>
-  <!-- BACKGROUND VISUALS -->
-  <div class="sky"><div class="stars-1"></div></div>
-  <div class="shooting">
-    <div class="meteor m1"></div>
-    <div class="meteor m2"></div>
-    <div class="meteor m3"></div>
-    <div class="meteor m4"></div>
-    <div class="meteor m5"></div>
-  </div>
+  <canvas id="starfield"></canvas>
 
-  <!-- ============================ HEADER / NAV ============================ -->
+  <!-- ================= Header / Nav ================= -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
         <span class="logo" aria-hidden="true">A</span>
         AHS Class of ’28
       </a>
+
       <div class="links" role="navigation">
         <a href="./">Home</a>
         <a href="./fundraisers.html">Fundraisers</a>
-        <a href="./calendar.html">Calendar</a>
+        <a class="active" href="./calendar.html">Calendar</a>
         <a href="./media.html">Media</a>
         <a href="./achievements.html">Achievements</a>
         <a href="./about.html">About</a>
         <a href="./contact.html">Contact</a>
-        <a class="active" href="./shop.html">Shop</a>
+        <a href="./shop.html">Shop</a>
         <a href="./announcements.html">Announcements</a>
         <a href="./community.html">Community</a>
       </div>
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+
+      <button id="menuBtn" class="menu-btn" aria-expanded="false"
+              aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
 
-    <!-- Mobile menu -->
     <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
       <a href="./">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
-      <a href="./calendar.html">Calendar</a>
+      <a class="active" href="./calendar.html">Calendar</a>
       <a href="./media.html">Media</a>
       <a href="./achievements.html">Achievements</a>
       <a href="./about.html">About</a>
       <a href="./contact.html">Contact</a>
-      <a class="active" href="./shop.html">Shop</a>
+      <a href="./shop.html">Shop</a>
       <a href="./announcements.html">Announcements</a>
       <a href="./community.html">Community</a>
       <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
     </div>
   </header>
 
-  <!-- ============================ PAGE CONTENT =========================== -->
-  <main class="section" role="main">
-    <div class="container">
-      <div class="panel glass hover-up" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-        <div>
-          <h1 style="margin:0;">Announcements</h1>
-          <p class="small" style="margin:4px 0 0;">Edit the blocks below right in this file. Pinned first • NEW auto-badge • Optional alerts.</p>
-        </div>
-        <div class="inline" style="align-items:center; gap:8px;">
-          <button id="annBell" class="btn" aria-pressed="false" title="Enable browser notifications">🔔 Alerts</button>
-          <button id="annRead" class="btn" title="Mark all announcements as read">Mark all read</button>
-        </div>
+  <!-- ================= Main ================= -->
+  <main>
+    <aside class="sidebar" id="holidayCountdowns">
+      <h2>Upcoming Holidays</h2>
+      <!-- items injected by JS -->
+    </aside>
+
+    <section class="calendar-wrap">
+      <div class="calendar-header">
+        <button id="prevMonth" class="nav-btn" type="button" aria-label="Previous month">‹</button>
+        <h2 id="calendarMonth" class="calendar-title" aria-live="polite">Loading…</h2>
+        <button id="nextMonth" class="nav-btn" type="button" aria-label="Next month">›</button>
       </div>
 
-      <!-- Announcements list (edit these blocks only) -->
-      <div id="annList" class="card-list" style="margin-top:14px;">
-        <!-- EXAMPLE ITEM: copy, paste, change text + data-updated -->
-        <article class="card-item" data-updated="2025-08-12T18:00:00-04:00" data-status="active" data-tags="school,schedule" data-pinned="true">
-          <div class="row">
-            <div class="title">Welcome back! First day schedule</div>
-            <div class="inline"><span class="badge blue">Active</span><span class="badge purple">Pinned</span></div>
-          </div>
-          <div class="meta">Aug 12, 6:00 PM • #school #schedule</div>
-          <div style="margin-top:6px;">Bell schedule, advisory, and bus updates.</div>
-          <div class="inline" style="margin-top:10px;"><a class="btn" href="./calendar.html">Open</a></div>
-        </article>
-
-        <article class="card-item" data-updated="2025-08-10T15:00:00-04:00" data-status="upcoming" data-tags="fundraiser,crumbl">
-          <div class="row">
-            <div class="title">Crumbl Cookie Fundraiser — Sept 8</div>
-            <div class="inline"><span class="badge">Upcoming</span></div>
-          </div>
-          <div class="meta">Aug 10, 3:00 PM • #fundraiser #crumbl</div>
-          <div style="margin-top:6px;">Bring friends — a portion of sales supports Class of ’28.</div>
-          <div class="inline" style="margin-top:10px;"><a class="btn" href="./fundraisers.html">Details</a></div>
-        </article>
+      <div class="calendar-grid" id="calendarGrid">
+        <div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div>
+        <div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>
+        <!-- days injected by JS -->
       </div>
-
-      <!-- Empty state -->
-      <div id="empty" class="panel" style="display:none; text-align:center;">
-        <div class="small">No announcements yet. Add one above.</div>
-      </div>
-    </div>
+    </section>
   </main>
 
-  <!-- ============================== FOOTER =============================== -->
-  <footer class="footer">
-    <div class="container">
-      <div class="small">Built for AHS Class of 2028 • Edit announcements in this file</div>
-    </div>
-  </footer>
-
-  <!-- Toast for small notices -->
-  <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
-
-  <!-- ============================== SCRIPTS ============================== -->
   <script>
-    // Helpers
-    const $ = (s, el=document) => el.querySelector(s);
-    const annList = $('#annList'), empty = $('#empty');
-    const bell = $('#annBell'), readBtn = $('#annRead'), toast = $('#toast');
-    const LS_LAST = 'ann_last_seen', LS_SUB = 'ann_sub';
-    const menuBtn = $('#menuBtn'), mobileMenu = $('#mobileMenu');
-
-    // Mobile menu
-    function toggleMenu(){
-      const hidden = mobileMenu.classList.toggle('hidden');
-      menuBtn?.setAttribute('aria-expanded', String(!hidden));
-    }
-    menuBtn?.addEventListener('click', toggleMenu);
-    document.addEventListener('click', e => {
-      if (!mobileMenu || mobileMenu.classList.contains('hidden')) return;
-      if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) toggleMenu();
-    });
-
-    // Pin + date sort, mark NEW since last visit & simple empty state
-    function renderAndMarkNew(){
-      // Sort pinned first, then by updated desc
-      const items = Array.from(annList.querySelectorAll('.card-item')).sort((a, b) => {
-        const pa = a.getAttribute('data-pinned') === 'true' ? 1 : 0;
-        const pb = b.getAttribute('data-pinned') === 'true' ? 1 : 0;
-        if (pa !== pb) return pb - pa;
-        return +new Date(b.getAttribute('data-updated')||0) - +new Date(a.getAttribute('data-updated')||0);
+    /* Mobile menu */
+    (function(){
+      const btn = document.getElementById('menuBtn');
+      const menu = document.getElementById('mobileMenu');
+      if (!btn || !menu) return;
+      btn.addEventListener('click', e=>{
+        e.stopPropagation();
+        const hidden = menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', String(!hidden));
       });
-      // Re-append in order
-      items.forEach(it => annList.appendChild(it));
-
-      const last = +(localStorage.getItem(LS_LAST)||0);
-      if (!items.length){ empty.style.display='block'; return Math.max(0,last); }
-      empty.style.display='none';
-
-      let newest = 0;
-      items.forEach(it => {
-        const ts = +new Date(it.getAttribute('data-updated')||0);
-        if (ts > newest) newest = ts;
-        // status chips (ensure correct label)
-        const status = (it.getAttribute('data-status')||'').toLowerCase();
-        const row = it.querySelector('.row .inline') || it.querySelector('.row');
-        if (row) {
-          if (!row.querySelector('.badge.blue') && status === 'active') row.insertAdjacentHTML('beforeend','<span class="badge blue">Active</span>');
-          if (!row.querySelector('.badge') && status === 'upcoming') row.insertAdjacentHTML('beforeend','<span class="badge">Upcoming</span>');
-          if (!row.querySelector('.badge') && status === 'past') row.insertAdjacentHTML('beforeend','<span class="badge">Past</span>');
-        }
-        // NEW badge
-        if (ts > last){
-          const b = document.createElement('span'); b.className='badge red'; b.textContent='NEW';
-          row && row.appendChild(b);
+      document.addEventListener('click', e=>{
+        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && e.target !== btn){
+          btn.setAttribute('aria-expanded','false'); menu.classList.add('hidden');
         }
       });
-      return newest;
-    }
+    })();
 
-    // Notifications (page-open only)
-    function showToast(msg, kind='info'){
-      if (!toast) return;
-      toast.textContent=msg; toast.className='toast '+kind;
-      toast.classList.remove('hidden'); setTimeout(()=>toast.classList.add('hidden'), 2200);
-    }
-    function subscribed(){ return localStorage.getItem(LS_SUB)==='1'; }
-    function setSub(on){
-      localStorage.setItem(LS_SUB, on ? '1' : '0');
-      bell.setAttribute('aria-pressed', String(!!on));
-      bell.textContent = on ? '🔔 Alerts on' : '🔔 Alerts';
-    }
-    async function maybeNotify(newestTs){
-      if (!subscribed() || !('Notification' in window)) return;
-      if (Notification.permission !== 'granted') return;
-      const last = +(localStorage.getItem(LS_LAST)||0);
-      if (newestTs > last){
-        try {
-          new Notification('New announcement', {
-            body: 'There are updates on the Announcements page.',
-            icon: '/favicon.ico'
-          });
-        } catch {}
+    /* Starfield (theme-aware) */
+    (function(){
+      const cvs = document.getElementById('starfield');
+      const ctx = cvs.getContext('2d', { alpha: false });
+      let stars=[];
+      function resize(){
+        cvs.width = innerWidth; cvs.height = innerHeight;
+        stars = Array.from({length: 200}, ()=>({
+          x: Math.random()*cvs.width, y: Math.random()*cvs.height,
+          r: Math.random()*1.6, v: Math.random()*0.3+0.05
+        }));
       }
-    }
-    bell.addEventListener('click', async () => {
-      if (!('Notification' in window)){ showToast('Notifications not supported'); return; }
-      if (!subscribed()){
-        let perm = Notification.permission;
-        if (perm==='default') perm = await Notification.requestPermission();
-        if (perm!=='granted'){ showToast('Permission denied'); return; }
-        setSub(true); showToast('Alerts enabled'); maybeNotify(Date.now());
-      } else {
-        setSub(false); showToast('Alerts disabled');
+      addEventListener('resize', resize); resize();
+      (function tick(){
+        const isLight = document.documentElement.getAttribute('data-theme')==='light';
+        const g = ctx.createLinearGradient(0,0,0,cvs.height);
+        if(isLight){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
+        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
+        ctx.fillStyle = g; ctx.fillRect(0,0,cvs.width,cvs.height);
+        ctx.fillStyle = isLight ? 'rgba(60,90,140,.85)' : 'rgba(180,200,255,.85)';
+        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; } }
+        requestAnimationFrame(tick);
+      })();
+    })();
+
+    /* ====== EVENTS (JSON only; no hardcoded seed) ====== */
+    const EVENTS_URL = 'data/calendar-events.json'; // edit this file in your repo
+    // eventsByDate: { "YYYY-MM-DD": [ {type,label}, ... ] }
+    let eventsByDate = {};
+    function groupEvents(list){
+      const by = {};
+      for(const e of list){
+        if(!by[e.date]) by[e.date] = [];
+        by[e.date].push({ type: (e.type||'event'), label: (e.label||'') });
       }
-    });
+      return by;
+    }
 
-    readBtn.addEventListener('click', () => {
-      localStorage.setItem(LS_LAST, String(Date.now()));
-      document.querySelectorAll('.badge.red').forEach(b=>b.remove());
-      showToast('Marked all read','success');
-    });
+    /* ====== CALENDAR RENDER ====== */
+    (function(){
+      const grid = document.getElementById("calendarGrid");
+      const monthLabel = document.getElementById("calendarMonth");
+      const prevBtn = document.getElementById("prevMonth");
+      const nextBtn = document.getElementById("nextMonth");
+      let current = new Date();
 
-    // Init
-    if (!localStorage.getItem(LS_LAST)) localStorage.setItem(LS_LAST, '0');
-    setSub(subscribed());
-    const newest = renderAndMarkNew();
-    maybeNotify(newest);
+      function render(date){
+        const y = date.getFullYear(), m = date.getMonth();
+        monthLabel.textContent = date.toLocaleString("default", { month:"long", year:"numeric" });
+
+        // clear old cells
+        grid.querySelectorAll(".day:not(.day-name)").forEach(el => el.remove());
+
+        const first = new Date(y,m,1), last = new Date(y,m+1,0);
+        const start = first.getDay(), total = last.getDate();
+
+        for(let i=0;i<start;i++){
+          const e = document.createElement("div"); e.className="day empty"; grid.appendChild(e);
+        }
+
+        const today = new Date(); today.setHours(0,0,0,0);
+
+        for(let d=1; d<=total; d++){
+          const cell = document.createElement("div");
+          cell.className = "day";
+          cell.textContent = d;
+
+          const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+          const items = eventsByDate[key] || [];
+          if (items.length){
+            // choose a primary style for the day (priority: event > break > half > lunch)
+            const priority = { event:4, break:3, half:2, lunch:1 };
+            const primary = items.slice().sort((a,b)=>(priority[b.type]||0)-(priority[a.type]||0))[0];
+            if (primary?.type) cell.classList.add(primary.type);
+
+            // stack labels
+            const list = document.createElement('div');
+            list.className = 'event-list';
+            items.forEach(it => {
+              const chip = document.createElement('div');
+              chip.className = 'event-chip';
+              chip.textContent = it.label || '';
+              list.appendChild(chip);
+            });
+            cell.appendChild(list);
+          }
+
+          const thisDay = new Date(y,m,d); thisDay.setHours(0,0,0,0);
+          if (+thisDay === +today) cell.classList.add("today");
+
+          grid.appendChild(cell);
+        }
+      }
+
+      prevBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()-1); render(current); });
+      nextBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()+1); render(current); });
+
+      // Load JSON, then draw
+      fetch(EVENTS_URL, { cache:'no-store' })
+        .then(r => r.ok ? r.json() : [])
+        .then(list => { eventsByDate = groupEvents(Array.isArray(list)? list : []); })
+        .catch(()=>{ eventsByDate = {}; })
+        .finally(()=>{ render(current); });
+    })();
+
+    /* ====== SIDEBAR COUNTDOWNS (holidays only) ====== */
+    (function () {
+      const wrap = document.getElementById("holidayCountdowns");
+      const HOLIDAY_TYPES = new Set(["break", "holiday", "half", "no-school"]); // no lunches
+
+      function startOfToday() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+      function fmtDiff(ms) {
+        const days  = Math.floor(ms / (1000*60*60*24));
+        const hours = Math.floor((ms % (1000*60*60*24)) / (1000*60*60));
+        return `${days} days, ${hours} hours`;
+      }
+
+      function update() {
+        // wipe previous items (keep heading)
+        wrap.querySelectorAll(".countdown-item").forEach(n => n.remove());
+
+        const today0 = startOfToday();
+        const upcoming = [];
+
+        // read from eventsByDate
+        for (const [iso, list] of Object.entries(eventsByDate || {})) {
+          const arr = Array.isArray(list) ? list : [list];
+          for (const ev of arr) {
+            if (!ev || !ev.type) continue;
+            if (!HOLIDAY_TYPES.has(ev.type)) continue; // hide lunch/others
+            const dt = new Date(iso);
+            if (dt >= today0) upcoming.push({ date: dt, label: ev.label, type: ev.type, iso });
+          }
+        }
+
+        // group per-day
+        const byDay = new Map();
+        for (const e of upcoming) {
+          if (!byDay.has(e.iso)) byDay.set(e.iso, []);
+          byDay.get(e.iso).push(e);
+        }
+
+        const rows = [...byDay.entries()]
+          .map(([iso, items]) => ({ iso, date: items[0].date, items }))
+          .sort((a,b) => a.date - b.date)
+          .slice(0, 8);
+
+        if (!rows.length) {
+          const none = document.createElement("div");
+          none.className = "countdown-item";
+          none.textContent = "No upcoming holidays found.";
+          wrap.appendChild(none);
+          return;
+        }
+
+        for (const row of rows) {
+          const diff = row.date - new Date();
+          const item = document.createElement("div");
+          item.className = "countdown-item";
+          const labels = row.items.map(i => i.label).join(", ");
+          item.innerHTML = `
+            <div style="font-weight:700;">${labels}</div>
+            <div style="opacity:.8">${fmtDiff(diff)}</div>
+          `;
+          wrap.appendChild(item);
+        }
+      }
+
+      // call after events load
+      const ready = setInterval(() => {
+        if (eventsByDate && Object.keys(eventsByDate).length >= 0) { update(); clearInterval(ready); }
+      }, 200);
+      setInterval(update, 60*1000);
+    })();
   </script>
+
+  <script src="script.js?v=23"></script>
 </body>
 </html>
