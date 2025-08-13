@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html> 
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -116,7 +116,7 @@
       })();
     })();
 
-    /* Announcements loader */
+    /* Announcements loader with cache-buster and error display */
     const SOURCE = 'data/announcements.json';
     const listEl = document.getElementById('list');
     const emptyEl = document.getElementById('empty');
@@ -124,28 +124,25 @@
     let ANN = [];
 
     function mdToHTML(s){
-      // very tiny markdown: links + paragraphs + line breaks
       if(!s) return '';
-      let html = s
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); // basic escape
-      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>'); // links
-      html = html.replace(/\n{2,}/g, '</p><p>'); // paragraphs
-      html = '<p>'+html.replace(/\n/g,'<br>')+'</p>'; // single line breaks
+      let html = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+      html = html.replace(/\n{2,}/g, '</p><p>');
+      html = '<p>'+html.replace(/\n/g,'<br>')+'</p>';
       return html;
     }
 
     function render(){
       const term = (q.value||'').toLowerCase().trim();
-      const filtered = ANN.filter(a=>{
-        const hay = (a.title+' '+a.content).toLowerCase();
-        return !term || hay.includes(term);
-      }).sort((a,b)=> b.date.localeCompare(a.date)); // newest first (YYYY-MM-DD)
+      const filtered = ANN
+        .filter(a => (a.title+' '+a.content).toLowerCase().includes(term))
+        .sort((a,b)=> (b.date||'').localeCompare(a.date||'')); 
 
       listEl.innerHTML = '';
       if (!filtered.length){ emptyEl.classList.remove('hidden'); return; }
       emptyEl.classList.add('hidden');
 
-      filtered.forEach(a=>{
+      for (const a of filtered){
         const card = document.createElement('article');
         card.className = 'card hover-up ann';
 
@@ -155,7 +152,8 @@
 
         const meta = document.createElement('div');
         meta.className = 'ann-meta';
-        meta.textContent = new Date(a.date).toLocaleDateString();
+        const dt = new Date(a.date);
+        meta.textContent = isFinite(dt) ? dt.toLocaleDateString() : (a.date||'');
 
         const body = document.createElement('div');
         body.className = 'ann-content';
@@ -165,18 +163,36 @@
         card.appendChild(meta);
         card.appendChild(body);
         listEl.appendChild(card);
-      });
+      }
     }
 
-    q.addEventListener('input', render);
+    function showError(msg){
+      emptyEl.classList.remove('hidden');
+      emptyEl.textContent = 'Announcements error: ' + msg;
+    }
 
-    fetch(SOURCE, { cache:'no-store' })
-      .then(r=> r.ok ? r.json() : [])
-      .then(data => { ANN = Array.isArray(data) ? data : []; render(); })
-      .catch(()=>{ ANN = []; render(); });
+    (async function load(){
+      try{
+        const url = SOURCE + '?ts=' + Date.now();
+        const res = await fetch(url, { cache: 'no-store' });
+        if(!res.ok){ showError('HTTP ' + res.status + ' — is data/announcements.json in the repo?'); return; }
+        const text = await res.text();
+        let data;
+        try { data = JSON.parse(text); }
+        catch(e){ showError('JSON parse error — check commas/brackets'); return; }
+
+        if(!Array.isArray(data)){ showError('JSON must be an array: [ {title,date,content}, ... ]'); return; }
+        ANN = data;
+        render();
+        q.addEventListener('input', render);
+      }catch(err){
+        showError(err.message || 'Unknown error');
+      }
+    })();
   </script>
 
   <script src="script.js?v=27"></script>
 </body>
 </html>
+
 
