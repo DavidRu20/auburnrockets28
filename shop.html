@@ -5,34 +5,82 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Shop</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css?v=24" />
+  <link rel="stylesheet" href="styles.css?v=25" />
   <style>
     body { color: var(--text); background: transparent; overflow-x:hidden; }
     #starfield{ position: fixed; inset: 0; z-index:-1; }
-    main{ max-width: 1200px; margin: 0 auto; padding: 22px 18px 40px; }
+    main{ max-width: 1220px; margin: 0 auto; padding: 26px 18px 44px; }
 
-    /* Toolbar */
+    /* ---------- top notice ---------- */
+    .concept-banner{
+      display:flex; gap:10px; align-items:flex-start;
+      padding: 14px 16px; border-radius: 14px;
+      background: linear-gradient(135deg, #2b8cff22, #ffffff10);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-1);
+      margin: 8px 0 18px;
+      backdrop-filter: blur(10px);
+    }
+    .concept-banner .icon{
+      width: 28px; height: 28px; border-radius: 8px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg, var(--yellow), var(--yellow-2));
+      color:#000; font-weight:900;
+    }
+
+    /* ---------- toolbar ---------- */
     .shop-toolbar{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px;
     }
-    .shop-toolbar .input{ max-width: 360px; }
-
-    /* Grid */
-    .shop-grid{ display:grid; gap:14px; grid-template-columns: repeat(3, minmax(0,1fr)); }
-    @media (max-width: 960px){ .shop-grid{ grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 560px){ .shop-grid{ grid-template-columns: 1fr; } }
-
-    /* Card specifics (uses your .panel + .product styles) */
-    .product-card .title{ font-weight: 800; margin: 8px 0 4px; }
-    .product-card .price{ font-weight: 800; }
-    .product-card .meta{ font-size: 12px; color: var(--muted); }
-    .product-card .actions{ display:flex; gap:8px; margin-top:10px; }
-    .product-card img { aspect-ratio: 4/3; object-fit: cover; width:100%; }
-
-    .empty-msg{
-      text-align:center; opacity:.8; padding:30px 10px;
-      border:1px dashed var(--border); border-radius:14px;
+    .pillbar{ display:flex; gap:8px; flex-wrap:wrap; }
+    .pill{
+      border:1px solid var(--border); background: var(--panel);
+      padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px;
+      opacity:.9; cursor:pointer; user-select:none;
+      transition: transform var(--t-fast), background var(--t-fast);
     }
+    .pill:hover{ transform: translateY(-1px); }
+    .pill.active{ background: linear-gradient(135deg, var(--blue), var(--blue-2)); color:#fff; border-color:transparent; }
+    .tool-gap{ flex:1 1 auto; }
+
+    .input{ max-width: 360px; }
+    .select{ width: 200px; }
+
+    /* ---------- grid + cards ---------- */
+    .shop-grid{
+      display:grid; gap:16px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+    }
+    @media (max-width: 1100px){ .shop-grid{ grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 820px){ .shop-grid{ grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px){ .shop-grid{ grid-template-columns: 1fr; } }
+
+    .card.product{
+      padding: 0;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .product-media{
+      position: relative;
+      aspect-ratio: 4/3;
+      overflow:hidden; border-bottom:1px solid var(--border);
+    }
+    .product-media img{
+      width:100%; height:100%; object-fit:cover;
+      transform: scale(1.001); transition: transform 600ms cubic-bezier(.2,.8,.2,1);
+    }
+    .card.product:hover .product-media img{ transform: scale(1.04); }
+
+    .product-body{ padding: 14px; display:grid; gap:8px; }
+    .title-row{ display:flex; justify-content:space-between; gap:8px; align-items:center; }
+    .product-title{ font-weight:900; line-height:1.1; }
+    .price{ font-weight:900; }
+    .meta{ font-size:12px; color: var(--muted); }
+
+    .actions{ display:flex; gap:8px; }
+    .actions .btn{ flex:1 1 0; height:40px; }
+
+    .empty-msg{ text-align:center; opacity:.85; padding:30px 10px; border:1px dashed var(--border); border-radius:14px; margin-top:10px; }
   </style>
 </head>
 <body>
@@ -61,40 +109,43 @@
               aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
     <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-      <a href="./">Home</a>
-      <a href="./fundraisers.html">Fundraisers</a>
-      <a href="./calendar.html">Calendar</a>
-      <a href="./media.html">Media</a>
-      <a href="./achievements.html">Achievements</a>
-      <a href="./about.html">About</a>
-      <a href="./contact.html">Contact</a>
-      <a class="active" href="./shop.html">Shop</a>
-      <a href="./announcements.html">Announcements</a>
-      <a href="./community.html">Community</a>
+      <a href="./">Home</a><a href="./fundraisers.html">Fundraisers</a><a href="./calendar.html">Calendar</a>
+      <a href="./media.html">Media</a><a href="./achievements.html">Achievements</a><a href="./about.html">About</a>
+      <a href="./contact.html">Contact</a><a class="active" href="./shop.html">Shop</a><a href="./announcements.html">Announcements</a><a href="./community.html">Community</a>
       <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
     </div>
   </header>
 
   <main>
     <h1>Shop</h1>
-    <p class="small" style="margin-top:-6px">All profits support AHS Class of ’28.</p>
+
+    <!-- Concept/approval notice -->
+    <div class="concept-banner">
+      <div class="icon">!</div>
+      <div>
+        <strong>Concept Only:</strong> this shop is an idea and items have not yet been approved.  
+        If you’re interested or have feedback, please
+        <a href="./contact.html" class="badge blue" style="vertical-align:middle;">contact us</a>.
+      </div>
+    </div>
 
     <!-- Toolbar -->
     <div class="shop-toolbar">
+      <div class="pillbar" id="pillbar">
+        <!-- pills injected -->
+      </div>
+      <div class="tool-gap"></div>
       <input id="q" class="input" type="search" placeholder="Search hoodies, tees, hats…" aria-label="Search products">
-      <select id="cat" class="select" aria-label="Filter by category">
-        <option value="">All categories</option>
-        <option value="hoodie">Hoodies</option>
-        <option value="jersey">Jerseys</option>
-        <option value="tee">T-Shirts</option>
-        <option value="hat">Hats</option>
-        <option value="pants">Pants</option>
+      <select id="sort" class="select" aria-label="Sort">
+        <option value="new">Newest</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
       </select>
     </div>
 
     <!-- Grid -->
     <div id="grid" class="shop-grid"></div>
-    <div id="empty" class="empty-msg hidden">No items match that filter.</div>
+    <div id="empty" class="empty-msg hidden">No items match your filters.</div>
   </main>
 
   <footer class="footer">
@@ -142,98 +193,141 @@
       })();
     })();
 
-    /* ===== SHOP RENDER ===== */
+    /* ===== SHOP LOGIC ===== */
     const DATA_URL = 'data/products.json';
     const grid = document.getElementById('grid');
     const empty = document.getElementById('empty');
     const q = document.getElementById('q');
-    const cat = document.getElementById('cat');
+    const sortSel = document.getElementById('sort');
+    const pillbar = document.getElementById('pillbar');
+
     let items = [];
+    let activeCat = ''; // "", "hoodie", "jersey", ...
+
+    const CATEGORY_LABELS = {
+      hoodie: "Hoodies",
+      jersey: "Jerseys",
+      tee: "T-Shirts",
+      hat: "Hats",
+      pants: "Pants"
+    };
 
     function fmtPrice(n){ return `$${Number(n).toFixed(2)}`; }
 
-    function render(){
-      grid.innerHTML = '';
-      const term = (q.value||'').toLowerCase().trim();
-      const category = cat.value;
+    function buildPills(){
+      const cats = Array.from(new Set(items.map(i=>i.category))).filter(Boolean);
+      pillbar.innerHTML = '';
+      const all = document.createElement('button');
+      all.className = 'pill' + (activeCat===''?' active':'');
+      all.textContent = 'All';
+      all.addEventListener('click', ()=>{ activeCat=''; render(); buildPills(); });
+      pillbar.appendChild(all);
 
-      const filtered = items.filter(p=>{
-        const t = (p.title+' '+(p.tags||[]).join(' ')+' '+(p.desc||'')).toLowerCase();
-        const okTerm = !term || t.includes(term);
-        const okCat = !category || p.category === category;
-        return okTerm && okCat;
+      cats.forEach(c=>{
+        const b = document.createElement('button');
+        b.className = 'pill' + (activeCat===c?' active':'');
+        b.textContent = CATEGORY_LABELS[c] || c;
+        b.addEventListener('click', ()=>{ activeCat=c; render(); buildPills(); });
+        pillbar.appendChild(b);
+      });
+    }
+
+    function render(){
+      const term = (q.value||'').toLowerCase().trim();
+      const sort = sortSel.value;
+
+      let list = items.filter(p=>{
+        const inCat = !activeCat || p.category === activeCat;
+        const hay = (p.title+' '+(p.tags||[]).join(' ')+' '+(p.desc||'')).toLowerCase();
+        const inTerm = !term || hay.includes(term);
+        return inCat && inTerm;
       });
 
-      if (!filtered.length){ empty.classList.remove('hidden'); return; }
+      // sort
+      if (sort === 'price-asc') list.sort((a,b)=> a.price - b.price);
+      else if (sort === 'price-desc') list.sort((a,b)=> b.price - a.price);
+      else list.sort((a,b)=> (b.created||0) - (a.created||0)); // newest (optional field)
+
+      grid.innerHTML = '';
+      if (!list.length){ empty.classList.remove('hidden'); return; }
       empty.classList.add('hidden');
 
-      for(const p of filtered){
-        const card = document.createElement('a');
-        card.href = p.link || '#';
-        card.className = 'panel hover-up product product-card';
-        card.setAttribute('aria-label', p.title);
+      list.forEach(p=>{
+        const card = document.createElement('div');
+        card.className = 'card hover-up product';
 
-        // chip(s)
+        // media
+        const media = document.createElement('div');
+        media.className = 'product-media';
+        const img = document.createElement('img');
+        img.loading='lazy'; img.src = p.image; img.alt = p.alt || p.title;
+        media.appendChild(img);
+
+        // top-left chip(s)
         const chips = document.createElement('div');
         chips.className = 'chips';
-        if (p.badge) {
+        chips.style.position='absolute'; chips.style.top='10px'; chips.style.left='10px';
+        if (p.badge){
           const b = document.createElement('span');
           b.className = 'badge blue'; b.textContent = p.badge;
           chips.appendChild(b);
         }
-        card.appendChild(chips);
+        media.appendChild(chips);
 
-        // media
-        const media = document.createElement('div');
-        media.className = 'media-item';
-        const img = document.createElement('img');
-        img.loading = 'lazy';
-        img.src = p.image;
-        img.alt = p.alt || p.title;
-        media.appendChild(img);
-        card.appendChild(media);
+        // body
+        const body = document.createElement('div');
+        body.className = 'product-body';
 
-        // text
-        const h3 = document.createElement('div');
-        h3.className = 'title'; h3.textContent = p.title;
+        const row = document.createElement('div');
+        row.className = 'title-row';
+        const title = document.createElement('div');
+        title.className = 'product-title';
+        title.textContent = p.title;
+        const price = document.createElement('div');
+        price.className = 'price';
+        price.textContent = fmtPrice(p.price);
+        row.appendChild(title); row.appendChild(price);
+
         const meta = document.createElement('div');
         meta.className = 'meta';
-        meta.textContent = (p.colors? p.colors.join(', ')+' • ' : '') + (p.sizes? p.sizes.join(', ') : '');
-        const price = document.createElement('div');
-        price.className = 'price'; price.textContent = fmtPrice(p.price);
+        const colors = (p.colors && p.colors.length)? p.colors.join(', ') : '';
+        const sizes  = (p.sizes  && p.sizes.length)? p.sizes.join(', ')  : '';
+        meta.textContent = [colors, sizes].filter(Boolean).join(' • ');
 
-        // actions
         const actions = document.createElement('div');
         actions.className = 'actions';
-        const buy = document.createElement('button');
+        const buy = document.createElement('a');
         buy.className = 'btn primary';
-        buy.type='button';
         buy.textContent = p.cta || 'Buy';
-        buy.addEventListener('click', (e)=>{ e.preventDefault(); location.href = p.link || '#'; });
-        actions.appendChild(buy);
+        buy.href = p.link || './contact.html';
+        const interest = document.createElement('a');
+        interest.className = 'btn';
+        interest.textContent = 'I’m interested';
+        const subject = encodeURIComponent('Product interest: ' + p.title);
+        interest.href = `./contact.html?subject=${subject}`;
+        actions.appendChild(buy); actions.appendChild(interest);
 
-        if (p.file){
-          const dl = document.createElement('a');
-          dl.className = 'btn';
-          dl.href = p.file; dl.textContent = 'Sizing';
-          actions.appendChild(dl);
-        }
+        body.appendChild(row); body.appendChild(meta); body.appendChild(actions);
 
-        card.appendChild(h3); card.appendChild(meta); card.appendChild(price); card.appendChild(actions);
+        card.appendChild(media); card.appendChild(body);
         grid.appendChild(card);
-      }
+      });
     }
 
+    // listeners
     q.addEventListener('input', render);
-    cat.addEventListener('change', render);
+    sortSel.addEventListener('change', render);
 
+    // load data
     fetch(DATA_URL, { cache:'no-store' })
       .then(r=>r.ok?r.json():[])
-      .then(list => { items = Array.isArray(list)? list : []; })
-      .catch(()=>{ items = []; })
-      .finally(render);
+      .then(list=>{
+        items = Array.isArray(list)? list : [];
+        buildPills(); render();
+      })
+      .catch(()=>{ items=[]; buildPills(); render(); });
   </script>
 
-  <script src="script.js?v=24"></script>
+  <script src="script.js?v=25"></script>
 </body>
 </html>
