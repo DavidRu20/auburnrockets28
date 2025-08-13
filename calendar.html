@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css?v=22" />
+  <link rel="stylesheet" href="styles.css?v=23" />
 
   <style>
     /* Page base */
@@ -23,7 +23,7 @@
       padding: 24px clamp(12px, 2vw, 28px);
     }
 
-    /* ---------------- Sidebar (Upcoming Holidays) --------------- */
+    /* ---------------- Sidebar ---------------- */
     .sidebar{
       position: sticky; top: 96px;
       height: calc(100vh - 120px);
@@ -100,10 +100,10 @@
     .day.today{ background:#0d6efd; color:#fff; font-weight:700; }
     .day.event{ background: rgba(0,255,255,.18); border:1px solid cyan; }
     .day.break{ background: rgba(255,165,0,.18); border:1px solid orange; }
+    .day.half { background: rgba(13,110,253,.18); border:1px solid var(--blue-2); }
+    .day.lunch{ outline: 1px dashed rgba(255,255,255,.25); }
 
-    /* NEW: extra types + stacked chips */
-    .day.half  { background: rgba(13,110,253,.18); border:1px solid var(--blue-2); }
-    .day.lunch { outline: 1px dashed rgba(255,255,255,.25); }
+    /* stacked labels inside a day */
     .event-list { margin-top:auto; display:grid; gap:4px; }
     .event-chip {
       font-size:.75rem; opacity:.95;
@@ -231,39 +231,17 @@
       })();
     })();
 
-    /* ====== EVENTS LOADER (JSON + multiple items per day) ====== */
-    const EVENTS_URL = './data/calendar-events.json';  // edit this file on GitHub
-    let eventsByDate = {};                              // { "YYYY-MM-DD": [ {type,label}, ... ] }
-let events = {};
-
-fetch('data/calendar-events.json')
-  .then(res => res.json())
-  .then(data => {
-    events = {};
-    data.forEach(e => {
-      events[e.date] = { type: e.type, label: e.label };
-    });
-    renderCalendar();
-    updateCountdowns();
-  })
-  .catch(err => {
-    console.error("Failed to load calendar events:", err);
-  });
-
-    async function loadEvents(){
-      // clone seed
-      eventsByDate = JSON.parse(JSON.stringify(seed));
-      try{
-        const res = await fetch(EVENTS_URL, { cache:'no-store' });
-        if (res.ok){
-          const list = await res.json();
-          for (const e of list){
-            const key = e.date;
-            if (!eventsByDate[key]) eventsByDate[key] = [];
-            eventsByDate[key].push({ type: e.type || 'event', label: e.label || '' });
-          }
-        }
-      }catch{ /* ignore if file is missing on first run */ }
+    /* ====== EVENTS (JSON only; no hardcoded seed) ====== */
+    const EVENTS_URL = 'data/calendar-events.json'; // edit this file in your repo
+    // eventsByDate: { "YYYY-MM-DD": [ {type,label}, ... ] }
+    let eventsByDate = {};
+    function groupEvents(list){
+      const by = {};
+      for(const e of list){
+        if(!by[e.date]) by[e.date] = [];
+        by[e.date].push({ type: (e.type||'event'), label: (e.label||'') });
+      }
+      return by;
     }
 
     /* ====== CALENDAR RENDER ====== */
@@ -325,8 +303,12 @@ fetch('data/calendar-events.json')
       prevBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()-1); render(current); });
       nextBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()+1); render(current); });
 
-      // load events first, then draw
-      loadEvents().then(()=> render(current));
+      // Load JSON, then draw
+      fetch(EVENTS_URL, { cache:'no-store' })
+        .then(r => r.ok ? r.json() : [])
+        .then(list => { eventsByDate = groupEvents(Array.isArray(list)? list : []); })
+        .catch(()=>{ eventsByDate = {}; })
+        .finally(()=>{ render(current); });
     })();
 
     /* ====== SIDEBAR COUNTDOWNS ====== */
@@ -358,13 +340,19 @@ fetch('data/calendar-events.json')
           });
       }
 
-      // refresh after events load, then every minute
-      loadEvents().then(update);
+      // refresh every minute and also when page becomes visible
       setInterval(update, 60*1000);
+      document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) update(); });
+
+      // initial update after events load
+      fetch(EVENTS_URL, { cache:'no-store' })
+        .then(r => r.ok ? r.json() : [])
+        .then(list => { eventsByDate = groupEvents(Array.isArray(list)? list : []); })
+        .catch(()=>{ eventsByDate = {}; })
+        .finally(update);
     })();
   </script>
 
-  <script src="script.js?v=22"></script>
+  <script src="script.js?v=23"></script>
 </body>
 </html>
-
