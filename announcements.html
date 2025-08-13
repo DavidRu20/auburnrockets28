@@ -125,7 +125,11 @@
     })();
 
     /* Announcements loader with cache-buster and error display */
-    const SOURCE = 'data/announcements.json';
+    const CANDIDATE_SOURCES = [
+      'data/announcements.json',      // same folder / root
+      '../data/announcements.json'    // if this page is inside a subfolder
+    ];
+
     const listEl = document.getElementById('list');
     const emptyEl = document.getElementById('empty');
     const q = document.getElementById('q');
@@ -148,6 +152,16 @@
       return Number.isNaN(t) ? -Infinity : t;
     }
 
+    // Normalize incoming JSON item keys → {title,date,content,html}
+    function normalizeItem(raw){
+      return {
+        title:   raw.title   ?? raw.name    ?? raw.heading ?? '',
+        date:    raw.date    ?? raw.posted  ?? raw.published ?? raw.created ?? '',
+        content: raw.content ?? raw.body    ?? raw.text    ?? raw.markdown ?? '',
+        html:    raw.html    ?? ''  // if present, we render this directly
+      };
+    }
+
     function render(){
       const term = (q.value || '').toLowerCase().trim();
 
@@ -155,7 +169,8 @@
         .filter(a => {
           const title = (a.title || '').toLowerCase();
           const content = (a.content || '').toLowerCase();
-          return (title + ' ' + content).includes(term);
+          const html = (a.html || '').toLowerCase();
+          return (title + ' ' + content + ' ' + html).includes(term);
         })
         .sort((a, b) => parseTimeSafe(b.date) - parseTimeSafe(a.date));
 
@@ -178,7 +193,7 @@
 
         const body = document.createElement('div');
         body.className = 'ann-content';
-        body.innerHTML = mdToHTML(a.content || '');
+        body.innerHTML = a.html ? a.html : mdToHTML(a.content || '');
 
         card.appendChild(title);
         card.appendChild(meta);
@@ -192,22 +207,30 @@
       emptyEl.textContent = 'Announcements error: ' + msg;
     }
 
+    async function fetchFirst(urls){
+      for (const path of urls){
+        try{
+          const url = path + '?ts=' + Date.now();
+          const res = await fetch(url, { cache: 'no-store' });
+          if(res.ok) return await res.text();
+        }catch(_) {}
+      }
+      throw new Error('Could not load announcements.json from expected paths.');
+    }
+
     (async function load(){
       try{
-        const url = SOURCE + '?ts=' + Date.now();
-        const res = await fetch(url, { cache: 'no-store' });
-        if(!res.ok){ showError('HTTP ' + res.status + ' — is data/announcements.json in the repo?'); return; }
-        const text = await res.text();
+        const text = await fetchFirst(CANDIDATE_SOURCES);
         let data;
         try { data = JSON.parse(text); }
         catch(e){ showError('JSON parse error — check commas/brackets'); return; }
 
-        if(Array.isArray(data)) ANN = data;
-        else if (data && Array.isArray(data.items)) ANN = data.items;
+        if(Array.isArray(data)) ANN = data.map(normalizeItem);
+        else if (data && Array.isArray(data.items)) ANN = data.items.map(normalizeItem);
         else { showError('JSON must be an array: [ {title,date,content}, ... ]'); return; }
 
         // Skip totally empty entries
-        ANN = ANN.filter(a => a && (a.title || a.content));
+        ANN = ANN.filter(a => a && (a.title || a.content || a.html));
 
         render();
 
