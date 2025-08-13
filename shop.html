@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Shop</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css?v=25" />
+  <link rel="stylesheet" href="styles.css?v=26" />
   <style>
     body { color: var(--text); background: transparent; overflow-x:hidden; }
     #starfield{ position: fixed; inset: 0; z-index:-1; }
     main{ max-width: 1220px; margin: 0 auto; padding: 26px 18px 44px; }
 
-    /* ---------- top notice ---------- */
+    /* Notice */
     .concept-banner{
       display:flex; gap:10px; align-items:flex-start;
       padding: 14px 16px; border-radius: 14px;
@@ -28,7 +28,7 @@
       color:#000; font-weight:900;
     }
 
-    /* ---------- toolbar ---------- */
+    /* Toolbar */
     .shop-toolbar{
       display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:14px;
     }
@@ -46,7 +46,7 @@
     .input{ max-width: 360px; }
     .select{ width: 200px; }
 
-    /* ---------- grid + cards ---------- */
+    /* Grid + cards */
     .shop-grid{
       display:grid; gap:16px;
       grid-template-columns: repeat(4, minmax(0,1fr));
@@ -56,19 +56,12 @@
     @media (max-width: 540px){ .shop-grid{ grid-template-columns: 1fr; } }
 
     .card.product{
-      padding: 0;
-      overflow: hidden;
+      padding: 0; overflow: hidden;
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid var(--border);
     }
-    .product-media{
-      position: relative;
-      aspect-ratio: 4/3;
-      overflow:hidden; border-bottom:1px solid var(--border);
-    }
-    .product-media img{
-      width:100%; height:100%; object-fit:cover;
-      transform: scale(1.001); transition: transform 600ms cubic-bezier(.2,.8,.2,1);
-    }
+    .product-media{ position: relative; aspect-ratio: 4/3; overflow:hidden; border-bottom:1px solid var(--border); }
+    .product-media img{ width:100%; height:100%; object-fit:cover; transform: scale(1.001); transition: transform 600ms cubic-bezier(.2,.8,.2,1); }
     .card.product:hover .product-media img{ transform: scale(1.04); }
 
     .product-body{ padding: 14px; display:grid; gap:8px; }
@@ -76,7 +69,6 @@
     .product-title{ font-weight:900; line-height:1.1; }
     .price{ font-weight:900; }
     .meta{ font-size:12px; color: var(--muted); }
-
     .actions{ display:flex; gap:8px; }
     .actions .btn{ flex:1 1 0; height:40px; }
 
@@ -119,11 +111,11 @@
   <main>
     <h1>Shop</h1>
 
-    <!-- Concept/approval notice -->
+    <!-- Concept notice -->
     <div class="concept-banner">
       <div class="icon">!</div>
       <div>
-        <strong>Concept Only:</strong> this shop is an idea and items have not yet been approved.  
+        <strong>Concept Only:</strong> this shop is an idea and items have not yet been approved.
         If you’re interested or have feedback, please
         <a href="./contact.html" class="badge blue" style="vertical-align:middle;">contact us</a>.
       </div>
@@ -131,9 +123,7 @@
 
     <!-- Toolbar -->
     <div class="shop-toolbar">
-      <div class="pillbar" id="pillbar">
-        <!-- pills injected -->
-      </div>
+      <div class="pillbar" id="pillbar"></div>
       <div class="tool-gap"></div>
       <input id="q" class="input" type="search" placeholder="Search hoodies, tees, hats…" aria-label="Search products">
       <select id="sort" class="select" aria-label="Sort">
@@ -150,11 +140,17 @@
 
   <footer class="footer">
     <div class="container">
-      <div class="small">Built for AHS Class of 2028 • Edit items in <code>data/products.json</code></div>
+      <div class="small">Built for AHS Class of 2028 • Edit items in <code>data/products.json</code> (or just drop images into <code>images/shop</code>)</div>
     </div>
   </footer>
 
   <script>
+    /* ===== CONFIG: set your GitHub repo for API fallback ===== */
+    const GITHUB_USER = 'YOUR_USERNAME';   // <-- change this
+    const GITHUB_REPO = 'YOUR_REPO_NAME';  // <-- change this
+    const SHOP_FOLDER = 'images/shop';     // folder that holds the product images
+    const PRODUCTS_JSON = 'data/products.json'; // preferred data source
+
     /* Mobile menu */
     (function(){
       const btn = document.getElementById('menuBtn');
@@ -193,36 +189,27 @@
       })();
     })();
 
-    /* ===== SHOP LOGIC ===== */
-    const DATA_URL = 'data/products.json';
+    /* ===== SHOP LOGIC (JSON first, GitHub API fallback) ===== */
     const grid = document.getElementById('grid');
     const empty = document.getElementById('empty');
     const q = document.getElementById('q');
     const sortSel = document.getElementById('sort');
     const pillbar = document.getElementById('pillbar');
 
-    let items = [];
-    let activeCat = ''; // "", "hoodie", "jersey", ...
+    let items = [];          // unified list of products
+    let activeCat = '';      // pill filter
+    const CATEGORY_LABELS = { hoodie:'Hoodies', jersey:'Jerseys', tee:'T-Shirts', hat:'Hats', pants:'Pants', other:'Other' };
 
-    const CATEGORY_LABELS = {
-      hoodie: "Hoodies",
-      jersey: "Jerseys",
-      tee: "T-Shirts",
-      hat: "Hats",
-      pants: "Pants"
-    };
-
-    function fmtPrice(n){ return `$${Number(n).toFixed(2)}`; }
+    function fmtPrice(n){ return typeof n==='number' ? `$${Number(n).toFixed(2)}` : ''; }
 
     function buildPills(){
-      const cats = Array.from(new Set(items.map(i=>i.category))).filter(Boolean);
+      const cats = Array.from(new Set(items.map(i=>i.category || 'other'))).filter(Boolean);
       pillbar.innerHTML = '';
       const all = document.createElement('button');
       all.className = 'pill' + (activeCat===''?' active':'');
       all.textContent = 'All';
       all.addEventListener('click', ()=>{ activeCat=''; render(); buildPills(); });
       pillbar.appendChild(all);
-
       cats.forEach(c=>{
         const b = document.createElement('button');
         b.className = 'pill' + (activeCat===c?' active':'');
@@ -237,16 +224,16 @@
       const sort = sortSel.value;
 
       let list = items.filter(p=>{
-        const inCat = !activeCat || p.category === activeCat;
-        const hay = (p.title+' '+(p.tags||[]).join(' ')+' '+(p.desc||'')).toLowerCase();
+        const inCat = !activeCat || (p.category||'other') === activeCat;
+        const hay = (p.title+' '+(p.tags||[]).join(' ')+' '+(p.desc||'')+' '+(p.colors||[]).join(' ')+' '+(p.sizes||[]).join(' ')).toLowerCase();
         const inTerm = !term || hay.includes(term);
         return inCat && inTerm;
       });
 
       // sort
-      if (sort === 'price-asc') list.sort((a,b)=> a.price - b.price);
-      else if (sort === 'price-desc') list.sort((a,b)=> b.price - a.price);
-      else list.sort((a,b)=> (b.created||0) - (a.created||0)); // newest (optional field)
+      if (sort === 'price-asc') list.sort((a,b)=> (a.price||0) - (b.price||0));
+      else if (sort === 'price-desc') list.sort((a,b)=> (b.price||0) - (a.price||0));
+      else list.sort((a,b)=> (b.created||0) - (a.created||0)); // newest first if provided
 
       grid.innerHTML = '';
       if (!list.length){ empty.classList.remove('hidden'); return; }
@@ -263,7 +250,7 @@
         img.loading='lazy'; img.src = p.image; img.alt = p.alt || p.title;
         media.appendChild(img);
 
-        // top-left chip(s)
+        // top-left badge
         const chips = document.createElement('div');
         chips.className = 'chips';
         chips.style.position='absolute'; chips.style.top='10px'; chips.style.left='10px';
@@ -275,59 +262,78 @@
         media.appendChild(chips);
 
         // body
-        const body = document.createElement('div');
-        body.className = 'product-body';
-
-        const row = document.createElement('div');
-        row.className = 'title-row';
-        const title = document.createElement('div');
-        title.className = 'product-title';
-        title.textContent = p.title;
-        const price = document.createElement('div');
-        price.className = 'price';
-        price.textContent = fmtPrice(p.price);
+        const body = document.createElement('div'); body.className = 'product-body';
+        const row = document.createElement('div'); row.className = 'title-row';
+        const title = document.createElement('div'); title.className = 'product-title'; title.textContent = p.title;
+        const price = document.createElement('div'); price.className = 'price'; price.textContent = fmtPrice(p.price);
         row.appendChild(title); row.appendChild(price);
 
-        const meta = document.createElement('div');
-        meta.className = 'meta';
+        const meta = document.createElement('div'); meta.className = 'meta';
         const colors = (p.colors && p.colors.length)? p.colors.join(', ') : '';
         const sizes  = (p.sizes  && p.sizes.length)? p.sizes.join(', ')  : '';
         meta.textContent = [colors, sizes].filter(Boolean).join(' • ');
 
-        const actions = document.createElement('div');
-        actions.className = 'actions';
-        const buy = document.createElement('a');
-        buy.className = 'btn primary';
-        buy.textContent = p.cta || 'Buy';
+        const actions = document.createElement('div'); actions.className = 'actions';
+        const buy = document.createElement('a'); buy.className = 'btn primary'; buy.textContent = p.cta || 'Buy';
         buy.href = p.link || './contact.html';
-        const interest = document.createElement('a');
-        interest.className = 'btn';
-        interest.textContent = 'I’m interested';
+        const interest = document.createElement('a'); interest.className = 'btn'; interest.textContent = 'I’m interested';
         const subject = encodeURIComponent('Product interest: ' + p.title);
         interest.href = `./contact.html?subject=${subject}`;
         actions.appendChild(buy); actions.appendChild(interest);
 
         body.appendChild(row); body.appendChild(meta); body.appendChild(actions);
-
         card.appendChild(media); card.appendChild(body);
         grid.appendChild(card);
       });
     }
 
-    // listeners
-    q.addEventListener('input', render);
-    sortSel.addEventListener('change', render);
+    async function loadFromJSON(){
+      const res = await fetch(PRODUCTS_JSON, { cache:'no-store' });
+      if (!res.ok) throw new Error('no products.json');
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('bad products.json');
+      return data;
+    }
 
-    // load data
-    fetch(DATA_URL, { cache:'no-store' })
-      .then(r=>r.ok?r.json():[])
-      .then(list=>{
-        items = Array.isArray(list)? list : [];
-        buildPills(); render();
-      })
-      .catch(()=>{ items=[]; buildPills(); render(); });
+    async function loadFromGitHubAPI(){
+      // Build URL for GitHub Contents API (public repos only)
+      const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${SHOP_FOLDER}`;
+      const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github+json' }});
+      if (!res.ok) throw new Error('GitHub API failed');
+      const files = await res.json();
+      // Map each image into a basic product card
+      const imgs = files.filter(f => f.type==='file' && /\.(png|jpe?g|webp|gif)$/i.test(f.name));
+      return imgs.map(f => ({
+        id: f.sha,
+        title: f.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim(), // filename → title
+        category: 'other',
+        price: null,
+        image: f.download_url,  // raw file URL from GitHub
+        alt: f.name,
+        link: './contact.html',
+        badge: 'Concept'
+      }));
+    }
+
+    (async function start(){
+      try{
+        // Try JSON first (nice titles/prices/categories)
+        items = await loadFromJSON();
+      }catch{
+        // Fallback: auto-gallery from GitHub folder
+        items = await loadFromGitHubAPI();
+      }
+      // optional: assign created timestamps so "Newest" works
+      const now = new Date();
+      items.forEach((p,i)=>{ if (!p.created) p.created = Number(now.toISOString().slice(0,10).replace(/-/g,'')) - i; });
+      buildPills(); render();
+
+      // listeners
+      q.addEventListener('input', render);
+      sortSel.addEventListener('change', render);
+    })();
   </script>
 
-  <script src="script.js?v=25"></script>
+  <script src="script.js?v=26"></script>
 </body>
 </html>
