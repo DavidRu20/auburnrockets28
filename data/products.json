@@ -1,0 +1,125 @@
+[
+  {
+    "id": "hoodie-auburn-cream",
+    "title": "Auburn Bubble Hoodie — Cream",
+    "category": "hoodie",
+    "price": 45,
+    "image": "img/shop/hoodie-cream.jpg",
+    "alt": "Cream hoodie with bold AUBURN wordmark",
+    "colors": ["Cream"],
+    "sizes": ["S","M","L","XL","2XL"],
+    "badge": "New",
+    "link": "#"
+  },
+  {
+    "id": "hoodie-auburn-black",
+    "title": "Auburn Bubble Hoodie — Black",
+    "category": "hoodie",
+    "price": 45,
+    "image": "img/shop/hoodie-black.jpg",
+    "alt": "Black hoodie with white AUBURN wordmark",
+    "colors": ["Black"],
+    "sizes": ["S","M","L","XL","2XL"],
+    "link": "#"
+  },
+  {
+    "id": "soccer-rocket-crest",
+    "title": "Rocket Soccer Jersey (Stripe Crest)",
+    "category": "jersey",
+    "price": 55,
+    "image": "img/shop/jersey-soccer-crest.jpg",
+    "alt": "Blue/black striped soccer jersey with A crest and Rocket 27 back",
+    "colors": ["Navy/Black"],
+    "sizes": ["XS","S","M","L","XL"],
+    "badge": "Limited",
+    "link": "#"
+  },
+  {
+    "id": "soccer-rocket-vneck",
+    "title": "Rocket Soccer Jersey (V-Neck)",
+    "category": "jersey",
+    "price": 55,
+    "image": "img/shop/jersey-soccer-vneck.jpg",
+    "alt": "V-neck soccer jersey with Rocket 27 back",
+    "colors": ["Navy/Black"],
+    "sizes": ["XS","S","M","L","XL"],
+    "link": "#"
+  },
+  {
+    "id": "basketball-pinstripe",
+    "title": "Rockets Pinstripe Basketball Jersey",
+    "category": "jersey",
+    "price": 50,
+    "image": "img/shop/jersey-basketball-pinstripe.jpg",
+    "alt": "Black pinstripe basketball jersey Rockets 26",
+    "colors": ["Black/Navy"],
+    "sizes": ["XS","S","M","L","XL"],
+    "link": "#"
+  },
+  {
+    "id": "rocket-tee",
+    "title": "Auburn Rocket Tee",
+    "category": "tee",
+    "price": 22,
+    "image": "img/shop/tee-rocket-cream.jpg",
+    "alt": "Cream tee with sketched rocket and vertical AUBURN",
+    "colors": ["Cream"],
+    "sizes": ["S","M","L","XL","2XL"],
+    "link": "#"
+  },
+  {
+    "id": "trucker-cap",
+    "title": "Auburn High Trucker Cap",
+    "category": "hat",
+    "price": 20,
+    "image": "img/shop/hat-trucker.jpg",
+    "alt": "Brown/cream trucker cap with Auburn High patch",
+    "colors": ["Brown/Cream"],
+    "sizes": ["One Size"],
+    "link": "#"
+  },
+  {
+    "id": "hockey-sweater",
+    "title": "Auburn Rockets Hockey Sweater",
+    "category": "jersey",
+    "price": 60,
+    "image": "img/shop/jersey-hockey.jpg",
+    "alt": "Cream and navy hockey sweater with Auburn Rockets script",
+    "colors": ["Cream/Navy"],
+    "sizes": ["S","M","L","XL","2XL"],
+    "link": "#"
+  },
+  {
+    "id": "rugby-polo",
+    "title": "Rugby Polo — A Crest",
+    "category": "tee",
+    "price": 28,
+    "image": "img/shop/rugby-polo.jpg",
+    "alt": "Cream rugby polo with purple stripes and A-rocket crest",
+    "colors": ["Cream/Purple"],
+    "sizes": ["S","M","L","XL"],
+    "link": "#"
+  },
+  {
+    "id": "track-pants",
+    "title": "A Crest Track Pants",
+    "category": "pants",
+    "price": 32,
+    "image": "img/shop/track-pants.jpg",
+    "alt": "Grey sweatpants with side stripes and A-rocket crest",
+    "colors": ["Heather Grey"],
+    "sizes": ["S","M","L","XL"],
+    "link": "#"
+  },
+  {
+    "id": "football-vtee",
+    "title": "Auburn Rockets V-Neck Tee",
+    "category": "tee",
+    "price": 24,
+    "image": "img/shop/tee-vneck-blue.jpg",
+    "alt": "Blue v-neck tee with Auburn Rockets script, number 28 back",
+    "colors": ["Blue"],
+    "sizes": ["S","M","L","XL","2XL"],
+    "link": "#"
+  }
+]
