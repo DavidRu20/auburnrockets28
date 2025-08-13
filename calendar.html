@@ -170,6 +170,7 @@
   <main>
     <aside class="sidebar" id="holidayCountdowns">
       <h2>Upcoming Holidays</h2>
+      <!-- items injected by JS -->
     </aside>
 
     <section class="calendar-wrap">
@@ -182,170 +183,165 @@
       <div class="calendar-grid" id="calendarGrid">
         <div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div>
         <div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>
+        <!-- days injected by JS -->
       </div>
     </section>
   </main>
 
   <script>
     /* Mobile menu */
-    (() => {
+    (function(){
       const btn = document.getElementById('menuBtn');
       const menu = document.getElementById('mobileMenu');
       if (!btn || !menu) return;
-      btn.addEventListener('click', e => {
+      btn.addEventListener('click', e=>{
         e.stopPropagation();
         const hidden = menu.classList.toggle('hidden');
         btn.setAttribute('aria-expanded', String(!hidden));
       });
-      document.addEventListener('click', e => {
-        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && e.target !== btn) {
-          btn.setAttribute('aria-expanded', 'false');
-          menu.classList.add('hidden');
+      document.addEventListener('click', e=>{
+        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && e.target !== btn){
+          btn.setAttribute('aria-expanded','false'); menu.classList.add('hidden');
         }
       });
     })();
 
-    /* Starfield */
-    (() => {
+    /* Starfield (theme-aware) */
+    (function(){
       const cvs = document.getElementById('starfield');
       const ctx = cvs.getContext('2d', { alpha: false });
-      let stars = [];
-      function resize() {
-        cvs.width = innerWidth;
-        cvs.height = innerHeight;
-        stars = Array.from({ length: 200 }, () => ({
-          x: Math.random() * cvs.width,
-          y: Math.random() * cvs.height,
-          r: Math.random() * 1.6,
-          v: Math.random() * 0.3 + 0.05
+      let stars=[];
+      function resize(){
+        cvs.width = innerWidth; cvs.height = innerHeight;
+        stars = Array.from({length: 200}, ()=>({
+          x: Math.random()*cvs.width, y: Math.random()*cvs.height,
+          r: Math.random()*1.6, v: Math.random()*0.3+0.05
         }));
       }
-      addEventListener('resize', resize);
-      resize();
-      (function tick() {
-        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-        const g = ctx.createLinearGradient(0, 0, 0, cvs.height);
-        if (isLight) { g.addColorStop(0, '#eaf2ff'); g.addColorStop(1, '#ffffff'); }
-        else { g.addColorStop(0, '#0b0e1a'); g.addColorStop(1, '#000'); }
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, cvs.width, cvs.height);
+      addEventListener('resize', resize); resize();
+      (function tick(){
+        const isLight = document.documentElement.getAttribute('data-theme')==='light';
+        const g = ctx.createLinearGradient(0,0,0,cvs.height);
+        if(isLight){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
+        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
+        ctx.fillStyle = g; ctx.fillRect(0,0,cvs.width,cvs.height);
         ctx.fillStyle = isLight ? 'rgba(60,90,140,.85)' : 'rgba(180,200,255,.85)';
-        for (const s of stars) {
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fill();
-          s.y += s.v;
-          if (s.y > cvs.height) { s.y = -2; s.x = Math.random() * cvs.width; }
-        }
+        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; } }
         requestAnimationFrame(tick);
       })();
     })();
 
-    const EVENTS_URL = 'data/calendar-events.json';
+    /* ====== EVENTS (JSON only; no hardcoded seed) ====== */
+    const EVENTS_URL = 'data/calendar-events.json'; // edit this file in your repo
+    // eventsByDate: { "YYYY-MM-DD": [ {type,label}, ... ] }
     let eventsByDate = {};
-
-    function groupEvents(list) {
+    function groupEvents(list){
       const by = {};
-      for (const e of list) {
-        if (!by[e.date]) by[e.date] = [];
-        by[e.date].push({ type: e.type || 'event', label: e.label || '' });
+      for(const e of list){
+        if(!by[e.date]) by[e.date] = [];
+        by[e.date].push({ type: (e.type||'event'), label: (e.label||'') });
       }
       return by;
     }
 
-    /* Calendar */
-    (() => {
+    /* ====== CALENDAR RENDER ====== */
+    (function(){
       const grid = document.getElementById("calendarGrid");
       const monthLabel = document.getElementById("calendarMonth");
       const prevBtn = document.getElementById("prevMonth");
       const nextBtn = document.getElementById("nextMonth");
       let current = new Date();
 
-      function render(date) {
+      function render(date){
         const y = date.getFullYear(), m = date.getMonth();
-        monthLabel.textContent = date.toLocaleString("default", { month: "long", year: "numeric" });
+        monthLabel.textContent = date.toLocaleString("default", { month:"long", year:"numeric" });
+
+        // clear old cells
         grid.querySelectorAll(".day:not(.day-name)").forEach(el => el.remove());
 
-        const first = new Date(y, m, 1), last = new Date(y, m + 1, 0);
+        const first = new Date(y,m,1), last = new Date(y,m+1,0);
         const start = first.getDay(), total = last.getDate();
 
-        for (let i = 0; i < start; i++) {
-          const e = document.createElement("div");
-          e.className = "day empty";
-          grid.appendChild(e);
+        for(let i=0;i<start;i++){
+          const e = document.createElement("div"); e.className="day empty"; grid.appendChild(e);
         }
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = new Date(); today.setHours(0,0,0,0);
 
-        for (let d = 1; d <= total; d++) {
+        for(let d=1; d<=total; d++){
           const cell = document.createElement("div");
           cell.className = "day";
           cell.textContent = d;
 
-          const key = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+          const key = ${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')};
           const items = eventsByDate[key] || [];
-          if (items.length) {
-            const priority = { event: 4, break: 3, half: 2, lunch: 1 };
-            const primary = items.slice().sort((a, b) => (priority[b.type] || 0) - (priority[a.type] || 0))[0];
+          if (items.length){
+            // choose a primary style for the day (priority: event > break > half > lunch)
+            const priority = { event:4, break:3, half:2, lunch:1 };
+            const primary = items.slice().sort((a,b)=>(priority[b.type]||0)-(priority[a.type]||0))[0];
             if (primary?.type) cell.classList.add(primary.type);
 
+            // stack labels
             const list = document.createElement('div');
             list.className = 'event-list';
             items.forEach(it => {
               const chip = document.createElement('div');
               chip.className = 'event-chip';
-              chip.textContent = it.label;
+              chip.textContent = it.label || '';
               list.appendChild(chip);
             });
             cell.appendChild(list);
           }
 
-          const thisDay = new Date(y, m, d);
-          thisDay.setHours(0, 0, 0, 0);
+          const thisDay = new Date(y,m,d); thisDay.setHours(0,0,0,0);
           if (+thisDay === +today) cell.classList.add("today");
 
           grid.appendChild(cell);
         }
       }
 
-      prevBtn.addEventListener("click", () => { current.setMonth(current.getMonth() - 1); render(current); });
-      nextBtn.addEventListener("click", () => { current.setMonth(current.getMonth() + 1); render(current); });
+      prevBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()-1); render(current); });
+      nextBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()+1); render(current); });
 
-      fetch(EVENTS_URL, { cache: 'no-store' })
+      // Load JSON, then draw
+      fetch(EVENTS_URL, { cache:'no-store' })
         .then(r => r.ok ? r.json() : [])
-        .then(list => { eventsByDate = groupEvents(Array.isArray(list) ? list : []); })
-        .catch(() => { eventsByDate = {}; })
-        .finally(() => { render(current); });
+        .then(list => { eventsByDate = groupEvents(Array.isArray(list)? list : []); })
+        .catch(()=>{ eventsByDate = {}; })
+        .finally(()=>{ render(current); });
     })();
 
-    /* Sidebar countdowns */
-    (() => {
+    /* ====== SIDEBAR COUNTDOWNS (holidays only) ====== */
+    (function () {
       const wrap = document.getElementById("holidayCountdowns");
-      const HOLIDAY_TYPES = new Set(["break", "holiday", "half", "no-school"]);
+      const HOLIDAY_TYPES = new Set(["break", "holiday", "half", "no-school"]); // no lunches
 
-      function startOfToday() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+      function startOfToday() { const d = new Date(); d.setHours(0,0,0,0); return d; }
       function fmtDiff(ms) {
-        const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        return `${days} days, ${hours} hours`;
+        const days  = Math.floor(ms / (1000*60*60*24));
+        const hours = Math.floor((ms % (1000*60*60*24)) / (1000*60*60));
+        return ${days} days, ${hours} hours;
       }
 
       function update() {
+        // wipe previous items (keep heading)
         wrap.querySelectorAll(".countdown-item").forEach(n => n.remove());
+
         const today0 = startOfToday();
         const upcoming = [];
 
+        // read from eventsByDate
         for (const [iso, list] of Object.entries(eventsByDate || {})) {
           const arr = Array.isArray(list) ? list : [list];
           for (const ev of arr) {
             if (!ev || !ev.type) continue;
-            if (!HOLIDAY_TYPES.has(ev.type)) continue;
+            if (!HOLIDAY_TYPES.has(ev.type)) continue; // hide lunch/others
             const dt = new Date(iso);
             if (dt >= today0) upcoming.push({ date: dt, label: ev.label, type: ev.type, iso });
           }
         }
 
+        // group per-day
         const byDay = new Map();
         for (const e of upcoming) {
           if (!byDay.has(e.iso)) byDay.set(e.iso, []);
@@ -354,7 +350,7 @@
 
         const rows = [...byDay.entries()]
           .map(([iso, items]) => ({ iso, date: items[0].date, items }))
-          .sort((a, b) => a.date - b.date)
+          .sort((a,b) => a.date - b.date)
           .slice(0, 8);
 
         if (!rows.length) {
@@ -370,16 +366,22 @@
           const item = document.createElement("div");
           item.className = "countdown-item";
           const labels = row.items.map(i => i.label).join(", ");
-          item.innerHTML = `<div style="font-weight:700;">${labels}</div><div style="opacity:.8">${fmtDiff(diff)}</div>`;
+          item.innerHTML = 
+            <div style="font-weight:700;">${labels}</div>
+            <div style="opacity:.8">${fmtDiff(diff)}</div>
+          ;
           wrap.appendChild(item);
         }
       }
 
+      // call after events load
       const ready = setInterval(() => {
-        if (eventsByDate) { update(); clearInterval(ready); }
+        if (eventsByDate && Object.keys(eventsByDate).length >= 0) { update(); clearInterval(ready); }
       }, 200);
-      setInterval(update, 60 * 1000);
+      setInterval(update, 60*1000);
     })();
   </script>
+
+  <script src="script.js?v=23"></script>
 </body>
 </html>
