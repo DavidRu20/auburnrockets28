@@ -1,13 +1,169 @@
 <!doctype html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="styles.css">
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Announcements • AHS Class of ’28</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-local visuals: starfield + shooting stars -->
+  <style>
+    /* ==== STARFIELD (layered) ==== */
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: -2; /* behind everything */
+      pointer-events: none;
+      /* base space gradient to blend with your site background */
+      background:
+        radial-gradient(1200px 700px at 50% -15%, rgba(82,168,255,0.12), transparent 60%),
+        linear-gradient(180deg, #070a0f, #0b0e13 30%, #06090d);
+    }
+    /* Three star layers with different sizes/parallax speeds */
+    .sky::before,
+    .sky::after {
+      content: "";
+      position: absolute; inset: 0;
+      background-repeat: repeat;
+      animation: starParallax 120s linear infinite;
+      opacity: 0.9;
+    }
+    /* Layer 1: many tiny stars */
+    .stars-1 {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(1px 1px at 10% 20%, #ffffffcc 99%, transparent 100%),
+        radial-gradient(1px 1px at 30% 80%, #ffffffcc 99%, transparent 100%),
+        radial-gradient(1px 1px at 55% 15%, #ffffffcc 99%, transparent 100%),
+        radial-gradient(1px 1px at 80% 30%, #ffffffcc 99%, transparent 100%),
+        radial-gradient(1px 1px at 70% 70%, #ffffffcc 99%, transparent 100%),
+        radial-gradient(1px 1px at 20% 60%, #ffffffcc 99%, transparent 100%),
+        radial-gradient(1px 1px at 90% 50%, #ffffffcc 99%, transparent 100%),
+        radial-gradient(1px 1px at 40% 40%, #ffffffcc 99%, transparent 100%);
+      background-size: 600px 600px;
+      animation: starDrift1 160s linear infinite;
+      opacity: .7;
+      z-index: -2;
+    }
+    .sky::before {
+      background-image:
+        radial-gradient(1.2px 1.2px at 15% 35%, #eaf1ff 99%, transparent 100%),
+        radial-gradient(1.2px 1.2px at 45% 55%, #eaf1ff 99%, transparent 100%),
+        radial-gradient(1.2px 1.2px at 75% 25%, #eaf1ff 99%, transparent 100%),
+        radial-gradient(1.2px 1.2px at 25% 75%, #eaf1ff 99%, transparent 100%),
+        radial-gradient(1.2px 1.2px at 85% 80%, #eaf1ff 99%, transparent 100%),
+        radial-gradient(1.2px 1.2px at 55% 85%, #eaf1ff 99%, transparent 100%);
+      background-size: 900px 900px;
+      animation-duration: 200s;
+      z-index: -2;
+    }
+    .sky::after {
+      background-image:
+        radial-gradient(0.8px 0.8px at 20% 20%, #9bb0cc 99%, transparent 100%),
+        radial-gradient(0.8px 0.8px at 60% 40%, #9bb0cc 99%, transparent 100%),
+        radial-gradient(0.8px 0.8px at 35% 70%, #9bb0cc 99%, transparent 100%),
+        radial-gradient(0.8px 0.8px at 80% 60%, #9bb0cc 99%, transparent 100%),
+        radial-gradient(0.8px 0.8px at 90% 30%, #9bb0cc 99%, transparent 100%);
+      background-size: 700px 700px;
+      animation-duration: 280s;
+      z-index: -2;
+      opacity: .6;
+    }
+    @keyframes starParallax {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(200px); }
+    }
+    @keyframes starDrift1 {
+      0%   { transform: translateY(0) translateX(0); }
+      100% { transform: translateY(150px) translateX(60px); }
+    }
+
+    /* ==== SHOOTING STARS ==== */
+    .shooting {
+      position: fixed;
+      inset: 0;
+      z-index: -1; /* above stars but still behind UI */
+      pointer-events: none;
+    }
+    .shooting .meteor {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #fff;
+      opacity: 0;
+      /* Tail */
+      --len: 140px;
+    }
+    .shooting .meteor::after {
+      content: "";
+      position: absolute;
+      left: -2px; top: -1px;
+      width: var(--len);
+      height: 2px;
+      background: linear-gradient(90deg, #fff, rgba(255,255,255,0));
+      transform: translateX(-100%);
+      border-radius: 2px;
+    }
+    /* We create a few meteors with different paths/delays */
+    .meteor.m1 { --len: 160px; animation: fly1 6s linear infinite 1s; }
+    .meteor.m2 { --len: 120px; animation: fly2 8s linear infinite 3.5s; }
+    .meteor.m3 { --len: 180px; animation: fly3 10s linear infinite 6s; }
+    .meteor.m4 { --len: 140px; animation: fly4 9s linear infinite 9.5s; }
+    .meteor.m5 { --len: 200px; animation: fly5 12s linear infinite 12s; }
+
+    @keyframes fly1 {
+      0%   { opacity: 0; transform: translate(82vw, 8vh) rotate(-35deg); }
+      5%   { opacity: 1; }
+      35%  { transform: translate(30vw, 40vh) rotate(-35deg); opacity: .9; }
+      60%  { transform: translate(5vw, 70vh) rotate(-35deg); opacity: 0; }
+      100% { opacity: 0; }
+    }
+    @keyframes fly2 {
+      0%   { opacity: 0; transform: translate(95vw, 25vh) rotate(-40deg); }
+      6%   { opacity: 1; }
+      30%  { transform: translate(55vw, 55vh) rotate(-40deg); }
+      55%  { transform: translate(20vw, 85vh) rotate(-40deg); opacity: 0; }
+      100% { opacity: 0; }
+    }
+    @keyframes fly3 {
+      0%   { opacity: 0; transform: translate(88vw, -5vh) rotate(-30deg); }
+      5%   { opacity: 1; }
+      28%  { transform: translate(60vw, 20vh) rotate(-30deg); }
+      45%  { transform: translate(35vw, 45vh) rotate(-30deg); opacity: .7; }
+      70%  { transform: translate(10vw, 72vh) rotate(-30deg); opacity: 0; }
+      100% { opacity: 0; }
+    }
+    @keyframes fly4 {
+      0%   { opacity: 0; transform: translate(75vw, -10vh) rotate(-28deg); }
+      10%  { opacity: 1; }
+      40%  { transform: translate(45vw, 25vh) rotate(-28deg); }
+      65%  { transform: translate(18vw, 58vh) rotate(-28deg); opacity: 0; }
+      100% { opacity: 0; }
+    }
+    @keyframes fly5 {
+      0%   { opacity: 0; transform: translate(98vw, 15vh) rotate(-33deg); }
+      8%   { opacity: 1; }
+      38%  { transform: translate(62vw, 46vh) rotate(-33deg); }
+      62%  { transform: translate(25vw, 78vh) rotate(-33deg); opacity: 0; }
+      100% { opacity: 0; }
+    }
+  </style>
 </head>
 <body>
+  <!-- BACKGROUND VISUALS -->
+  <div class="sky"><div class="stars-1"></div></div>
+  <div class="shooting">
+    <div class="meteor m1"></div>
+    <div class="meteor m2"></div>
+    <div class="meteor m3"></div>
+    <div class="meteor m4"></div>
+    <div class="meteor m5"></div>
+  </div>
+
   <!-- ============================ HEADER / NAV ============================ -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
@@ -52,61 +208,41 @@
       <div class="panel glass hover-up" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
         <div>
           <h1 style="margin:0;">Announcements</h1>
-          <p class="small" style="margin:4px 0 0;">Simple to manage via <code>/data/announcements.json</code>. Pinned items show first.
-          </p>
+          <p class="small" style="margin:4px 0 0;">Edit the blocks below right in this file. Pinned first • NEW auto-badge • Optional alerts.</p>
         </div>
         <div class="inline" style="align-items:center; gap:8px;">
-          <button id="subscribeBtn" class="btn" aria-pressed="false" title="Enable browser notifications">
-            🔔 Enable alerts
-          </button>
-          <button id="markReadBtn" class="btn" title="Mark all announcements as read">Mark all read</button>
+          <button id="annBell" class="btn" aria-pressed="false" title="Enable browser notifications">🔔 Alerts</button>
+          <button id="annRead" class="btn" title="Mark all announcements as read">Mark all read</button>
         </div>
       </div>
 
-      <!-- Filters / search (optional, lightweight) -->
-      <div class="panel hover-up" style="margin-top:14px;">
-        <div class="inline" style="align-items:center;">
-          <input id="search" class="input" placeholder="Search announcements (title, body, tags)…" aria-label="Search announcements" />
-          <select id="tagFilter" class="select" aria-label="Filter by tag">
-            <option value="">All tags</option>
-          </select>
-          <select id="statusFilter" class="select" aria-label="Filter by status">
-            <option value="">All</option>
-            <option value="active">Active</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="past">Past</option>
-          </select>
-        </div>
-      </div>
+      <!-- Announcements list (edit these blocks only) -->
+      <div id="annList" class="card-list" style="margin-top:14px;">
+        <!-- EXAMPLE ITEM: copy, paste, change text + data-updated -->
+        <article class="card-item" data-updated="2025-08-12T18:00:00-04:00" data-status="active" data-tags="school,schedule" data-pinned="true">
+          <div class="row">
+            <div class="title">Welcome back! First day schedule</div>
+            <div class="inline"><span class="badge blue">Active</span><span class="badge purple">Pinned</span></div>
+          </div>
+          <div class="meta">Aug 12, 6:00 PM • #school #schedule</div>
+          <div style="margin-top:6px;">Bell schedule, advisory, and bus updates.</div>
+          <div class="inline" style="margin-top:10px;"><a class="btn" href="./calendar.html">Open</a></div>
+        </article>
 
-      <!-- Announcements list -->
-      <div id="list" class="card-list" style="margin-top:14px;"></div>
+        <article class="card-item" data-updated="2025-08-10T15:00:00-04:00" data-status="upcoming" data-tags="fundraiser,crumbl">
+          <div class="row">
+            <div class="title">Crumbl Cookie Fundraiser — Sept 8</div>
+            <div class="inline"><span class="badge">Upcoming</span></div>
+          </div>
+          <div class="meta">Aug 10, 3:00 PM • #fundraiser #crumbl</div>
+          <div style="margin-top:6px;">Bring friends — a portion of sales supports Class of ’28.</div>
+          <div class="inline" style="margin-top:10px;"><a class="btn" href="./fundraisers.html">Details</a></div>
+        </article>
+      </div>
 
       <!-- Empty state -->
       <div id="empty" class="panel" style="display:none; text-align:center;">
-        <div class="small">No announcements match your filters.</div>
-      </div>
-
-      <!-- How to manage (visible only to admins if you want later) -->
-      <div class="panel" style="margin-top:16px;">
-        <details>
-          <summary class="small">How to add an announcement</summary>
-          <div class="small" style="margin-top:8px; line-height:1.6;">
-            Edit <code>/data/announcements.json</code> in your repo. Example:
-            <pre style="white-space:pre-wrap;">[
-  {
-    "id": "first-day-2025",
-    "title": "Welcome back! First day schedule",
-    "body": "Bell schedule, advisory, and bus updates.",
-    "tags": ["school", "schedule"],
-    "pinned": true,
-    "status": "active",   // active | upcoming | past
-    "url": "./calendar.html",
-    "updatedAt": "2025-08-12T18:00:00-04:00"
-  }
-]</pre>
-          </div>
-        </details>
+        <div class="small">No announcements yet. Add one above.</div>
       </div>
     </div>
   </main>
@@ -114,7 +250,7 @@
   <!-- ============================== FOOTER =============================== -->
   <footer class="footer">
     <div class="container">
-      <div class="small">Built for AHS Class of 2028 • Manage data in <code>/data/announcements.json</code></div>
+      <div class="small">Built for AHS Class of 2028 • Edit announcements in this file</div>
     </div>
   </footer>
 
@@ -123,181 +259,109 @@
 
   <!-- ============================== SCRIPTS ============================== -->
   <script>
-  // Helper
-  const $ = (sel, el=document) => el.querySelector(sel);
-  const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+    // Helpers
+    const $ = (s, el=document) => el.querySelector(s);
+    const annList = $('#annList'), empty = $('#empty');
+    const bell = $('#annBell'), readBtn = $('#annRead'), toast = $('#toast');
+    const LS_LAST = 'ann_last_seen', LS_SUB = 'ann_sub';
+    const menuBtn = $('#menuBtn'), mobileMenu = $('#mobileMenu');
 
-  // Mobile menu toggle
-  const menuBtn = $('#menuBtn');
-  const mobileMenu = $('#mobileMenu');
-  function onToggleMenu(){
-    const nowHidden = mobileMenu.classList.toggle('hidden');
-    menuBtn?.setAttribute('aria-expanded', String(!nowHidden));
-  }
-  menuBtn?.addEventListener('click', onToggleMenu);
-  document.addEventListener('click', (e)=>{
-    if (!mobileMenu || mobileMenu.classList.contains('hidden')) return;
-    const outside = !mobileMenu.contains(e.target) && !menuBtn.contains(e.target);
-    if (outside) onToggleMenu();
-  });
-
-  // --------------------------- Announcements ---------------------------
-  const DATA_URL = './data/announcements.json'; // place a JSON file here
-  const LIST = $('#list');
-  const EMPTY = $('#empty');
-  const SEARCH = $('#search');
-  const TAG = $('#tagFilter');
-  const STATUS = $('#statusFilter');
-  const SUB_BTN = $('#subscribeBtn');
-  const READ_BTN = $('#markReadBtn');
-  const TOAST = $('#toast');
-
-  const LS_LAST_SEEN = 'ann_last_seen';
-  const LS_SUB = 'ann_subscribed';
-
-  let announcements = [];
-  let allTags = new Set();
-
-  function toast(msg, kind='info'){
-    if (!TOAST) return;
-    TOAST.textContent = msg;
-    TOAST.className = `toast ${kind}`;
-    TOAST.classList.remove('hidden');
-    setTimeout(()=>TOAST.classList.add('hidden'), 2200);
-  }
-
-  function formatDate(iso){
-    try { return new Date(iso).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}); }
-    catch { return iso; }
-  }
-
-  function newestTimestamp(items){
-    return items.reduce((max, a)=> Math.max(max, +new Date(a.updatedAt||0)), 0);
-  }
-
-  function render(){
-    const q = SEARCH.value.trim().toLowerCase();
-    const tag = TAG.value;
-    const status = STATUS.value;
-    const lastSeen = +(localStorage.getItem(LS_LAST_SEEN)||0);
-
-    let list = announcements
-      .filter(a=> !q || (a.title+" "+a.body+" "+(a.tags||[]).join(' ')).toLowerCase().includes(q))
-      .filter(a=> !tag || (a.tags||[]).includes(tag))
-      .filter(a=> !status || a.status===status)
-      .sort((a,b)=> (b.pinned===true)-(a.pinned===true) || +new Date(b.updatedAt)-+new Date(a.updatedAt));
-
-    LIST.innerHTML = '';
-
-    if (!list.length){
-      EMPTY.style.display = 'block';
-      return;
+    // Mobile menu
+    function toggleMenu(){
+      const hidden = mobileMenu.classList.toggle('hidden');
+      menuBtn?.setAttribute('aria-expanded', String(!hidden));
     }
-    EMPTY.style.display = 'none';
+    menuBtn?.addEventListener('click', toggleMenu);
+    document.addEventListener('click', e => {
+      if (!mobileMenu || mobileMenu.classList.contains('hidden')) return;
+      if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) toggleMenu();
+    });
 
-    for (const a of list){
-      const isNew = +new Date(a.updatedAt||0) > lastSeen;
-      const el = document.createElement('article');
-      el.className = 'card-item';
-      el.innerHTML = `
-        <div class="row">
-          <div class="title">${a.title || 'Untitled'}</div>
-          <div class="inline">
-            ${a.pinned ? '<span class="badge purple" title="Pinned">Pinned</span>' : ''}
-            ${a.status==='active' ? '<span class="badge blue">Active</span>' : ''}
-            ${a.status==='upcoming' ? '<span class="badge">Upcoming</span>' : ''}
-            ${a.status==='past' ? '<span class="badge">Past</span>' : ''}
-            ${isNew ? '<span class="badge red">NEW</span>' : ''}
-          </div>
-        </div>
-        <div class="meta">${formatDate(a.updatedAt)}${(a.tags&&a.tags.length)? ' • '+a.tags.map(t=>`#${t}`).join(' ') : ''}</div>
-        <div style="margin-top:6px;">${a.body || ''}</div>
-        ${a.url ? `<div class="inline" style="margin-top:10px;"><a class="btn" href="${a.url}">Open</a></div>` : ''}
-      `;
-      LIST.appendChild(el);
+    // Pin + date sort, mark NEW since last visit & simple empty state
+    function renderAndMarkNew(){
+      // Sort pinned first, then by updated desc
+      const items = Array.from(annList.querySelectorAll('.card-item')).sort((a, b) => {
+        const pa = a.getAttribute('data-pinned') === 'true' ? 1 : 0;
+        const pb = b.getAttribute('data-pinned') === 'true' ? 1 : 0;
+        if (pa !== pb) return pb - pa;
+        return +new Date(b.getAttribute('data-updated')||0) - +new Date(a.getAttribute('data-updated')||0);
+      });
+      // Re-append in order
+      items.forEach(it => annList.appendChild(it));
+
+      const last = +(localStorage.getItem(LS_LAST)||0);
+      if (!items.length){ empty.style.display='block'; return Math.max(0,last); }
+      empty.style.display='none';
+
+      let newest = 0;
+      items.forEach(it => {
+        const ts = +new Date(it.getAttribute('data-updated')||0);
+        if (ts > newest) newest = ts;
+        // status chips (ensure correct label)
+        const status = (it.getAttribute('data-status')||'').toLowerCase();
+        const row = it.querySelector('.row .inline') || it.querySelector('.row');
+        if (row) {
+          if (!row.querySelector('.badge.blue') && status === 'active') row.insertAdjacentHTML('beforeend','<span class="badge blue">Active</span>');
+          if (!row.querySelector('.badge') && status === 'upcoming') row.insertAdjacentHTML('beforeend','<span class="badge">Upcoming</span>');
+          if (!row.querySelector('.badge') && status === 'past') row.insertAdjacentHTML('beforeend','<span class="badge">Past</span>');
+        }
+        // NEW badge
+        if (ts > last){
+          const b = document.createElement('span'); b.className='badge red'; b.textContent='NEW';
+          row && row.appendChild(b);
+        }
+      });
+      return newest;
     }
-  }
 
-  async function load(){
-    try{
-      const res = await fetch(DATA_URL, { cache:'no-store' });
-      if (!res.ok) throw new Error('Failed to load announcements');
-      const data = await res.json();
-      announcements = Array.isArray(data) ? data : [];
-      // collect tags
-      allTags = new Set();
-      announcements.forEach(a => (a.tags||[]).forEach(t=> allTags.add(t)));
-      TAG.innerHTML = '<option value="">All tags</option>' + Array.from(allTags).sort().map(t=>`<option value="${t}">${t}</option>`).join('');
-      render();
-      maybeNotify();
-    }catch(e){
-      LIST.innerHTML = '<div class="panel">Could not load announcements.</div>';
-      console.error(e);
+    // Notifications (page-open only)
+    function showToast(msg, kind='info'){
+      if (!toast) return;
+      toast.textContent=msg; toast.className='toast '+kind;
+      toast.classList.remove('hidden'); setTimeout(()=>toast.classList.add('hidden'), 2200);
     }
-  }
-
-  // --------------------------- Notifications ---------------------------
-  function isSubscribed(){ return localStorage.getItem(LS_SUB)==='1'; }
-  function setSubscribed(v){ localStorage.setItem(LS_SUB, v? '1':'0'); SUB_BTN.setAttribute('aria-pressed', String(!!v)); SUB_BTN.textContent = v ? '🔔 Alerts on' : '🔔 Enable alerts'; }
-
-  async function requestPermission(){
-    if (!('Notification' in window)) { toast('Notifications not supported'); return false; }
-    let perm = Notification.permission;
-    if (perm === 'default') perm = await Notification.requestPermission();
-    if (perm !== 'granted'){ toast('Permission denied'); return false; }
-    return true;
-  }
-
-  async function maybeNotify(){
-    if (!isSubscribed()) return; // user controls it
-    if (!('Notification' in window) || Notification.permission !== 'granted') return;
-
-    const latest = newestTimestamp(announcements);
-    const lastSeen = +(localStorage.getItem(LS_LAST_SEEN)||0);
-    if (latest > lastSeen){
-      const newCount = announcements.filter(a => +new Date(a.updatedAt||0) > lastSeen).length;
-      try{
-        new Notification('New announcement' + (newCount>1? 's':''), {
-          body: newCount===1 ? announcements.find(a=> +new Date(a.updatedAt||0)===latest)?.title || 'Updated' : `${newCount} new items`,
-          icon: '/favicon.ico'
-        });
-      }catch{}
+    function subscribed(){ return localStorage.getItem(LS_SUB)==='1'; }
+    function setSub(on){
+      localStorage.setItem(LS_SUB, on ? '1' : '0');
+      bell.setAttribute('aria-pressed', String(!!on));
+      bell.textContent = on ? '🔔 Alerts on' : '🔔 Alerts';
     }
-  }
-
-  SUB_BTN.addEventListener('click', async ()=>{
-    if (!isSubscribed()){
-      const ok = await requestPermission();
-      if (!ok) return;
-      setSubscribed(true);
-      toast('Alerts enabled');
-      maybeNotify();
-    } else {
-      setSubscribed(false);
-      toast('Alerts disabled');
+    async function maybeNotify(newestTs){
+      if (!subscribed() || !('Notification' in window)) return;
+      if (Notification.permission !== 'granted') return;
+      const last = +(localStorage.getItem(LS_LAST)||0);
+      if (newestTs > last){
+        try {
+          new Notification('New announcement', {
+            body: 'There are updates on the Announcements page.',
+            icon: '/favicon.ico'
+          });
+        } catch {}
+      }
     }
-  });
+    bell.addEventListener('click', async () => {
+      if (!('Notification' in window)){ showToast('Notifications not supported'); return; }
+      if (!subscribed()){
+        let perm = Notification.permission;
+        if (perm==='default') perm = await Notification.requestPermission();
+        if (perm!=='granted'){ showToast('Permission denied'); return; }
+        setSub(true); showToast('Alerts enabled'); maybeNotify(Date.now());
+      } else {
+        setSub(false); showToast('Alerts disabled');
+      }
+    });
 
-  READ_BTN.addEventListener('click', ()=>{
-    const ts = Date.now();
-    localStorage.setItem(LS_LAST_SEEN, String(ts));
-    render();
-    toast('Marked all as read', 'success');
-  });
+    readBtn.addEventListener('click', () => {
+      localStorage.setItem(LS_LAST, String(Date.now()));
+      document.querySelectorAll('.badge.red').forEach(b=>b.remove());
+      showToast('Marked all read','success');
+    });
 
-  // First-load local state
-  setSubscribed(isSubscribed());
-  if (!localStorage.getItem(LS_LAST_SEEN)) localStorage.setItem(LS_LAST_SEEN, '0');
-
-  // Filters
-  SEARCH.addEventListener('input', render);
-  TAG.addEventListener('change', render);
-  STATUS.addEventListener('change', render);
-
-  // Load announcements
-  load();
-  // Optional refresh every 5 minutes while page is open
-  setInterval(load, 5*60*1000);
+    // Init
+    if (!localStorage.getItem(LS_LAST)) localStorage.setItem(LS_LAST, '0');
+    setSub(subscribed());
+    const newest = renderAndMarkNew();
+    maybeNotify(newest);
   </script>
 </body>
 </html>
