@@ -1,9 +1,6 @@
 [
   { "image": "images/shop/baseballcap-white.jpeg",   "title": "Baseball Cap (White)",           "category": "hat",    "price": 20 },
-  { "image": "images/shop/basketballjersey.PNG",     "title": "Basketball Jersey",              "category": "jersey", "price": 50 },
   { "image": "images/shop/crewneck-blcak.jpg",       "title": "Crewneck (Black)",               "category": "tee",    "price": 35 },
-  { "image": "images/shop/footballjersey-blue.PNG",  "title": "Football Jersey (Blue)",         "category": "jersey", "price": 55 },
-  { "image": "images/shop/hockeyjersey.jpg",         "title": "Hockey Jersey",                  "category": "jersey", "price": 60 },
   { "image": "images/shop/hoodie-black.jpeg",        "title": "Hoodie (Black)",                 "category": "hoodie", "price": 45 },
   { "image": "images/shop/hoodie-cream.jpeg",        "title": "Hoodie (Cream)",                 "category": "hoodie", "price": 45 },
   { "image": "images/shop/poloshirt-white.jpg",      "title": "Polo Shirt (White)",             "category": "tee",    "price": 28 },
@@ -13,4 +10,7 @@
   { "image": "images/shop/sweats.jpg",               "title": "Sweatpants",                     "category": "pants",  "price": 32 },
   { "image": "images/shop/truckerhat.jpg",           "title": "Trucker Hat",                    "category": "hat",    "price": 20 },
   { "image": "images/shop/tshirt-cream.jpg",         "title": "T-Shirt (Cream)",                "category": "tee",    "price": 22 }
+  { "image": "images/shop/basketball-jersey.png",    "title": "Basketball Jersey",           "category": "jersey", "price": 50 },
+  { "image": "images/shop/football-jersey-blue.png", "title": "Football Jersey (Blue)",      "category": "jersey", "price": 55 },
+  { "image": "images/shop/hockey-jersey.jpg",        "title": "Hockey Jersey",               "category": "jersey", "price": 60 }
 ]
