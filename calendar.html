@@ -142,7 +142,7 @@
         <a href="./achievements.html">Achievements</a>
         <a href="./about.html">About</a>
         <a href="./contact.html">Contact</a>
-        <a class="active" href="./shop.html">Shop</a>
+        <a href="./shop.html">Shop</a>
         <a href="./announcements.html">Announcements</a>
         <a href="./community.html">Community</a>
       </div>
@@ -159,7 +159,7 @@
       <a href="./achievements.html">Achievements</a>
       <a href="./about.html">About</a>
       <a href="./contact.html">Contact</a>
-      <a class="active" href="./shop.html">Shop</a>
+      <a href="./shop.html">Shop</a>
       <a href="./announcements.html">Announcements</a>
       <a href="./community.html">Community</a>
       <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
@@ -169,7 +169,7 @@
   <!-- ================= Main ================= -->
   <main>
     <aside class="sidebar" id="holidayCountdowns">
-      <h2>Upcoming</h2>
+      <h2>Upcoming Holidays</h2>
       <!-- items injected by JS -->
     </aside>
 
@@ -311,82 +311,78 @@
         .finally(()=>{ render(current); });
     })();
 
-   <script>
-/* Sidebar countdowns — only show holidays / no-school items */
-(function () {
-  const wrap = document.getElementById("holidayCountdowns");
-  // Only these types will appear in the sidebar:
-  const HOLIDAY_TYPES = new Set(["break", "holiday", "half", "no-school"]);
+    /* ====== SIDEBAR COUNTDOWNS (holidays only) ====== */
+    (function () {
+      const wrap = document.getElementById("holidayCountdowns");
+      const HOLIDAY_TYPES = new Set(["break", "holiday", "half", "no-school"]); // no lunches
 
-  function startOfToday() {
-    const d = new Date(); d.setHours(0,0,0,0); return d;
-  }
-  function fmtDiff(ms) {
-    const days  = Math.floor(ms / (1000*60*60*24));
-    const hours = Math.floor((ms % (1000*60*60*24)) / (1000*60*60));
-    return `${days} days, ${hours} hours`;
-  }
-
-  function update() {
-    // wipe previous items (keep heading)
-    wrap.querySelectorAll(".countdown-item").forEach(n => n.remove());
-
-    const today0 = startOfToday();
-    const upcoming = [];
-
-    // 🔧 read from eventsByDate (NOT "events")
-    for (const [iso, list] of Object.entries(eventsByDate || {})) {
-      const arr = Array.isArray(list) ? list : [list];
-      for (const ev of arr) {
-        if (!ev || !ev.type) continue;
-        if (!HOLIDAY_TYPES.has(ev.type)) continue; // hide lunch/other types
-        const dt = new Date(iso);
-        if (dt >= today0) upcoming.push({ date: dt, label: ev.label, type: ev.type, iso });
+      function startOfToday() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+      function fmtDiff(ms) {
+        const days  = Math.floor(ms / (1000*60*60*24));
+        const hours = Math.floor((ms % (1000*60*60*24)) / (1000*60*60));
+        return `${days} days, ${hours} hours`;
       }
-    }
 
-    // Group same-day items into one row
-    const byDay = new Map();
-    for (const e of upcoming) {
-      if (!byDay.has(e.iso)) byDay.set(e.iso, []);
-      byDay.get(e.iso).push(e);
-    }
+      function update() {
+        // wipe previous items (keep heading)
+        wrap.querySelectorAll(".countdown-item").forEach(n => n.remove());
 
-    const rows = [...byDay.entries()]
-      .map(([iso, items]) => ({ iso, date: items[0].date, items }))
-      .sort((a,b) => a.date - b.date)
-      .slice(0, 8);
+        const today0 = startOfToday();
+        const upcoming = [];
 
-    if (!rows.length) {
-      const none = document.createElement("div");
-      none.className = "countdown-item";
-      none.textContent = "No upcoming holidays found.";
-      wrap.appendChild(none);
-      return;
-    }
+        // read from eventsByDate
+        for (const [iso, list] of Object.entries(eventsByDate || {})) {
+          const arr = Array.isArray(list) ? list : [list];
+          for (const ev of arr) {
+            if (!ev || !ev.type) continue;
+            if (!HOLIDAY_TYPES.has(ev.type)) continue; // hide lunch/others
+            const dt = new Date(iso);
+            if (dt >= today0) upcoming.push({ date: dt, label: ev.label, type: ev.type, iso });
+          }
+        }
 
-    for (const row of rows) {
-      const diff = row.date - new Date();
-      const item = document.createElement("div");
-      item.className = "countdown-item";
-      const labels = row.items.map(i => i.label).join(", ");
-      item.innerHTML = `
-        <div style="font-weight:700;">${labels}</div>
-        <div style="opacity:.8">${fmtDiff(diff)}</div>
-      `;
-      wrap.appendChild(item);
-    }
-  }
+        // group per-day
+        const byDay = new Map();
+        for (const e of upcoming) {
+          if (!byDay.has(e.iso)) byDay.set(e.iso, []);
+          byDay.get(e.iso).push(e);
+        }
 
-  // Call after the calendar loads eventsByDate
-  const ready = setInterval(() => {
-    if (typeof eventsByDate === 'object') { update(); clearInterval(ready); }
-  }, 200);
-  setInterval(update, 60*1000);
-})();
-</script>
+        const rows = [...byDay.entries()]
+          .map(([iso, items]) => ({ iso, date: items[0].date, items }))
+          .sort((a,b) => a.date - b.date)
+          .slice(0, 8);
 
+        if (!rows.length) {
+          const none = document.createElement("div");
+          none.className = "countdown-item";
+          none.textContent = "No upcoming holidays found.";
+          wrap.appendChild(none);
+          return;
+        }
+
+        for (const row of rows) {
+          const diff = row.date - new Date();
+          const item = document.createElement("div");
+          item.className = "countdown-item";
+          const labels = row.items.map(i => i.label).join(", ");
+          item.innerHTML = `
+            <div style="font-weight:700;">${labels}</div>
+            <div style="opacity:.8">${fmtDiff(diff)}</div>
+          `;
+          wrap.appendChild(item);
+        }
+      }
+
+      // call after events load
+      const ready = setInterval(() => {
+        if (eventsByDate && Object.keys(eventsByDate).length >= 0) { update(); clearInterval(ready); }
+      }, 200);
+      setInterval(update, 60*1000);
+    })();
+  </script>
 
   <script src="script.js?v=23"></script>
 </body>
 </html>
+
