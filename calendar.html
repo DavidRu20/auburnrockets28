@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css?v=21" />
+  <link rel="stylesheet" href="styles.css?v=22" />
 
   <style>
     /* Page base */
@@ -14,12 +14,9 @@
 
     /* ================== LAYOUT (fills page) ================== */
     main{
-      /* sidebar | calendar */
       display: grid;
-      grid-template-columns: clamp(260px, 22vw, 340px) minmax(0, 1fr);
+      grid-template-columns: clamp(260px, 22vw, 340px) minmax(0, 1fr); /* sidebar | calendar */
       gap: 24px;
-
-      /* let the calendar breathe across the screen */
       width: min(96vw, 1800px);
       max-width: none;
       margin-inline: auto;
@@ -28,15 +25,14 @@
 
     /* ---------------- Sidebar (Upcoming Holidays) --------------- */
     .sidebar{
-      position: sticky; top: 96px;         /* under header */
+      position: sticky; top: 96px;
       height: calc(100vh - 120px);
       overflow: auto;
       padding: 16px;
       border-radius: 18px;
       background: rgba(255,255,255,0.05);
       box-shadow: var(--shadow-1);
-      width: auto;                         /* grid controls width */
-      max-width: 360px;
+      width: auto; max-width: 360px;
     }
     :root[data-theme="light"] .sidebar{
       background: var(--panel);
@@ -94,7 +90,7 @@
     .day{
       background: rgba(255,255,255,0.08);
       border-radius: 16px;
-      min-height: clamp(110px, 12vw, 180px);  /* scales with screen */
+      min-height: clamp(110px, 12vw, 180px);
       padding: 12px;
       display:flex; flex-direction:column;
       transition: transform .15s ease, background .15s ease;
@@ -104,7 +100,18 @@
     .day.today{ background:#0d6efd; color:#fff; font-weight:700; }
     .day.event{ background: rgba(0,255,255,.18); border:1px solid cyan; }
     .day.break{ background: rgba(255,165,0,.18); border:1px solid orange; }
-    .event-label{ margin-top:auto; font-size:.75rem; opacity:.9; }
+
+    /* NEW: extra types + stacked chips */
+    .day.half  { background: rgba(13,110,253,.18); border:1px solid var(--blue-2); }
+    .day.lunch { outline: 1px dashed rgba(255,255,255,.25); }
+    .event-list { margin-top:auto; display:grid; gap:4px; }
+    .event-chip {
+      font-size:.75rem; opacity:.95;
+      padding:3px 6px; border-radius:8px; width:fit-content;
+      background: rgba(255,255,255,.09);
+    }
+    .day.today .event-chip { background: rgba(0,0,0,.18); }
+
     .empty{ background: transparent !important; border:0; }
 
     /* ---------------- Mobile stack ---------------- */
@@ -182,7 +189,7 @@
   </main>
 
   <script>
-    /* Mobile menu (shared pattern) */
+    /* Mobile menu */
     (function(){
       const btn = document.getElementById('menuBtn');
       const menu = document.getElementById('mobileMenu');
@@ -224,23 +231,43 @@
       })();
     })();
 
-    /* Events (sample) */
-    const events = {
-      "2025-08-27": { type: "event", label: "First Day of School" },
-      "2025-09-01": { type: "break", label: "Labor Day" },
-      "2025-10-13": { type: "break", label: "Indigenous Peoples’ Day" },
-      "2025-11-11": { type: "break", label: "Veterans Day" },
-      "2025-11-26": { type: "break", label: "Thanksgiving Break" },
-      "2025-11-27": { type: "break", label: "Thanksgiving Break" },
-      "2025-11-28": { type: "break", label: "Thanksgiving Break" },
-      "2025-12-23": { type: "break", label: "Winter Break" },
-      "2025-12-24": { type: "break", label: "Winter Break" },
-      "2025-12-25": { type: "break", label: "Winter Break" },
-      "2026-01-01": { type: "break", label: "New Year’s Day" },
-      "2026-06-12": { type: "event", label: "Last Day of School" }
+    /* ====== EVENTS LOADER (JSON + multiple items per day) ====== */
+    const EVENTS_URL = './data/calendar-events.json';  // edit this file on GitHub
+    let eventsByDate = {};                              // { "YYYY-MM-DD": [ {type,label}, ... ] }
+
+    // Built-in seed so the calendar isn't empty if the JSON file is missing.
+    const seed = {
+      "2025-08-27": [{ type:"event", label:"First Day of School" }],
+      "2025-09-01": [{ type:"break", label:"Labor Day" }],
+      "2025-10-13": [{ type:"break", label:"Indigenous Peoples’ Day" }],
+      "2025-11-11": [{ type:"break", label:"Veterans Day" }],
+      "2025-11-26": [{ type:"break", label:"Thanksgiving Break" }],
+      "2025-11-27": [{ type:"break", label:"Thanksgiving Break" }],
+      "2025-11-28": [{ type:"break", label:"Thanksgiving Break" }],
+      "2025-12-23": [{ type:"break", label:"Winter Break" }],
+      "2025-12-24": [{ type:"break", label:"Winter Break" }],
+      "2025-12-25": [{ type:"break", label:"Winter Break" }],
+      "2026-01-01": [{ type:"break", label:"New Year’s Day" }],
+      "2026-06-12": [{ type:"event", label:"Last Day of School" }]
     };
 
-    /* Calendar render */
+    async function loadEvents(){
+      // clone seed
+      eventsByDate = JSON.parse(JSON.stringify(seed));
+      try{
+        const res = await fetch(EVENTS_URL, { cache:'no-store' });
+        if (res.ok){
+          const list = await res.json();
+          for (const e of list){
+            const key = e.date;
+            if (!eventsByDate[key]) eventsByDate[key] = [];
+            eventsByDate[key].push({ type: e.type || 'event', label: e.label || '' });
+          }
+        }
+      }catch{ /* ignore if file is missing on first run */ }
+    }
+
+    /* ====== CALENDAR RENDER ====== */
     (function(){
       const grid = document.getElementById("calendarGrid");
       const monthLabel = document.getElementById("calendarMonth");
@@ -252,7 +279,7 @@
         const y = date.getFullYear(), m = date.getMonth();
         monthLabel.textContent = date.toLocaleString("default", { month:"long", year:"numeric" });
 
-        // remove previous cells
+        // clear old cells
         grid.querySelectorAll(".day:not(.day-name)").forEach(el => el.remove());
 
         const first = new Date(y,m,1), last = new Date(y,m+1,0);
@@ -270,12 +297,23 @@
           cell.textContent = d;
 
           const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-          if (events[key]){
-            cell.classList.add(events[key].type);
-            const lbl = document.createElement("div");
-            lbl.className = "event-label";
-            lbl.textContent = events[key].label;
-            cell.appendChild(lbl);
+          const items = eventsByDate[key] || [];
+          if (items.length){
+            // choose a primary style for the day (priority: event > break > half > lunch)
+            const priority = { event:4, break:3, half:2, lunch:1 };
+            const primary = items.slice().sort((a,b)=>(priority[b.type]||0)-(priority[a.type]||0))[0];
+            if (primary?.type) cell.classList.add(primary.type);
+
+            // stack labels
+            const list = document.createElement('div');
+            list.className = 'event-list';
+            items.forEach(it => {
+              const chip = document.createElement('div');
+              chip.className = 'event-chip';
+              chip.textContent = it.label || '';
+              list.appendChild(chip);
+            });
+            cell.appendChild(list);
           }
 
           const thisDay = new Date(y,m,d); thisDay.setHours(0,0,0,0);
@@ -287,17 +325,26 @@
 
       prevBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()-1); render(current); });
       nextBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()+1); render(current); });
-      render(current);
+
+      // load events first, then draw
+      loadEvents().then(()=> render(current));
     })();
 
-    /* Sidebar countdowns */
+    /* ====== SIDEBAR COUNTDOWNS ====== */
     (function(){
       const wrap = document.getElementById("holidayCountdowns");
       function update(){
         wrap.querySelectorAll(".countdown-item").forEach(n=>n.remove());
+
         const now = new Date();
-        Object.keys(events)
-          .map(d => ({ date:new Date(d), ...events[d] }))
+        const flat = [];
+        Object.keys(eventsByDate).forEach(key => {
+          for (const item of eventsByDate[key]){
+            flat.push({ date: new Date(key), type: item.type, label: item.label });
+          }
+        });
+
+        flat
           .filter(e => e.date >= now)
           .sort((a,b)=> a.date - b.date)
           .slice(0, 8)
@@ -311,11 +358,14 @@
             wrap.appendChild(item);
           });
       }
-      update();
+
+      // refresh after events load, then every minute
+      loadEvents().then(update);
       setInterval(update, 60*1000);
     })();
   </script>
 
-  <script src="script.js?v=21"></script>
+  <script src="script.js?v=22"></script>
 </body>
 </html>
+
