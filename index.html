@@ -51,32 +51,6 @@
     </div>
   </header>
 
-  <canvas id="starfield"></canvas>
-
-<script>
-  // Starfield (theme-aware)
-  const canvas = document.getElementById('starfield');
-  const ctx = canvas.getContext('2d');
-  let stars = [];
-  const numStars = 150;
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    createStars();
-  }
-
-  function createStars() {
-    stars = [];
-    for (let i = 0; i < numStars; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.2,
-        alpha: Math.random()
-      });
-    }
-  }
 
   <!-- ============================== HERO ================================= -->
   <main role="main">
