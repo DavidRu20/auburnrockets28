@@ -6,21 +6,54 @@
   <title>About • AHS Class of ’28</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Starfield CSS -->
+  <style>
+    body { background: transparent; overflow-x: hidden; }
+    #starfield {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- ============================ HEADER / NAV ============================ -->
- <!-- ===== Global Header (regular site header) ===== -->
-<header class="header" role="banner">
-  <nav class="nav" aria-label="Primary">
-    <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
-      <span class="logo" aria-hidden="true">A</span>
-      AHS Class of ’28
-    </a>
+  <!-- Starfield background -->
+  <canvas id="starfield" aria-hidden="true"></canvas>
 
-    <!-- Desktop links -->
-    <div class="links" role="navigation">
-      <a href="./index.html">Home</a>
+  <!-- ============================ HEADER / NAV ============================ -->
+  <!-- ===== Global Header (regular site header) ===== -->
+  <header class="header" role="banner">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+        <span class="logo" aria-hidden="true">A</span>
+        AHS Class of ’28
+      </a>
+
+      <!-- Desktop links -->
+      <div class="links" role="navigation">
+        <a href="./index.html">Home</a>
+        <a href="./fundraisers.html">Fundraisers</a>
+        <a href="./calendar.html">Calendar</a>
+        <a href="./media.html">Media</a>
+        <a href="./achievements.html">Achievements</a>
+        <a class="active" href="./about.html">About</a>
+        <a href="./contact.html">Contact</a>
+        <a href="./shop.html">Shop</a>
+        <a href="./announcements.html">Announcements</a>
+        <a href="./community.html">Community</a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button id="menuBtn" class="menu-btn" aria-expanded="false"
+              aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+      <a href="./">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
       <a href="./media.html">Media</a>
@@ -30,210 +63,14 @@
       <a href="./shop.html">Shop</a>
       <a href="./announcements.html">Announcements</a>
       <a href="./community.html">Community</a>
+      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
     </div>
-
-    <!-- Mobile menu button -->
-    <button id="menuBtn" class="menu-btn" aria-expanded="false"
-            aria-controls="mobileMenu" aria-label="Open menu">☰</button>
-  </nav>
-
-  <!-- Mobile menu -->
-  <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-    <a href="./">Home</a>
-    <a href="./fundraisers.html">Fundraisers</a>
-    <a href="./calendar.html">Calendar</a>
-    <a href="./media.html">Media</a>
-    <a href="./achievements.html">Achievements</a>
-    <a class="active" href="./about.html">About</a>
-    <a href="./contact.html">Contact</a>
-    <a href="./shop.html">Shop</a>
-    <a href="./announcements.html">Announcements</a>
-    <a href="./community.html">Community</a>
-    <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
-  </div>
-</header>
-
+  </header>
 
   <!-- ============================== HERO ================================= -->
   <main role="main">
-    <section class="hero" aria-labelledby="aboutTitle">
-      <div class="card hover-up" style="max-width:860px; margin-inline:auto;">
-        <h1 id="aboutTitle">About This Site</h1>
-        <p class="small" style="margin-top:6px;">
-          Built by and for the Auburn High School Class of 2028.
-        </p>
-        <div class="inline" style="justify-content:center; margin-top:14px;">
-          <a class="btn primary" href="https://instagram.com/ahs.class.of28" target="_blank" rel="noopener">
-            Instagram @ahs.class.of28
-          </a>
-          <a class="btn" href="./contact.html">Contact Officers</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================ MISSION =============================== -->
-    <section class="section">
-      <div class="container">
-        <div class="grid grid-3">
-          <article class="panel glass hover-up">
-            <h2 class="section-title">Why it exists</h2>
-            <p class="small">Phones aren’t allowed during school. This site gives students a fast way to:</p>
-            <ul class="small" style="margin:8px 0 0 18px; line-height:1.6;">
-              <li>See what fundraisers are live right now</li>
-              <li>Check the event calendar & no-school days</li>
-              <li>Submit media for highlights</li>
-              <li>Contact class officers quickly</li>
-            </ul>
-          </article>
-
-          <article class="panel glass hover-up">
-            <h2 class="section-title">What’s here</h2>
-            <ul class="small" style="margin:0 0 0 18px; line-height:1.6;">
-              <li><strong>Fundraisers:</strong> Live/Upcoming/Past with times</li>
-              <li><strong>Calendar:</strong> Today highlighted + next/previous event</li>
-              <li><strong>Media:</strong> Photos & video grid; student submissions</li>
-              <li><strong>Achievements:</strong> Wall of recognition</li>
-              <li><strong>Merch:</strong> Class gear (coming soon)</li>
-              <li><strong>Admin:</strong> Quick edits to data (officers only)</li>
-            </ul>
-          </article>
-
-          <article class="panel glass hover-up">
-            <h2 class="section-title">How it’s built</h2>
-            <p class="small">
-              Fast static pages with a glass UI and starfield background. Fundraisers and events
-              load from simple JSON so dates/times are easy to update on GitHub—no coding needed.
-            </p>
-            <div class="chips">
-              <span class="badge blue">Blue / White / Black / Grey</span>
-              <span class="badge">Glass UI</span>
-              <span class="badge">Starfield</span>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================ OFFICERS =============================== -->
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">Class Officers</h2>
-        <p class="section-sub">Tap a card for a quick detail. Email is best during the school day.</p>
-
-        <!-- data-flip enables the flip-on-tap JS we’ll add next -->
-        <div class="grid grid-4">
-          <article class="panel hover-up" data-flip>
-            <div class="front">
-              <div class="chips"><span class="badge yellow">President</span></div>
-              <h3 style="margin:8px 0 6px;">Patrick Haroian</h3>
-              <p class="small">The leader.</p>
-              <div class="inline" style="margin-top:10px;">
-                <a class="btn" href="https://www.instagram.com/ilovetombrady74/?next=%2F">Patrick's Instagram</a>
-              </div>
-            </div>
-            <div class="back small" style="display:none;">
-              Fun fact: Nasty at Monster Legends
-            </div>
-          </article>
-
-          <article class="panel hover-up" data-flip>
-            <div class="front">
-              <div class="chips"><span class="badge purple">Vice President</span></div>
-              <h3 style="margin:8px 0 6px;">Michael Atiemo</h3>
-              <p class="small"> Keeps everything organized and working well</p>
-              <div class="inline" style="margin-top:10px;">
-                <a class="btn" href="https://www.instagram.com/michael__atiemo/?next=%2F">Michael's Instagram</a>
-              </div>
-            </div>
-            <div class="back small" style="display:none;">
-              Fun fact: I set up all the fundraisers
-            </div>
-          </article>
-
-          <article class="panel hover-up" data-flip>
-            <div class="front">
-              <div class="chips"><span class="badge blue">Treasurer</span></div>
-              <h3 style="margin:8px 0 6px;">David Ruco</h3>
-              <p class="small">Budget & purchasing—transparent and responsible.</p>
-              <div class="inline" style="margin-top:10px;">
-                <a class="btn" href="https://www.instagram.com/david.ruco/?next=%2F">David's Instagram</a>
-              </div>
-            </div>
-            <div class="back small" style="display:none;">
-              Fun fact: I made the website
-            </div>
-          </article>
-
-          <article class="panel hover-up" data-flip>
-            <div class="front">
-              <div class="chips"><span class="badge red">Secretary</span></div>
-              <h3 style="margin:8px 0 6px;">Matias Gonzalez</h3>
-              <p class="small">Notes, records, and announcements.</p>
-              <div class="inline" style="margin-top:10px;">
-                <a class="btn" href="https://www.instagram.com/matiasgonzalez2028/?next=%2F">Matias's Instagram</a>
-              </div>
-            </div>
-            <div class="back small" style="display:none;">
-              Fun fact: I design the clothes
-            </div>
-          </article>
-          <!-- Advisor: J. Berg -->
-<article class="panel hover-up">
-  <div class="chips"><span class="badge">Advisor</span></div>
-  <h3 style="margin:8px 0 6px;">J. Berg</h3>
-  <p class="small">Faculty advisor and guidance for Student Gov.</p>
-  <div class="inline" style="margin-top:10px;">
-  </div>
-</article>
-
-<!-- Class Advisor: Mr. Martin -->
-<article class="panel hover-up">
-  <div class="chips"><span class="badge">Class Advisor</span></div>
-  <h3 style="margin:8px 0 6px;">Mr. Martin</h3>
-  <p class="small">Class advisor — supports Class of ’28 activities.</p>
-  <div class="inline" style="margin-top:10px;">
-  </div>
-</article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================ GUIDELINES ============================ -->
-    <section class="section">
-      <div class="container">
-        <div class="grid grid-2">
-          <article class="panel glass hover-up">
-            <h2 class="section-title">Media & Submissions</h2>
-            <p class="small">
-              Students can submit photos/videos for the Media page. Submissions are reviewed
-              by officers before posting.
-            </p>
-            <ul class="small" style="margin:8px 0 0 18px; line-height:1.6;">
-              <li>School-appropriate content only</li>
-              <li>Get permission from people in the photo/video</li>
-              <li>No personal phone numbers or private info</li>
-              <li>We may crop or edit for layout</li>
-            </ul>
-            <div class="inline" style="margin-top:12px;">
-              <a class="btn primary" href="./media.html">Go to Media</a>
-              <a class="btn" href="./contact.html">Submit to Officers</a>
-            </div>
-          </article>
-
-          <article class="panel glass hover-up">
-            <h2 class="section-title">Site Conduct</h2>
-            <p class="small">
-              Be respectful. No harassment, hate speech, or impersonation. Violations may be reported to school staff.
-            </p>
-            <div class="chips">
-              <span class="badge success">Positive</span>
-              <span class="badge warn">Safe</span>
-              <span class="badge danger">Report Issues</span>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
+    <!-- (everything in your main stays exactly the same) -->
+    <!-- ... existing sections for About This Site, Mission, Officers, Guidelines ... -->
   </main>
 
   <!-- ============================= FOOTER ================================ -->
@@ -245,8 +82,85 @@
     </div>
   </footer>
 
-  <!-- Toast placeholder (keeps consistency with your other pages) -->
+  <!-- Toast placeholder -->
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
+
+  <!-- Starfield script -->
+  <script>
+  (function(){
+    const cvs = document.getElementById('starfield');
+    const ctx = cvs.getContext('2d', { alpha: false });
+    let stars = [];
+    const N = 220;
+    const MIN_V = 0.05, MAX_V = 0.35;
+
+    function resize(){
+      const { innerWidth:w, innerHeight:h } = window;
+      cvs.width = w; cvs.height = h;
+      stars = Array.from({length:N}, () => ({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        r: Math.random()*1.7 + 0.2,
+        v: Math.random()*(MAX_V-MIN_V)+MIN_V,
+        a: 0.65 + Math.random()*0.35
+      }));
+    }
+
+    function draw(){
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      const g = ctx.createLinearGradient(0,0,0,cvs.height);
+      if (light){
+        g.addColorStop(0,'#eaf2ff');
+        g.addColorStop(0.5,'#f7fbff');
+        g.addColorStop(1,'#ffffff');
+      } else {
+        g.addColorStop(0,'#0a0d14');
+        g.addColorStop(0.5,'#070b12');
+        g.addColorStop(1,'#00060c');
+      }
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,cvs.width,cvs.height);
+
+      ctx.fillStyle = light ? 'rgba(60,90,140,0.9)' : 'rgba(190,210,255,0.9)';
+
+      const t = performance.now() * 0.0025;
+      for (const s of stars){
+        const twinkle = (Math.sin(t + s.x*0.01 + s.y*0.01)*0.25 + 0.75) * s.a;
+        ctx.globalAlpha = Math.min(1, Math.max(0.08, twinkle));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fill();
+        s.y += s.v;
+        if (s.y > cvs.height + 2){
+          s.y = -2; s.x = Math.random()*cvs.width;
+        }
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(draw);
+    }
+
+    const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function boot(){
+      resize();
+      if (prefersReduce.matches) {
+        const light = document.documentElement.getAttribute('data-theme') === 'light';
+        const g = ctx.createLinearGradient(0,0,0,cvs.height);
+        (light ? [ '#eaf2ff','#f7fbff','#ffffff' ] : [ '#0a0d14','#070b12','#00060c' ])
+          .forEach((col,i)=>g.addColorStop(i/2, col));
+        ctx.fillStyle = g; ctx.fillRect(0,0,cvs.width,cvs.height);
+        ctx.fillStyle = light ? 'rgba(60,90,140,0.9)' : 'rgba(190,210,255,0.9)';
+        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); }
+      } else {
+        requestAnimationFrame(draw);
+      }
+    }
+
+    window.addEventListener('resize', resize);
+    const obs = new MutationObserver(boot);
+    obs.observe(document.documentElement,{attributes:true, attributeFilter:['data-theme']});
+    boot();
+  })();
+  </script>
 
   <script src="script.js"></script>
 </body>
