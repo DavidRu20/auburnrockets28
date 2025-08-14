@@ -6,8 +6,30 @@
   <title>AHS Class of ’28</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-local styles for starfield -->
+  <style>
+    /* Fullscreen starfield canvas behind everything */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;          /* sit behind header, hero, etc. */
+      pointer-events: none; /* never block clicks */
+      display: block;
+    }
+    /* If someone prefers reduced motion, we’ll render a static sky once */
+    @media (prefers-reduced-motion: reduce) {
+      #starfield { animation: none !important; }
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Animated starfield background -->
+  <canvas id="starfield" aria-hidden="true"></canvas>
+
   <!-- ============================ HEADER / NAV ============================ -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
@@ -160,6 +182,110 @@
 
   <!-- Toast placeholder -->
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
+
+  <!-- Subtle starfield script (parallax + twinkle; respects reduced motion) -->
+  <script>
+    (function(){
+      const canvas = document.getElementById('starfield');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: true });
+
+      // Layers of stars for depth
+      const LAYERS = [
+        { count: 70,  speed: 0.03, size: [0.6, 1.2],  alpha: [0.10, 0.20] }, // far
+        { count: 40,  speed: 0.06, size: [0.8, 1.6],  alpha: [0.12, 0.26] }, // mid
+        { count: 18,  speed: 0.10, size: [1.2, 2.4],  alpha: [0.16, 0.32] }  // near
+      ];
+      const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let stars = [];
+      let w = 0, h = 0, rafId = 0, last = performance.now();
+
+      function rand(min, max){ return min + Math.random() * (max - min); }
+
+      function makeStars(){
+        stars = [];
+        LAYERS.forEach((L, li) => {
+          for (let i = 0; i < L.count; i++) {
+            stars.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              r: rand(L.size[0], L.size[1]),
+              a: rand(L.alpha[0], L.alpha[1]),
+              tw: rand(0, Math.PI * 2), // twinkle phase
+              spd: L.speed,
+              layer: li
+            });
+          }
+        });
+      }
+
+      function resize(){
+        w = canvas.width = window.innerWidth * devicePixelRatio;
+        h = canvas.height = window.innerHeight * devicePixelRatio;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+        makeStars();
+        drawStatic(); // immediate paint
+      }
+
+      function drawStatic(){
+        ctx.clearRect(0, 0, w, h);
+        for (const s of stars){
+          ctx.globalAlpha = s.a;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      function tick(ts){
+        const dt = Math.min(0.05, (ts - last) / 1000); // cap delta
+        last = ts;
+        ctx.clearRect(0, 0, w, h);
+
+        for (const s of stars){
+          // gentle parallax drift to the right + slight downward
+          s.x += s.spd * 24 * dt;
+          s.y += s.spd * 6  * dt;
+          if (s.x > window.innerWidth) s.x = -2;
+          if (s.y > window.innerHeight) s.y = -2;
+
+          // twinkle (very subtle)
+          s.tw += 0.8 * dt;
+          const twinkle = 0.5 + 0.5 * Math.sin(s.tw + s.layer);
+          const alpha = Math.max(0.08, Math.min(1, s.a * (0.85 + 0.25 * twinkle)));
+
+          ctx.globalAlpha = alpha;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        rafId = requestAnimationFrame(tick);
+      }
+
+      // Boot
+      resize();
+      window.addEventListener('resize', resize);
+
+      if (!prefersReduce) {
+        rafId = requestAnimationFrame(tick);
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) cancelAnimationFrame(rafId);
+          else { last = performance.now(); rafId = requestAnimationFrame(tick); }
+        });
+      } else {
+        // Static sky if reduced motion
+        drawStatic();
+      }
+    })();
+  </script>
 
   <!-- scripts -->
   <script src="script.js" defer></script>
