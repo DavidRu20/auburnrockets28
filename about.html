@@ -7,55 +7,52 @@
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-local styles (starfield + flip cards) -->
   <style>
-    /* Starfield sits behind everything */
-    #starfield {
-      position: fixed;
-      inset: 0;
-      z-index: -1; /* behind site UI */
-      display: block;
+    /* --- Header hardening: consistent layout + reliable mobile menu --- */
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
+    .menu-btn{ display:none; }
+    @media (max-width:980px){
+      .header .links{ display:none; }
+      .menu-btn{
+        display:inline-flex; align-items:center; justify-content:center;
+        width:42px; height:42px; border-radius:12px; border:1px solid var(--border);
+        background:var(--panel);
+      }
     }
+    .mobile-menu{
+      position:fixed; inset:64px 10px auto 10px; z-index:9999;
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:14px; box-shadow:var(--shadow-2); padding:12px;
+      backdrop-filter:blur(10px);
+    }
+    .mobile-menu a{ display:block; padding:12px 10px; border-radius:10px; color:var(--text); }
+    .mobile-menu a:hover{ background:rgba(255,255,255,.06); }
+    .hidden{ display:none !important; }
+    html.menu-open, body.menu-open { overflow:hidden; } /* lock scroll while menu open */
 
-    /* Optional: improve focus-ring visibility on dark bg */
-    :focus-visible {
-      outline: 2px solid var(--focus);
-      outline-offset: 3px;
-      border-radius: 10px;
-    }
+    /* Page base (match others + avoid sideways scroll) */
+    html, body { max-width:100%; overflow-x:hidden; }
+    body { color: var(--text); background: transparent; }
+
+    /* Starfield sits behind everything (same gradient/colors as the other pages) */
+    #starfield { position: fixed; inset: 0; z-index: -1; display: block; pointer-events:none; }
+
+    /* Optional: visible focus ring on dark bg */
+    :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 10px; }
 
     /* Flip card effect for officer tiles */
-    [data-flip] {
-      perspective: 1000px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-    [data-flip] .front,
-    [data-flip] .back {
+    [data-flip] { perspective: 1000px; cursor: pointer; position: relative; overflow: hidden; }
+    [data-flip] .front, [data-flip] .back {
       transition: transform 400ms cubic-bezier(.2,.8,.2,1), opacity 400ms;
       transform-style: preserve-3d;
     }
-    [data-flip] .back {
-      position: absolute;
-      inset: 16px; /* match panel padding visually */
-      display: none;
-      opacity: 0;
-    }
-    [data-flip].is-flipped .front {
-      transform: rotateY(180deg);
-      opacity: 0;
-    }
-    [data-flip].is-flipped .back {
-      display: block;
-      transform: rotateY(0deg);
-      opacity: 1;
-    }
+    [data-flip] .back { position: absolute; inset: 16px; display: none; opacity: 0; }
+    [data-flip].is-flipped .front { transform: rotateY(180deg); opacity: 0; }
+    [data-flip].is-flipped .back  { display: block; transform: rotateY(0deg); opacity: 1; }
 
-    /* Improve tap targets on mobile for the officer grid */
-    @media (max-width: 560px){
-      [data-flip] { padding: 12px; }
-    }
+    /* Mobile tap targets a bit cushier */
+    @media (max-width:560px){ [data-flip]{ padding:12px; } }
   </style>
 </head>
 <body>
@@ -65,7 +62,7 @@
   <!-- ============================ HEADER / NAV ============================ -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+      <a class="brand" href="./index.html" aria-label="AHS Class of 2028 — Home">
         <span class="logo" aria-hidden="true">A</span>
         AHS Class of ’28
       </a>
@@ -91,7 +88,7 @@
 
     <!-- Mobile menu -->
     <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-      <a href="./">Home</a>
+      <a href="./index.html">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
       <a href="./media.html">Media</a>
@@ -110,9 +107,7 @@
     <section class="hero" aria-labelledby="aboutTitle">
       <div class="card hover-up" style="max-width:860px; margin-inline:auto;">
         <h1 id="aboutTitle">About This Site</h1>
-        <p class="small" style="margin-top:6px;">
-          Built by and for the Auburn High School Class of 2028.
-        </p>
+        <p class="small" style="margin-top:6px;">Built by and for the Auburn High School Class of 2028.</p>
         <div class="inline" style="justify-content:center; margin-top:14px;">
           <a class="btn primary" href="https://instagram.com/ahs.class.of28" target="_blank" rel="noopener noreferrer">
             Instagram @ahs.class.of28
@@ -181,9 +176,7 @@
                 <a class="btn" href="https://www.instagram.com/ilovetombrady74/?next=%2F" target="_blank" rel="noopener noreferrer">Patrick's Instagram</a>
               </div>
             </div>
-            <div class="back small" style="display:none;">
-              Fun fact: Nasty at Monster Legends
-            </div>
+            <div class="back small" style="display:none;">Fun fact: Nasty at Monster Legends</div>
           </article>
 
           <article class="panel hover-up" data-flip tabindex="0" role="button" aria-label="Flip card: Vice President — Michael Atiemo">
@@ -195,9 +188,7 @@
                 <a class="btn" href="https://www.instagram.com/michael__atiemo/?next=%2F" target="_blank" rel="noopener noreferrer">Michael's Instagram</a>
               </div>
             </div>
-            <div class="back small" style="display:none;">
-              Fun fact: I set up all the fundraisers
-            </div>
+            <div class="back small" style="display:none;">Fun fact: I set up all the fundraisers</div>
           </article>
 
           <article class="panel hover-up" data-flip tabindex="0" role="button" aria-label="Flip card: Treasurer — David Ruco">
@@ -209,9 +200,7 @@
                 <a class="btn" href="https://www.instagram.com/david.ruco/?next=%2F" target="_blank" rel="noopener noreferrer">David's Instagram</a>
               </div>
             </div>
-            <div class="back small" style="display:none;">
-              Fun fact: I made the website
-            </div>
+            <div class="back small" style="display:none;">Fun fact: I made the website</div>
           </article>
 
           <article class="panel hover-up" data-flip tabindex="0" role="button" aria-label="Flip card: Secretary — Matias Gonzalez">
@@ -223,19 +212,15 @@
                 <a class="btn" href="https://www.instagram.com/matiasgonzalez2028/?next=%2F" target="_blank" rel="noopener noreferrer">Matias's Instagram</a>
               </div>
             </div>
-            <div class="back small" style="display:none;">
-              Fun fact: I design the clothes
-            </div>
+            <div class="back small" style="display:none;">Fun fact: I design the clothes</div>
           </article>
 
-          <!-- Advisor: J. Berg -->
           <article class="panel hover-up">
             <div class="chips"><span class="badge">Advisor</span></div>
             <h3 style="margin:8px 0 6px;">J. Berg</h3>
             <p class="small">Faculty advisor and guidance for Student Gov.</p>
           </article>
 
-          <!-- Class Advisor: Mr. Martin -->
           <article class="panel hover-up">
             <div class="chips"><span class="badge">Class Advisor</span></div>
             <h3 style="margin:8px 0 6px;">Mr. Martin</h3>
@@ -292,63 +277,71 @@
     </div>
   </footer>
 
-  <!-- Toast placeholder (keeps consistency with your other pages) -->
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
 
-  <!-- Page-only scripts: starfield + flip-cards (keeps main script.js untouched) -->
+  <!-- Mobile menu (robust + scroll-lock + desktop auto-close) -->
   <script>
-    /* Starfield (theme-aware, GPU-cheap) */
+    (function(){
+      const btn  = document.getElementById('menuBtn');
+      const menu = document.getElementById('mobileMenu');
+      if (!btn || !menu) return;
+      if (btn.dataset.bound === "1") return; // avoid double-binding
+      btn.dataset.bound = "1";
+
+      const DESKTOP_W = 980;
+      let open = false;
+      function setOpen(v){
+        open = v;
+        menu.classList.toggle('hidden', !open);
+        btn.setAttribute('aria-expanded', String(open));
+        document.documentElement.classList.toggle('menu-open', open);
+        document.body.classList.toggle('menu-open', open);
+      }
+
+      btn.addEventListener('click', (e)=>{ e.stopPropagation(); setOpen(!open); }, {passive:true});
+      document.addEventListener('click', (e)=>{ if(open && !menu.contains(e.target) && e.target !== btn) setOpen(false); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') setOpen(false); });
+      menu.addEventListener('click', (e)=>{ if (e.target.closest('a')) setOpen(false); });
+      window.addEventListener('resize', ()=>{ if (innerWidth > DESKTOP_W) setOpen(false); });
+    })();
+  </script>
+
+  <!-- Starfield (identical gradient/colors to your other pages) -->
+  <script>
     (function(){
       const cvs = document.getElementById('starfield');
-      const ctx = cvs.getContext('2d', { alpha: false });
-      let stars = [];
-
+      if(!cvs) return;
+      const ctx = cvs.getContext('2d', { alpha:false }); // solid gradient background
+      let stars=[];
       function resize(){
-        cvs.width = innerWidth;
-        cvs.height = innerHeight;
-        // Density scales mildly with width
-        const count = Math.round(Math.max(140, Math.min(280, innerWidth * 0.18)));
-        stars = Array.from({length: count}, () => ({
-          x: Math.random() * cvs.width,
-          y: Math.random() * cvs.height,
-          r: Math.random() * 1.6 + 0.2,
-          v: Math.random() * 0.3 + 0.05,
-          tw: Math.random() * 2 * Math.PI
+        cvs.width = innerWidth; cvs.height = innerHeight;
+        stars = Array.from({length:200},()=>({
+          x:Math.random()*cvs.width, y:Math.random()*cvs.height,
+          r:Math.random()*1.6, v:Math.random()*0.3+0.05
         }));
       }
-
-      function draw(){
-        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      addEventListener('resize', resize); resize();
+      (function tick(){
+        const light = document.documentElement.getAttribute('data-theme')==='light';
         const g = ctx.createLinearGradient(0,0,0,cvs.height);
-        if (isLight) { g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
-        else         { g.addColorStop(0,'#070a13');  g.addColorStop(1,'#000006'); }
-        ctx.fillStyle = g;
-        ctx.fillRect(0,0,cvs.width,cvs.height);
-
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        for (const s of stars){
-          s.y += s.v; if (s.y > cvs.height) { s.y = -2; s.x = Math.random() * cvs.width; }
-          s.tw += 0.02; const a = 0.6 + Math.sin(s.tw) * 0.35; // subtle twinkle
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fillStyle = isLight ? `rgba(60,90,140,${a})` : `rgba(180,200,255,${a})`;
-          ctx.fill();
+        if(light){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
+        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
+        ctx.fillStyle=g; ctx.fillRect(0,0,cvs.width,cvs.height);
+        ctx.fillStyle = light? 'rgba(60,90,140,.85)':'rgba(180,200,255,.85)';
+        for(const s of stars){
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+          s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; }
         }
-        ctx.restore();
-
-        requestAnimationFrame(draw);
-      }
-
-      addEventListener('resize', resize);
-      resize(); draw();
+        requestAnimationFrame(tick);
+      })();
     })();
+  </script>
 
-    /* Card flip (click / Enter / Space) */
+  <!-- Flip-cards (click / Enter / Space) -->
+  <script>
     (function(){
       function toggle(el){
         el.classList.toggle('is-flipped');
-        // Swap live front/back visibility for assistive tech
         const front = el.querySelector('.front');
         const back  = el.querySelector('.back');
         if (back) back.style.display = el.classList.contains('is-flipped') ? 'block' : 'none';
@@ -362,8 +355,7 @@
     })();
   </script>
 
-  <!-- Your main site script (menu, clocks, countdowns, etc.) -->
-  <script src="script.js"></script>
+  <!-- Your main site script (if needed) -->
+  <script src="script.js" defer></script>
 </body>
 </html>
-
