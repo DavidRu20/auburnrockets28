@@ -1,12 +1,12 @@
 [
-  /* ====== AUGUST 2025 ====== */
+  
   { "date": "2025-08-27", "type": "lunch", "label": "Chicken Tenders • Fries, Carrots • Fruit Cup / Salad Bar • Milk/Water" },
   { "date": "2025-08-28", "type": "lunch", "label": "Big Daddy Pizza • Assorted Fruits / Salad Bar • Milk/Water" },
   { "date": "2025-08-28", "type": "sport", "label": "Varsity Football (Scrimmage) vs Grafton —  Thu" },
   { "date": "2025-08-28", "type": "event", "label": "AHS Picture Day — Thu" },
   { "date": "2025-08-29", "type": "no-school", "label": "No School" },
 
-  /* ====== SEPTEMBER 2025 ====== */
+  
   { "date": "2025-09-01", "type": "no-school", "label": "Labor Day — No School" },
   { "date": "2025-09-02", "type": "lunch", "label": "BBQ Pork Slider • Sweet Potato, Roasted Corn • Fruit/Salad Bar • Milk/Water" },
   { "date": "2025-09-03", "type": "lunch", "label": "Teriyaki Chicken • Confetti Rice, Vegetables • Fruit Cup / Salad Bar • Milk/Water" },
@@ -31,14 +31,14 @@
   { "date": "2025-09-25", "type": "lunch", "label": "Chili Cheese Dogs • Roasted Corn • Salad Bar / Fruit Cup • Milk/Water" },
   { "date": "2025-09-26", "type": "lunch", "label": "Big Daddy Pizza + Salad Bar • Fruit Cups • Milk/Water" },
 
-  /* ====== OCTOBER 2025 ====== */
+  
   { "date": "2025-10-13", "type": "no-school", "label": "Indigenous Peoples’ Day — No School" },
 
-  /* ====== NOVEMBER 2025 ====== */
+  
   { "date": "2025-11-10", "type": "half", "label": "Half-Day — Parent/Teacher Conferences" },
   { "date": "2025-11-11", "type": "no-school", "label": "Veterans Day — No School" },
 
-  /* ====== DECEMBER 2025 ====== */
+ 
   { "date": "2025-12-23", "type": "half", "label": "Half-Day for Students & Staff" },
   { "date": "2025-12-24", "type": "break", "label": "Winter Recess (starts)" },
   { "date": "2025-12-25", "type": "break", "label": "Winter Recess" },
@@ -47,18 +47,18 @@
   { "date": "2025-12-30", "type": "break", "label": "Winter Recess" },
   { "date": "2025-12-31", "type": "break", "label": "Winter Recess" },
 
-  /* ====== JANUARY 2026 ====== */
+  
   { "date": "2026-01-01", "type": "break", "label": "Winter Recess" },
   { "date": "2026-01-02", "type": "break", "label": "Winter Recess (ends)" },
 
-  /* ====== FEBRUARY 2026 — VACATION WEEK ====== */
+  
   { "date": "2026-02-16", "type": "break", "label": "February Vacation — No School" },
   { "date": "2026-02-17", "type": "break", "label": "February Vacation — No School" },
   { "date": "2026-02-18", "type": "break", "label": "February Vacation — No School" },
   { "date": "2026-02-19", "type": "break", "label": "February Vacation — No School" },
   { "date": "2026-02-20", "type": "break", "label": "February Vacation — No School" },
 
-  /* ====== APRIL 2026 — VACATION WEEK ====== */
+  
   { "date": "2026-04-20", "type": "break", "label": "Spring Vacation — No School" },
   { "date": "2026-04-21", "type": "break", "label": "Spring Vacation — No School" },
   { "date": "2026-04-22", "type": "break", "label": "Spring Vacation — No School" },
