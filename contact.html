@@ -7,14 +7,39 @@
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-local starfield styles -->
   <style>
-    /* Fullscreen starfield canvas behind everything */
-    #starfield{
-      position:fixed; inset:0; width:100%; height:100%;
-      z-index:-1; pointer-events:none; display:block;
+    /* --- Header hardening: consistent layout + reliable mobile menu (matches other pages) --- */
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
+    .menu-btn{ display:none; }
+    @media (max-width:980px){
+      .header .links{ display:none; }
+      .menu-btn{
+        display:inline-flex; align-items:center; justify-content:center;
+        width:42px; height:42px; border-radius:12px; border:1px solid var(--border);
+        background:var(--panel);
+      }
     }
-    @media (prefers-reduced-motion: reduce){ #starfield{ animation:none !important; } }
+    .mobile-menu{
+      position:fixed; inset:64px 10px auto 10px; z-index:9999;
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:14px; box-shadow:var(--shadow-2); padding:12px;
+      backdrop-filter:blur(10px);
+    }
+    .mobile-menu a{ display:block; padding:12px 10px; border-radius:10px; color:var(--text); }
+    .mobile-menu a:hover{ background:rgba(255,255,255,.06); }
+    .hidden{ display:none !important; }
+    html.menu-open, body.menu-open { overflow:hidden; } /* lock scroll while menu open */
+
+    /* Page base (match background + remove horizontal scroll) */
+    html, body { max-width:100%; overflow-x:hidden; }
+    body { color: var(--text); background: transparent; }
+
+    /* Starfield canvas (identical to Announcements/Home/etc.) */
+    #starfield{ position:fixed; inset:0; z-index:-1; pointer-events:none; display:block; }
+
+    /* Main spacing */
+    main{ padding-bottom: 44px; }
   </style>
 </head>
 <body>
@@ -23,16 +48,35 @@
   <canvas id="starfield" aria-hidden="true"></canvas>
 
   <!-- ============================ HEADER / NAV ============================ -->
-<header class="header" role="banner">
-  <nav class="nav" aria-label="Primary">
-    <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
-      <span class="logo" aria-hidden="true">A</span>
-      AHS Class of ’28
-    </a>
+  <header class="header" role="banner">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="./index.html" aria-label="AHS Class of 2028 — Home">
+        <span class="logo" aria-hidden="true">A</span>
+        AHS Class of ’28
+      </a>
 
-    <!-- Desktop links -->
-    <div class="links" role="navigation">
-      <a href="./">Home</a>
+      <!-- Desktop links -->
+      <div class="links" role="navigation">
+        <a href="./index.html">Home</a>
+        <a href="./fundraisers.html">Fundraisers</a>
+        <a href="./calendar.html">Calendar</a>
+        <a href="./media.html">Media</a>
+        <a href="./achievements.html">Achievements</a>
+        <a href="./about.html">About</a>
+        <a class="active" href="./contact.html" aria-current="page">Contact</a>
+        <a href="./shop.html">Shop</a>
+        <a href="./announcements.html">Announcements</a>
+        <a href="./community.html">Community</a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button id="menuBtn" class="menu-btn" aria-expanded="false"
+              aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+      <a href="./index.html">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
       <a href="./media.html">Media</a>
@@ -42,29 +86,9 @@
       <a href="./shop.html">Shop</a>
       <a href="./announcements.html">Announcements</a>
       <a href="./community.html">Community</a>
+      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
     </div>
-
-    <!-- Mobile menu button -->
-    <button id="menuBtn" class="menu-btn" aria-expanded="false"
-            aria-controls="mobileMenu" aria-label="Open menu">☰</button>
-  </nav>
-
-  <!-- Mobile menu -->
-  <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-    <a href="./">Home</a>
-    <a href="./fundraisers.html">Fundraisers</a>
-    <a href="./calendar.html">Calendar</a>
-    <a href="./media.html">Media</a>
-    <a href="./achievements.html">Achievements</a>
-    <a href="./about.html">About</a>
-    <a class="active" href="./contact.html" aria-current="page">Contact</a>
-    <a href="./shop.html">Shop</a>
-    <a href="./announcements.html">Announcements</a>
-    <a href="./community.html">Community</a>
-    <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
-  </div>
-</header>
-
+  </header>
 
   <main>
     <!-- ============================== HERO ================================= -->
@@ -160,7 +184,7 @@
                   <tr><td>Class Advisor</td><td>Mr. Martin</td><td><a href="mailto:amartin@auburn.k12.ma.us">amartin@auburn.k12.ma.us</a></td></tr>
                 </tbody>
               </table>
-            </div> <!-- closed table-wrapper -->
+            </div>
 
             <div class="inline" style="margin-top:12px;">
               <a class="btn" href="./about.html">About this site</a>
@@ -183,7 +207,7 @@
 
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
 
-  <!-- Page-specific helper script -->
+  <!-- Page-specific helper script (kept from your version) -->
   <script>
     (function contactPage(){
       const form = document.getElementById('contactForm');
@@ -210,7 +234,6 @@
           return;
         }
 
-        // Build mailto if still using default action
         const action = form.getAttribute('action') || '';
         if (action === '' || action.startsWith('mailto:')) {
           e.preventDefault();
@@ -235,102 +258,65 @@
     })();
   </script>
 
-  <!-- Starfield script (parallax + twinkle; theme-aware; respects reduced motion) -->
+  <!-- Mobile menu (robust + scroll-lock + desktop auto-close) -->
   <script>
     (function(){
-      const canvas = document.getElementById('starfield');
-      const ctx = canvas.getContext('2d', { alpha:true });
-      const prefersReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let w=0,h=0, stars=[], raf=0, last=performance.now();
+      const btn  = document.getElementById('menuBtn');
+      const menu = document.getElementById('mobileMenu');
+      if (!btn || !menu) return;
+      if (btn.dataset.bound === "1") return; // avoid double-binding
+      btn.dataset.bound = "1";
 
-      const LAYERS = [
-        { n:70,  spd:0.03, size:[0.6,1.2], a:[0.10,0.20] }, // far
-        { n:40,  spd:0.06, size:[0.8,1.6], a:[0.12,0.26] }, // mid
-        { n:18,  spd:0.10, size:[1.2,2.4], a:[0.16,0.32] }  // near
-      ];
-      const rand = (min,max)=> min + Math.random()*(max-min);
-
-      function theme(){
-        const light = document.documentElement.getAttribute('data-theme') === 'light';
-        return {
-          bgTop: light ? '#eaf2ff' : '#05070d',
-          bgMid: light ? '#f7fbff' : '#0a0f1b',
-          bgBot: light ? '#ffffff' : '#05070d',
-          star:  light ? '#6a86b8' : '#e8f1ff'
-        };
+      const DESKTOP_W = 980;
+      let open = false;
+      function setOpen(v){
+        open = v;
+        menu.classList.toggle('hidden', !open);
+        btn.setAttribute('aria-expanded', String(open));
+        document.documentElement.classList.toggle('menu-open', open);
+        document.body.classList.toggle('menu-open', open);
       }
 
-      function resize(){
-        const dpr = devicePixelRatio || 1;
-        canvas.width  = Math.floor(innerWidth * dpr);
-        canvas.height = Math.floor(innerHeight * dpr);
-        canvas.style.width = '100%'; canvas.style.height = '100%';
-        ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
-        w = innerWidth; h = innerHeight;
-
-        stars = [];
-        LAYERS.forEach((L,li)=>{
-          for(let i=0;i<L.n;i++){
-            stars.push({
-              x: Math.random()*w, y: Math.random()*h,
-              r: rand(L.size[0], L.size[1]),
-              a: rand(L.a[0], L.a[1]),
-              tw: rand(0, Math.PI*2),
-              spd: L.spd, layer: li
-            });
-          }
-        });
-        paint(true);
-      }
-
-      function paint(staticOnly=false){
-        const c = theme();
-        const g = ctx.createLinearGradient(0,0,0,h);
-        g.addColorStop(0,c.bgTop); g.addColorStop(.5,c.bgMid); g.addColorStop(1,c.bgBot);
-        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
-
-        for(const s of stars){
-          s.tw += .8 * (staticOnly?0:1/60);
-          const tw = 0.5 + 0.5 * Math.sin(s.tw + s.layer);
-          const alpha = Math.max(.08, Math.min(1, s.a * (0.85 + 0.25 * tw)));
-          ctx.globalAlpha = alpha;
-          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-          ctx.fillStyle = c.star; ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-      }
-
-      function tick(ts){
-        const dt = Math.min(.05, (ts - last)/1000); last = ts;
-        for(const s of stars){
-          s.x += s.spd * 24 * dt;
-          s.y += s.spd * 6  * dt;
-          if (s.x > w+2) s.x = -2;
-          if (s.y > h+2) s.y = -2;
-        }
-        paint();
-        raf = requestAnimationFrame(tick);
-      }
-
-      resize();
-      addEventListener('resize', resize);
-      const mo = new MutationObserver(resize);
-      mo.observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
-
-      if (!prefersReduce){
-        raf = requestAnimationFrame(tick);
-        document.addEventListener('visibilitychange', ()=> {
-          if (document.hidden) cancelAnimationFrame(raf);
-          else { last = performance.now(); raf = requestAnimationFrame(tick); }
-        });
-      } else {
-        paint(true);
-      }
+      btn.addEventListener('click', (e)=>{ e.stopPropagation(); setOpen(!open); }, {passive:true});
+      document.addEventListener('click', (e)=>{ if(open && !menu.contains(e.target) && e.target !== btn) setOpen(false); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') setOpen(false); });
+      menu.addEventListener('click', (e)=>{ if (e.target.closest('a')) setOpen(false); });
+      window.addEventListener('resize', ()=>{ if (innerWidth > DESKTOP_W) setOpen(false); });
     })();
   </script>
 
-  <!-- Your global site script (menu, clock, countdown, etc.) -->
+  <!-- Starfield script (identical gradient/colors to the other pages) -->
+  <script>
+    (function(){
+      const cvs = document.getElementById('starfield');
+      if(!cvs) return;
+      const ctx = cvs.getContext('2d', { alpha:false }); // solid gradient background
+      let stars=[];
+      function resize(){
+        cvs.width = innerWidth; cvs.height = innerHeight;
+        stars = Array.from({length:200},()=>({
+          x:Math.random()*cvs.width, y:Math.random()*cvs.height,
+          r:Math.random()*1.6, v:Math.random()*0.3+0.05
+        }));
+      }
+      addEventListener('resize', resize); resize();
+      (function tick(){
+        const light = document.documentElement.getAttribute('data-theme')==='light';
+        const g = ctx.createLinearGradient(0,0,0,cvs.height);
+        if(light){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
+        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
+        ctx.fillStyle=g; ctx.fillRect(0,0,cvs.width,cvs.height);
+        ctx.fillStyle = light? 'rgba(60,90,140,.85)':'rgba(180,200,255,.85)';
+        for(const s of stars){
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+          s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; }
+        }
+        requestAnimationFrame(tick);
+      })();
+    })();
+  </script>
+
+  <!-- Your global site script (if needed) -->
   <script src="script.js" defer></script>
 </body>
 </html>
-
