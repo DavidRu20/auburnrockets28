@@ -1,85 +1,57 @@
 [
-  { "date": "2025-08-27", "type": "School", "label": "School: First Day of School" }
-  { "date": "2025-08-27", "type": "lunch", "label": "Lunch: Chicken Tenders, Fries, Carrots" },
-  { "date": "2025-08-28", "type": "event", "label": "AHS Picture Day" },
-  { "date": "2025-08-28", "type": "lunch", "label": "Lunch: Big Daddy Pizza" },
-
-  { "date": "2025-09-01", "type": "break", "label": "Labor Day — No School" },
-  { "date": "2025-09-02", "type": "lunch", "label": "Lunch: BBQ Pork Slider" },
-  { "date": "2025-09-03", "type": "lunch", "label": "Lunch: Teriyaki Chicken (Rice & Veg)" },
-  { "date": "2025-09-04", "type": "lunch", "label": "Lunch: Mac & Cheese + Dinner Roll" },
-  { "date": "2025-09-05", "type": "lunch", "label": "Lunch: Personal Round Pizza + Salad Bar" },
-
-  { "date": "2025-09-08", "type": "lunch", "label": "Lunch: Chicken Tenders + Sweet Potato" },
-  { "date": "2025-09-09", "type": "lunch", "label": "Lunch: Beef Nachos (Beans & Salsa)" },
-  { "date": "2025-09-10", "type": "lunch", "label": "Lunch: BBQ Chicken, Coleslaw & Fries" },
-  { "date": "2025-09-11", "type": "lunch", "label": "Lunch: American Chop Suey + Roll" },
-  { "date": "2025-09-12", "type": "lunch", "label": "Lunch: French Bread Pizza + Salad Bar" },
-
-  { "date": "2025-09-15", "type": "lunch", "label": "Lunch: Tomato Soup & Cheese Croissant" },
-  { "date": "2025-09-16", "type": "lunch", "label": "Lunch: Chicken Fajita (Salsa/Guac)" },
-  { "date": "2025-09-17", "type": "lunch", "label": "Lunch: Open-Faced Turkey w/ Mashed Potato & Carrots" },
-  { "date": "2025-09-18", "type": "lunch", "label": "Lunch: Pasta & Meatballs + Dinner Roll" },
-  { "date": "2025-09-19", "type": "lunch", "label": "Lunch: Personal Round Pizza + Salad Bar" },
-
-  { "date": "2025-09-22", "type": "lunch", "label": "Lunch: Breakfast for Lunch (Sausage & Tater Tots)" },
-  { "date": "2025-09-23", "type": "lunch", "label": "Lunch: Chicken Nachos (Beans, Salsa, Sour Cream)" },
-  { "date": "2025-09-24", "type": "lunch", "label": "Lunch: Mandarin Chicken + Rice & Broccoli" },
-  { "date": "2025-09-25", "type": "lunch", "label": "Lunch: Chili Cheese Dogs + Roasted Corn" },
-  { "date": "2025-09-26", "type": "lunch", "label": "Lunch: Big Daddy Pizza + Salad Bar" },
-
-  { "date": "2025-10-01", "type": "event", "label": "Yom Kippur Begins" },
-  { "date": "2025-10-09", "type": "half",  "label": "Half Day — Prof Dev for Teachers" },
-  { "date": "2025-10-10", "type": "break", "label": "No School — Prof Dev for Teachers" },
-  { "date": "2025-10-13", "type": "break", "label": "Indigenous Peoples' Day — No School" },
-
-  { "date": "2025-11-10", "type": "half",  "label": "Half Day — Parent/Teacher Conferences (K-8); HS Full Day" },
-  { "date": "2025-11-11", "type": "break", "label": "Veterans Day — No School" },
-  { "date": "2025-11-25", "type": "event", "label": "End of Trimester 1" },
-  { "date": "2025-11-26", "type": "break", "label": "Thanksgiving Recess" },
-  { "date": "2025-11-27", "type": "break", "label": "Thanksgiving Recess" },
-  { "date": "2025-11-28", "type": "break", "label": "Thanksgiving Recess" },
-
-  { "date": "2025-12-14", "type": "event", "label": "Hanukkah Begins" },
-  { "date": "2025-12-23", "type": "half",  "label": "Half Day — Students & Staff" },
-  { "date": "2025-12-24", "type": "break", "label": "Winter Recess" },
-  { "date": "2025-12-25", "type": "break", "label": "Christmas — Winter Recess" },
-  { "date": "2025-12-26", "type": "event", "label": "Kwanzaa Begins" },
-  { "date": "2025-12-27", "type": "break", "label": "Winter Recess" },
-  { "date": "2025-12-28", "type": "break", "label": "Winter Recess" },
-  { "date": "2025-12-29", "type": "break", "label": "Winter Recess" },
-  { "date": "2025-12-30", "type": "break", "label": "Winter Recess" },
-  { "date": "2025-12-31", "type": "break", "label": "Winter Recess" },
-
-  { "date": "2026-01-01", "type": "break", "label": "New Year's Day — No School" },
-  { "date": "2026-01-02", "type": "break", "label": "No School — Students & Staff" },
-  { "date": "2026-01-16", "type": "half",  "label": "Half Day — Prof Dev Teachers" },
-  { "date": "2026-01-19", "type": "break", "label": "Martin Luther King Jr. Day — No School" },
-
-  { "date": "2026-02-16", "type": "break", "label": "Presidents' Day — No School" },
-  { "date": "2026-02-17", "type": "break", "label": "February Vacation" },
-  { "date": "2026-02-18", "type": "event", "label": "Ramadan Begins" },
-  { "date": "2026-02-18", "type": "break", "label": "February Vacation" },
-  { "date": "2026-02-19", "type": "break", "label": "February Vacation" },
-  { "date": "2026-02-20", "type": "break", "label": "February Vacation" },
-
-  { "date": "2026-03-13", "type": "event", "label": "End of Trimester 2" },
-  { "date": "2026-03-19", "type": "half",  "label": "Half Day — Prof Dev for Teachers" },
-  { "date": "2026-03-20", "type": "break", "label": "No School — Prof Dev for Teachers" },
-
-  { "date": "2026-04-01", "type": "event", "label": "Passover Begins" },
-  { "date": "2026-04-05", "type": "event", "label": "Easter Sunday" },
-  { "date": "2026-04-20", "type": "break", "label": "Patriots' Day — No School" },
-  { "date": "2026-04-21", "type": "break", "label": "April Vacation" },
-  { "date": "2026-04-22", "type": "break", "label": "April Vacation" },
-  { "date": "2026-04-23", "type": "break", "label": "April Vacation" },
-  { "date": "2026-04-24", "type": "break", "label": "April Vacation" },
-
-  { "date": "2026-05-01", "type": "event", "label": "No School: Kindergarten Only — Screening" },
-  { "date": "2026-05-15", "type": "half",  "label": "Half Day — Prof Dev for Teachers" },
-  { "date": "2026-05-25", "type": "break", "label": "Memorial Day — No School" },
-  { "date": "2026-05-29", "type": "event", "label": "AHS Graduation" },
-
-  { "date": "2026-06-15", "type": "half",  "label": "Half Day — Last Day for Students & Staff" },
-  { "date": "2026-06-19", "type": "event", "label": "Juneteenth Observed (no school if snow day)" }
+  {
+    "date": "2025-08-20",
+    "type": "event",
+    "label": "First Day of School 🎒"
+  },
+  {
+    "date": "2025-09-01",
+    "type": "holiday",
+    "label": "Labor Day — No Classes 🇺🇸"
+  },
+  {
+    "date": "2025-10-13",
+    "type": "no-school",
+    "label": "Professional Development Day (No Students)"
+  },
+  {
+    "date": "2025-11-26",
+    "type": "half",
+    "label": "Thanksgiving Break — Early Release 🦃"
+  },
+  {
+    "date": "2025-11-27",
+    "type": "break",
+    "label": "Thanksgiving Break"
+  },
+  {
+    "date": "2025-11-28",
+    "type": "break",
+    "label": "Thanksgiving Break"
+  },
+  {
+    "date": "2025-12-22",
+    "type": "break",
+    "label": "Winter Break Begins ❄️"
+  },
+  {
+    "date": "2026-01-01",
+    "type": "holiday",
+    "label": "New Year’s Day 🎉"
+  },
+  {
+    "date": "2026-02-16",
+    "type": "break",
+    "label": "February Vacation"
+  },
+  {
+    "date": "2026-04-20",
+    "type": "break",
+    "label": "Spring Break 🌸"
+  },
+  {
+    "date": "2026-06-19",
+    "type": "event",
+    "label": "Last Day of School 🎓"
+  }
 ]
