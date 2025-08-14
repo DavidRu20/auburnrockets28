@@ -6,7 +6,6 @@
   <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css?v=24" />
-
   <style>
     /* Page base */
     body { color: var(--text); background: transparent; overflow-x: hidden; }
@@ -63,7 +62,8 @@
       display: grid;
       grid-template-columns: 44px 1fr 44px;
       align-items: center;
-      margin-bottom: 18px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
     .calendar-title{
       text-align: center;
@@ -78,10 +78,35 @@
       cursor: pointer; font-size: 1.2rem;
     }
 
+    /* -------- Toolbar (Search + Type filters) -------- */
+    .toolbar{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      margin: 8px 0 18px;
+    }
+    .search{
+      flex:1; min-width: 220px;
+    }
+    .search input{
+      width:100%; padding:10px 12px; border:1px solid var(--border);
+      border-radius:12px; background:var(--panel); color:var(--text);
+    }
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{
+      padding:6px 10px; border:1px solid var(--border); border-radius:999px;
+      background:var(--panel); color:var(--muted); font-weight:700; cursor:pointer;
+      user-select:none;
+      transition: transform var(--t-base), background var(--t-base), color var(--t-base);
+    }
+    .chip[aria-pressed="true"]{
+      background: linear-gradient(135deg,#0d6efd,#2b8cff);
+      color:#fff; border-color: transparent;
+    }
+    .clear-btn{ height: 36px; padding: 0 12px; }
+
     /* ---------------- Month grid ---------------- */
     .calendar-grid{
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
+      grid-template-columns: repeat(7, minmax(0, 1fr)); /* stretch evenly */
       gap: 14px;
     }
     .day-name{
@@ -98,14 +123,12 @@
     :root[data-theme="light"] .day{ background: rgba(0,0,0,.04); }
     .day:hover{ transform: scale(1.02); }
     .day.today{ background:#0d6efd; color:#fff; font-weight:700; }
-    .day.event{ background: rgba(82,168,255,.14); border:1px solid rgba(82,168,255,.35); }
+    .day.event{ background: rgba(0,255,255,.18); border:1px solid cyan; }
     .day.break{ background: rgba(255,165,0,.18); border:1px solid orange; }
     .day.half { background: rgba(13,110,253,.18); border:1px solid var(--blue-2); }
     .day.lunch{ outline: 1px dashed rgba(255,255,255,.25); }
     .day.no-school { background: rgba(255, 80, 80, .18); border:1px solid rgba(255,80,80,.6); }
     .day.holiday   { background: rgba(60, 220, 120, .18); border:1px solid rgba(60,220,120,.6); }
-    /* NEW: sport */
-    .day.sport  { background: rgba(82,168,255,.16); border: 1px solid rgba(82,168,255,.40); }
 
     .event-list { margin-top:auto; display:grid; gap:4px; }
     .event-chip {
@@ -114,9 +137,6 @@
       background: rgba(255,255,255,.09);
     }
     .day.today .event-chip { background: rgba(0,0,0,.18); }
-    /* NEW: chip accents */
-    .event-chip.sport { background: rgba(82,168,255,.22); }
-    .event-chip.lunch { background: rgba(255,255,255,.10); }
 
     .empty{ background: transparent !important; border:0; }
 
@@ -186,6 +206,23 @@
         <button id="nextMonth" class="nav-btn" type="button" aria-label="Next month">›</button>
       </div>
 
+      <!-- Toolbar: search + type filters -->
+      <div class="toolbar" role="region" aria-label="Calendar filters">
+        <div class="search">
+          <input id="searchBox" type="search" placeholder="Search events (e.g., pizza, break, football…)" aria-label="Search events">
+        </div>
+        <div class="chips" id="typeChips" role="group" aria-label="Filter by type">
+          <button class="chip" data-type="event"     aria-pressed="true">Events</button>
+          <button class="chip" data-type="sport"     aria-pressed="true">Sports</button>
+          <button class="chip" data-type="holiday"   aria-pressed="true">Holidays</button>
+          <button class="chip" data-type="break"     aria-pressed="true">Breaks</button>
+          <button class="chip" data-type="half"      aria-pressed="true">Half-Days</button>
+          <button class="chip" data-type="no-school" aria-pressed="true">No-School</button>
+          <button class="chip" data-type="lunch"     aria-pressed="false">Lunch</button>
+        </div>
+        <button id="clearFilters" class="btn clear-btn">Clear</button>
+      </div>
+
       <div class="calendar-grid" id="calendarGrid">
         <div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div>
         <div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>
@@ -237,8 +274,7 @@
       })();
     })();
 
-    /* ====== EVENTS: robust loader (array OR object JSON) ====== */
-    // IMPORTANT: points to your confirmed filename
+    /* ====== EVENTS loader ====== */
     const EVENTS_URL = 'data/calendar-events.json';
 
     // eventsByDate: { "YYYY-MM-DD": [ {type,label}, ... ] }
@@ -254,10 +290,8 @@
       return by;
     }
 
-    // Accept array OR object-shaped JSON
     function normalizeEvents(input){
       if (Array.isArray(input)) return input;
-
       const out = [];
       if (input && typeof input === 'object'){
         for (const [date, value] of Object.entries(input)){
@@ -275,12 +309,55 @@
       return out;
     }
 
+    /* ====== FILTER / SEARCH state ====== */
+    const activeTypes = new Set(['event','sport','holiday','break','half','no-school']); // lunch off by default
+    let query = '';
+
+    function matchesFilters(ev){
+      if (!activeTypes.has(ev.type)) return false;
+      if (!query) return true;
+      return (ev.label || '').toLowerCase().includes(query);
+    }
+
     /* ====== CALENDAR RENDER ====== */
     (function(){
       const grid = document.getElementById("calendarGrid");
       const monthLabel = document.getElementById("calendarMonth");
       const prevBtn = document.getElementById("prevMonth");
       const nextBtn = document.getElementById("nextMonth");
+
+      // Toolbar bindings
+      const chipsWrap = document.getElementById('typeChips');
+      const searchBox = document.getElementById('searchBox');
+      const clearBtn  = document.getElementById('clearFilters');
+
+      chipsWrap.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.chip'); if(!btn) return;
+        const t = btn.getAttribute('data-type');
+        const on = btn.getAttribute('aria-pressed') === 'true';
+        if (on) { activeTypes.delete(t); } else { activeTypes.add(t); }
+        btn.setAttribute('aria-pressed', String(!on));
+        render(current);
+      });
+
+      searchBox.addEventListener('input', ()=>{
+        query = searchBox.value.trim().toLowerCase();
+        render(current);
+      });
+
+      clearBtn.addEventListener('click', ()=>{
+        // reset: all on except lunch
+        ['event','sport','holiday','break','half','no-school','lunch'].forEach(t=>{
+          const wantOn = (t !== 'lunch');
+          const btn = chipsWrap.querySelector(`[data-type="${t}"]`);
+          if (wantOn) activeTypes.add(t); else activeTypes.delete(t);
+          if (btn) btn.setAttribute('aria-pressed', String(wantOn));
+        });
+        searchBox.value = '';
+        query = '';
+        render(current);
+      });
+
       let current = new Date();
 
       function render(date){
@@ -305,10 +382,12 @@
           cell.textContent = d;
 
           const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-          const items = eventsByDate[key] || [];
+          const itemsRaw = eventsByDate[key] || [];
+          const items = itemsRaw.filter(matchesFilters);
+
           if (items.length){
             // choose a primary style for the day
-            const priority = { "no-school": 5, holiday:4, sport:3, event:3, break:2, half:1, lunch:0 };
+            const priority = { "no-school": 5, holiday:4, event:3, break:2, half:1, sport:3, lunch:0 };
             const primary = items.slice().sort((a,b)=>(priority[b.type]||0)-(priority[a.type]||0))[0];
             if (primary?.type) cell.classList.add(primary.type);
 
@@ -317,7 +396,7 @@
             list.className = 'event-list';
             items.forEach(it => {
               const chip = document.createElement('div');
-              chip.className = 'event-chip ' + (it.type || 'event');  /* type-based chip styling */
+              chip.className = 'event-chip';
               chip.textContent = it.label || '';
               list.appendChild(chip);
             });
@@ -355,7 +434,7 @@
     /* ====== SIDEBAR COUNTDOWNS (holidays only) ====== */
     (function () {
       const wrap = document.getElementById("holidayCountdowns");
-      const HOLIDAY_TYPES = new Set(["break", "holiday", "half", "no-school"]); // hide sport/lunch/etc
+      const HOLIDAY_TYPES = new Set(["break", "holiday", "half", "no-school"]); // no lunches
 
       function startOfToday() { const d = new Date(); d.setHours(0,0,0,0); return d; }
       function fmtDiff(ms) {
@@ -365,9 +444,7 @@
       }
 
       function update() {
-        // wipe previous items (keep heading)
         wrap.querySelectorAll(".countdown-item").forEach(n => n.remove());
-
         const today0 = startOfToday();
         const upcoming = [];
 
@@ -381,7 +458,6 @@
           }
         }
 
-        // group per-day
         const byDay = new Map();
         for (const e of upcoming) {
           if (!byDay.has(e.iso)) byDay.set(e.iso, []);
@@ -427,4 +503,3 @@
   <script src="script.js?v=24"></script>
 </body>
 </html>
-
