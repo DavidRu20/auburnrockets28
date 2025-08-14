@@ -24,9 +24,7 @@
     }
 
     /* Masonry-ish photo grid (pure CSS columns) */
-    .masonry{
-      column-count: 3; column-gap: 14px;
-    }
+    .masonry{ column-count: 3; column-gap: 14px; }
     .masonry .m-item{
       break-inside: avoid; margin: 0 0 14px 0; display:block; position:relative;
       border-radius:14px; overflow:hidden; box-shadow: var(--shadow-1);
@@ -71,14 +69,14 @@
     .modal-head{ display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid var(--border); }
     .modal-body{ padding:0; }
     .x-btn{ background:transparent; border:0; font-size:22px; cursor:pointer; color:var(--text); }
+
+    /* Visually hide when section is not active (for tab UX) */
+    .is-hidden{ display:none; }
   </style>
-  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <!-- ============================ HEADER / NAV ============================ -->
-   <!-- Desktop links -->
-   <!-- ===== Global Header (regular site header) ===== -->
 <header class="header" role="banner">
   <nav class="nav" aria-label="Primary">
     <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -86,12 +84,11 @@
       AHS Class of ’28
     </a>
 
-    <!-- Desktop links -->
     <div class="links" role="navigation">
       <a href="./">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
-      <a class="active" href="./media.html">Media</a>
+      <a href="./media.html" aria-current="page">Media</a>
       <a href="./achievements.html">Achievements</a>
       <a href="./about.html">About</a>
       <a href="./contact.html">Contact</a>
@@ -100,17 +97,15 @@
       <a href="./community.html">Community</a>
     </div>
 
-    <!-- Mobile menu button -->
     <button id="menuBtn" class="menu-btn" aria-expanded="false"
             aria-controls="mobileMenu" aria-label="Open menu">☰</button>
   </nav>
 
-  <!-- Mobile menu -->
   <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
     <a href="./">Home</a>
     <a href="./fundraisers.html">Fundraisers</a>
     <a href="./calendar.html">Calendar</a>
-    <a class="active" href="./media.html">Media</a>
+    <a href="./media.html" aria-current="page">Media</a>
     <a href="./achievements.html">Achievements</a>
     <a href="./about.html">About</a>
     <a href="./contact.html">Contact</a>
@@ -120,7 +115,6 @@
     <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
   </div>
 </header>
-
 
   <main>
     <!-- ============================== HERO ================================= -->
@@ -196,8 +190,8 @@
 
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
 
-  <!-- page-only script (keeps your main script.js untouched) -->
-  <script>
+  <!-- Page-only script (keeps your main script.js untouched) -->
+  <script defer>
   (function mediaPage(){
     const DATA_URL = "data/media.json?v=" + Date.now().toString().slice(0,10);
 
@@ -205,6 +199,8 @@
     const videoGrid = document.getElementById('videoGrid');
     const photoEmpty = document.getElementById('photoEmpty');
     const videoEmpty = document.getElementById('videoEmpty');
+    const photosSection = document.getElementById('photosSection');
+    const videosSection = document.getElementById('videosSection');
     const tabs = Array.from(document.querySelectorAll('.tab-btn'));
     const searchInput = document.getElementById('mediaSearch');
 
@@ -218,30 +214,37 @@
     let all = { photos:[], videos:[] };
     let activeTab = 'all';
     let query = '';
+    let lbIndex = -1; // for arrow navigation
 
-    function escape(s){ return String(s||'').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    const esc = (s)=> String(s||'').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const yoid = (val)=> {
+      // extract safe YouTube Video ID (11 chars)
+      if (!val) return '';
+      let id = String(val).trim();
+      id = id.replace(/.*(?:v=|\/embed\/|\.be\/)/,'').split(/[?&]/)[0];
+      return /^[\w-]{11}$/.test(id) ? id : '';
+    };
 
-    function cardPhoto(p){
-      const cap = escape(p.caption || '');
-      const src = escape(p.src);
-      const alt = escape(p.alt || p.caption || 'Photo');
-      const tag = (p.tags || []).map(t=>`#${escape(t)}`).join(' ');
+    function cardPhoto(p, idx){
+      const cap = esc(p.caption || '');
+      const src = esc(p.src);
+      const alt = esc(p.alt || p.caption || 'Photo');
+      const tag = (p.tags || []).map(t=>`#${esc(t)}`).join(' ');
       return `
-        <a href="${src}" class="m-item" data-photo="${src}" data-alt="${alt}">
-          <img src="${src}" alt="${alt}" loading="lazy">
+        <a href="${src}" class="m-item" data-idx="${idx}" data-photo="${src}" data-alt="${alt}">
+          <img src="${src}" alt="${alt}" loading="lazy" decoding="async" onerror="this.style.opacity=0;this.parentElement.style.display='none'">
           <div class="m-cap">${cap} ${tag ? '• '+tag : ''}</div>
         </a>`;
     }
 
     function cardVideo(v){
-      // Expect v.youtube to be a YouTube video ID or full URL
-      const id = (v.youtube || '').replace(/.*v=|.*\.be\//,'').split(/[?&]/)[0];
-      const thumb = v.thumb || `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-      const title = escape(v.title || 'Video');
-      const meta = escape(v.meta || '');
+      const id = yoid(v.youtube);
+      const thumb = esc(v.thumb || `https://img.youtube.com/vi/${id}/hqdefault.jpg`);
+      const title = esc(v.title || 'Video');
+      const meta = esc(v.meta || '');
       return `
-        <article class="video-card" data-youtube="${id}" data-title="${title}">
-          <div class="video-thumb"><img src="${thumb}" alt="${title}" loading="lazy"></div>
+        <article class="video-card" data-youtube="${id}" data-title="${title}" tabindex="0" role="button" aria-label="Open video ${title}">
+          <div class="video-thumb"><img src="${thumb}" alt="${title}" loading="lazy" decoding="async"></div>
           <div class="video-body">
             <div class="video-title">${title}</div>
             <div class="video-meta">${meta}</div>
@@ -250,8 +253,7 @@
     }
 
     function matchQuery(text){
-      if (!query) return true;
-      return text.toLowerCase().includes(query.toLowerCase());
+      return !query || text.toLowerCase().includes(query.toLowerCase());
     }
 
     function render(){
@@ -260,7 +262,7 @@
         const hay = [p.caption, (p.tags||[]).join(' ')].join(' ');
         return (activeTab === 'all' || activeTab === 'photos') && matchQuery(hay);
       });
-      photoGrid.innerHTML = photos.map(cardPhoto).join('');
+      photoGrid.innerHTML = photos.map((p,i)=>cardPhoto(p,i)).join('');
       photoEmpty.style.display = photos.length ? 'none':'block';
 
       // Videos
@@ -271,42 +273,82 @@
       videoGrid.innerHTML = videos.map(cardVideo).join('');
       videoEmpty.style.display = videos.length ? 'none':'block';
 
-      wireLightbox();
+      // Section visibility based on tab
+      photosSection.classList.toggle('is-hidden', activeTab === 'videos');
+      videosSection.classList.toggle('is-hidden', activeTab === 'photos');
+
+      wireLightbox(photos);
       wireVideoModal();
     }
 
-    function wireLightbox(){
-      photoGrid.querySelectorAll('[data-photo]').forEach(a=>{
+    function wireLightbox(currentList){
+      const anchors = [...photoGrid.querySelectorAll('[data-photo]')];
+      anchors.forEach(a=>{
         a.addEventListener('click', (e)=>{
           e.preventDefault();
-          lbImg.src = a.getAttribute('data-photo');
-          lbImg.alt = a.getAttribute('data-alt') || 'Photo';
-          lightbox.classList.add('open');
+          lbIndex = Number(a.getAttribute('data-idx'));
+          openLightbox(currentList[lbIndex]?.src, currentList[lbIndex]?.alt);
+        });
+        a.addEventListener('keydown', (e)=>{
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); a.click(); }
         });
       });
-      lightbox.addEventListener('click', ()=> lightbox.classList.remove('open'));
+
+      function openLightbox(src, alt){
+        lbImg.src = src;
+        lbImg.alt = alt || 'Photo';
+        lightbox.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        lightbox.focus();
+      }
+      function closeLightbox(){
+        lightbox.classList.remove('open');
+        lbImg.src = '';
+        document.body.style.overflow = '';
+      }
+      lightbox.addEventListener('click', (e)=> { if(e.target === lightbox) closeLightbox(); });
       document.addEventListener('keydown', (e)=>{
-        if (e.key === 'Escape') lightbox.classList.remove('open');
+        if(!lightbox.classList.contains('open')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowRight' && currentList.length){
+          lbIndex = (lbIndex + 1) % currentList.length;
+          lbImg.src = currentList[lbIndex].src;
+        }
+        if (e.key === 'ArrowLeft' && currentList.length){
+          lbIndex = (lbIndex - 1 + currentList.length) % currentList.length;
+          lbImg.src = currentList[lbIndex].src;
+        }
       });
     }
 
     function wireVideoModal(){
-      videoGrid.querySelectorAll('[data-youtube]').forEach(card=>{
-        card.addEventListener('click', ()=>{
-          const id = card.getAttribute('data-youtube');
-          const title = card.getAttribute('data-title') || 'Video';
-          vmTitle.textContent = title;
-          vmFrame.innerHTML = `
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}?autoplay=1"
-              title="${title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen></iframe>`;
-          videoModal.classList.add('open');
-        });
+      const cards = [...videoGrid.querySelectorAll('[data-youtube]')];
+      const open = (card)=>{
+        const id = card.getAttribute('data-youtube');
+        if (!id) return;
+        const title = card.getAttribute('data-title') || 'Video';
+        vmTitle.textContent = title;
+        vmFrame.innerHTML = `
+          <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}?autoplay=1"
+            title="${title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>`;
+        videoModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        vmClose.focus();
+      };
+      const close = ()=>{
+        videoModal.classList.remove('open');
+        vmFrame.innerHTML = "";
+        document.body.style.overflow = '';
+      };
+
+      cards.forEach(card=>{
+        card.addEventListener('click', ()=> open(card));
+        card.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(card); }});
       });
-      vmClose.addEventListener('click', closeVideoModal);
-      videoModal.addEventListener('click', (e)=>{ if (e.target === videoModal) closeVideoModal(); });
-      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeVideoModal(); });
-      function closeVideoModal(){ videoModal.classList.remove('open'); vmFrame.innerHTML = ""; }
+      vmClose.addEventListener('click', close);
+      videoModal.addEventListener('click', (e)=>{ if (e.target === videoModal) close(); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape' && videoModal.classList.contains('open')) close(); });
     }
 
     // Tabs
@@ -325,16 +367,22 @@
       render();
     });
 
-    // Load data
+    // Load data (with one-tab session cache)
+    const cacheKey = 'media_cache_v1';
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      try { all = JSON.parse(cached); } catch {}
+    }
+
     fetch(DATA_URL, {cache:'no-store'}).then(r=>{
       if (!r.ok) throw new Error('Failed to load media.json');
       return r.json();
     }).then(json=>{
       all.photos = Array.isArray(json.photos) ? json.photos : [];
       all.videos = Array.isArray(json.videos) ? json.videos : [];
+      sessionStorage.setItem(cacheKey, JSON.stringify(all));
       render();
-    }).catch(err=>{
-      console.warn(err);
+    }).catch(()=>{
       // fallback placeholder
       all = {
         photos: [
@@ -346,9 +394,11 @@
       };
       render();
     });
+
   })();
   </script>
 
-  <script src="script.js"></script>
+  <!-- Your main site script (menu, clock, countdown, etc.) -->
+  <script src="script.js" defer></script>
 </body>
 </html>
