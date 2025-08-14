@@ -8,9 +8,9 @@
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    /* --- Header hardening: consistent layout + reliable mobile menu --- */
+    /* --- Header hardening: consistent nav (matches other pages) --- */
     .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
+    .links{ display:flex; align-items:center; gap:16px; white-space:nowrap; }
     .menu-btn{ display:none; }
     @media (max-width:980px){
       .header .links{ display:none; }
@@ -31,21 +31,19 @@
     .hidden{ display:none !important; }
     html.menu-open, body.menu-open { overflow:hidden; }
 
-    /* Page base (match others + no sideways scroll) */
+    /* Page base */
     html, body { max-width:100%; overflow-x:hidden; }
     body{ color:var(--text); background:transparent; }
-
-    /* Starfield canvas (identical gradient/colors to the other pages) */
     #starfield{ position:fixed; inset:0; z-index:-1; pointer-events:none; display:block; }
 
-    /* ======= Futuristic deck layout ======= */
+    /* Futuristic deck */
     .wrap{ width:min(1200px, 96vw); margin-inline:auto; padding:28px 0 44px; }
     .heroX{
-      display:grid; gap:14px; justify-items:center; text-align:center;
+      display:grid; gap:10px; justify-items:center; text-align:center;
       padding:80px 12px 30px;
     }
     .heroX h1{ font-size:clamp(2.1rem, 4.5vw, 3.2rem); margin:0; letter-spacing:.4px; }
-    .heroX .sub{ opacity:.9; margin:6px 0 0; }
+    .heroX .sub{ opacity:.9; margin:4px 0 0; }
 
     /* Tabs */
     .tabs{
@@ -56,7 +54,7 @@
       width:max-content; max-width:100%;
     }
     .tab{
-      border:1px solid var(--border); border-radius:999px; padding:8px 14px; cursor:pointer; user-select:none;
+      border:1px solid var(--border); border-radius:999px; padding:8px 14px; cursor:pointer;
       background:var(--panel); font-weight:800; letter-spacing:.2px;
       transition: transform var(--t-base), background var(--t-base), box-shadow var(--t-base);
       box-shadow:var(--shadow-1);
@@ -67,13 +65,11 @@
       box-shadow:0 8px 24px rgba(13,110,253,.30);
     }
 
-    /* Panels grid */
-    .grid-2x{
-      display:grid; gap:18px; grid-template-columns:repeat(2,minmax(0,1fr));
-    }
+    /* Panels */
+    .grid-2x{ display:grid; gap:18px; grid-template-columns:repeat(2,minmax(0,1fr)); }
     @media (max-width:900px){ .grid-2x{ grid-template-columns:1fr; } }
 
-    /* Neo-glass panels */
+    /* Neo-glass panel */
     .neo{
       border-radius:22px; padding:18px; position:relative;
       background: radial-gradient(1000px 450px at -10% -20%, rgba(13,110,253,.18), transparent 60%),
@@ -82,57 +78,37 @@
       border:1px solid rgba(255,255,255,.14);
       box-shadow: 0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
     }
-    .neo h2, .neo h3{ margin:6px 0 8px; }
-    .neo .subtle{ color:var(--muted); }
-
-    /* Inputs row */
-    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .row .input{ flex:1 1 320px; }
-    .input input{
-      width:100%; padding:12px 12px; border-radius:12px; border:1px solid var(--border);
-      background:var(--panel); color:var(--text);
-    }
-    .btn.small{ height:36px; padding:0 12px; font-weight:800; }
-    .btn.glow{ box-shadow:0 8px 28px rgba(13,110,253,.33); }
+    .neo h2{ margin:6px 0 8px; }
 
     /* Embeds */
     .embed{ aspect-ratio: 16/10; border-radius:14px; overflow:hidden; border:1px solid var(--border); background:var(--panel); }
     .embed iframe{ width:100%; height:100%; border:0; display:block; }
 
-    /* Divider text */
-    .divider{
-      text-align:center; opacity:.85; margin:4px 0 18px;
-      font-weight:800; letter-spacing:.25px;
-    }
+    /* Buttons row (open links) */
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:8px; }
+    .row .spacer{ flex:1 1 auto; }
+    .btn.small{ height:36px; padding:0 12px; font-weight:800; }
+    .btn.glow{ box-shadow:0 8px 28px rgba(13,110,253,.33); }
 
-    /* Demo poll styles */
+    /* Divider text */
+    .divider{ text-align:center; opacity:.85; margin:4px 0 18px; font-weight:800; letter-spacing:.25px; }
+
+    /* Demo poll */
     .choices{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
     .progress-rail{
       height:10px; border-radius:999px; background:rgba(255,255,255,.10);
       overflow:hidden; position:relative; border:1px solid rgba(255,255,255,.12);
     }
-    .progress-fill{
-      height:100%; width:0%;
-      background: linear-gradient(90deg,#52a8ff,#7ab8ff);
-      position:relative;
-    }
+    .progress-fill{ height:100%; width:0%; background: linear-gradient(90deg,#52a8ff,#7ab8ff); position:relative; }
     .progress-fill .ship{ position:absolute; right:-12px; top:-12px; filter: drop-shadow(0 0 8px rgba(255,255,255,.35)); }
-    .stat-row{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      font-weight:700; margin-top:6px;
-    }
+    .stat-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:700; margin-top:6px; }
     .stat-row .pct{ opacity:.9; }
 
-    /* Help card */
-    .help{
-      border-radius:16px; padding:12px; border:1px dashed var(--border);
-      background:rgba(255,255,255,.04); color:var(--muted);
-    }
+    .help{ border-radius:16px; padding:12px; border:1px dashed var(--border); background:rgba(255,255,255,.04); color:var(--muted); }
   </style>
 </head>
 <body>
 
-  <!-- Background -->
   <canvas id="starfield" aria-hidden="true"></canvas>
 
   <!-- ============================ HEADER / NAV ============================ -->
@@ -179,64 +155,58 @@
     <!-- HERO -->
     <section class="heroX">
       <h1>Community Voting</h1>
-      <div class="sub">Make decisions together. Live forms + live results, or use the built-in demo to test quickly.</div>
+      <div class="sub">Make decisions together. Live form + live results for everyone.</div>
     </section>
 
     <!-- TABS -->
     <div class="tabs" role="tablist" aria-label="Community tabs">
-      <button id="tabLive" class="tab" role="tab" aria-selected="true" aria-controls="panelLive">Live Poll (Google)</button>
+      <button id="tabLive" class="tab" role="tab" aria-selected="true" aria-controls="panelLive">Live Poll</button>
       <button id="tabDemo" class="tab" role="tab" aria-selected="false" aria-controls="panelDemo">Quick Demo</button>
     </div>
 
-    <!-- ======== PANEL: LIVE POLL ======== -->
+    <!-- ===== PANEL: LIVE POLL (admin-configured) ===== -->
     <section id="panelLive" role="tabpanel" aria-labelledby="tabLive">
       <div class="grid-2x">
         <article class="neo">
           <h2>Vote Here</h2>
-          <p class="subtle">Paste your Google Form link and hit <strong>Embed</strong>. We’ll remember it for next time.</p>
-          <div class="row" style="margin-top:8px;">
-            <div class="input"><input id="formUrl" type="url" placeholder="https://docs.google.com/forms/d/e/…/viewform" aria-label="Google Form URL"></div>
-            <button class="btn small glow" id="btnForm">Embed</button>
-            <button class="btn small" id="btnOpenForm">Open</button>
-            <button class="btn small" id="btnClearForm" title="Forget saved form URL">Clear</button>
-          </div>
           <div class="embed" style="margin-top:12px;">
             <iframe id="formFrame" title="Class Vote Form (Google)"></iframe>
           </div>
-          <div class="help" style="margin-top:12px;">
-            Tip: In Google Forms, click <em>Send</em> → <em>Link icon</em> → copy the URL. If embedding is blocked at your school, use “Open”.
+          <div class="row">
+            <span class="spacer"></span>
+            <a id="openFormBtn" class="btn small glow" target="_blank" rel="noopener">Open in new tab</a>
+          </div>
+          <div id="formHelp" class="help hidden" style="margin-top:12px;">
+            Admin: set <code>FORM_URL</code> in the script near the bottom of this file to your Google Form link.
           </div>
         </article>
 
         <article class="neo">
           <h2>Live Results</h2>
-          <p class="subtle">Publish a chart from Google Sheets and paste the “Published” link.</p>
-          <div class="row" style="margin-top:8px;">
-            <div class="input"><input id="chartUrl" type="url" placeholder="https://docs.google.com/spreadsheets/d/…/pubchart?…" aria-label="Google Sheets chart URL"></div>
-            <button class="btn small glow" id="btnChart">Embed</button>
-            <button class="btn small" id="btnOpenChart">Open</button>
-            <button class="btn small" id="btnClearChart" title="Forget saved chart URL">Clear</button>
-          </div>
           <div class="embed" style="margin-top:12px;">
             <iframe id="chartFrame" title="Live Results (Google Sheets)"></iframe>
           </div>
-          <div class="help" style="margin-top:12px;">
-            In Google Sheets: <em>File → Share → Publish to web → Chart</em>, then copy the link.
+          <div class="row">
+            <span class="spacer"></span>
+            <a id="openChartBtn" class="btn small glow" target="_blank" rel="noopener">Open in new tab</a>
+          </div>
+          <div id="chartHelp" class="help hidden" style="margin-top:12px;">
+            Admin: set <code>CHART_URL</code> in the script to a published chart URL from Google Sheets.
           </div>
         </article>
       </div>
     </section>
 
-    <!-- ======== PANEL: DEMO POLL ======== -->
+    <!-- ===== PANEL: DEMO POLL (optional, local only) ===== -->
     <section id="panelDemo" class="hidden" role="tabpanel" aria-labelledby="tabDemo">
       <article class="neo">
         <h2>Quick Demo Poll</h2>
-        <p class="subtle">Local demo only (saves to your browser). Great for testing the layout or running a quick vote in class.</p>
+        <p class="help">This is just for testing on your device. Votes save locally in your browser.</p>
 
         <div class="divider">Question</div>
         <div class="row" style="margin-bottom:10px;">
-          <div class="input"><input id="demoQuestion" type="text" placeholder="Which merch should we drop first?" aria-label="Demo poll question"></div>
-          <button class="btn small glow" id="btnSetQ">Set</button>
+          <div class="input" style="flex:1 1 460px;"><input id="demoQuestion" type="text" placeholder="Which merch should we drop first?"></div>
+          <button class="btn small" id="btnSetQ">Set</button>
           <button class="btn small" id="btnResetAll">Reset All</button>
         </div>
 
@@ -248,7 +218,7 @@
         <div class="row" style="margin-top:12px;">
           <button class="btn" id="btnAddChoice">Add choice</button>
           <button class="btn" id="btnResetVotes">Reset my demo votes</button>
-          <div class="small" style="margin-left:auto; color:var(--muted);" id="votesLeftNote"></div>
+          <div class="small" id="votesLeftNote" style="margin-left:auto; color:var(--muted)"></div>
         </div>
       </article>
     </section>
@@ -262,7 +232,7 @@
 
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
 
-  <!-- ===== Mobile menu (robust) ===== -->
+  <!-- ===== Mobile menu ===== -->
   <script>
     (function(){
       const btn  = document.getElementById('menuBtn');
@@ -288,9 +258,13 @@
     })();
   </script>
 
-  <!-- ===== Tabs + Embeds + Demo logic ===== -->
+  <!-- ===== Tabs + Admin-config embeds + Demo logic ===== -->
   <script>
     (function(){
+      /* ---------- CONFIG: set your URLs here ---------- */
+      const FORM_URL  = ""; // PUT YOUR GOOGLE FORM LINK HERE
+      const CHART_URL = ""; // PUT YOUR PUBLISHED GOOGLE SHEETS CHART LINK HERE
+
       /* ---------- Tabs ---------- */
       const tabLive = document.getElementById('tabLive');
       const tabDemo = document.getElementById('tabDemo');
@@ -306,69 +280,28 @@
       tabLive.addEventListener('click', ()=> select('live'));
       tabDemo.addEventListener('click', ()=> select('demo'));
 
-      /* ---------- Toast ---------- */
-      const toast = document.getElementById('toast');
-      function showToast(msg, cls='info'){
-        toast.textContent = msg;
-        toast.className = 'toast ' + cls;
-        toast.classList.remove('hidden');
-        setTimeout(()=> toast.classList.add('hidden'), 1600);
-      }
+      /* ---------- Live Poll Embeds ---------- */
+      const formFrame  = document.getElementById('formFrame');
+      const chartFrame = document.getElementById('chartFrame');
+      const openForm   = document.getElementById('openFormBtn');
+      const openChart  = document.getElementById('openChartBtn');
+      const formHelp   = document.getElementById('formHelp');
+      const chartHelp  = document.getElementById('chartHelp');
 
-      /* ---------- Live Poll (Embeds) ---------- */
-      const KEY_FORM  = 'ahs28_comm_form_url';
-      const KEY_CHART = 'ahs28_comm_chart_url';
-      const formUrl   = document.getElementById('formUrl');
-      const chartUrl  = document.getElementById('chartUrl');
-      const formFrame = document.getElementById('formFrame');
-      const chartFrame= document.getElementById('chartFrame');
+      function safeURL(u){ try{ return u ? new URL(u).href : ""; }catch{ return ""; } }
 
-      function safeURL(u){ try{ return new URL(u).href; }catch{ return ''; } }
+      const f = safeURL(FORM_URL);
+      const c = safeURL(CHART_URL);
+      if (f) { formFrame.src = f; openForm.href = f; }
+      else { formHelp.classList.remove('hidden'); openForm.classList.add('hidden'); }
 
-      function loadSaved(){
-        const f = localStorage.getItem(KEY_FORM)  || '';
-        const c = localStorage.getItem(KEY_CHART) || '';
-        if (f){ formUrl.value = f; formFrame.src = f; }
-        if (c){ chartUrl.value = c; chartFrame.src = c; }
-      }
-      loadSaved();
+      if (c) { chartFrame.src = c; openChart.href = c; }
+      else { chartHelp.classList.remove('hidden'); openChart.classList.add('hidden'); }
 
-      document.getElementById('btnForm').addEventListener('click', ()=>{
-        const u = safeURL(formUrl.value.trim());
-        if(!u) return showToast('Enter a valid Google Form URL','warn');
-        localStorage.setItem(KEY_FORM, u);
-        formFrame.src = u; showToast('Form embedded','success');
-      });
-      document.getElementById('btnOpenForm').addEventListener('click', ()=>{
-        const u = safeURL(formUrl.value.trim() || localStorage.getItem(KEY_FORM)||'');
-        if(!u) return showToast('No form URL yet','warn');
-        window.open(u, '_blank', 'noopener');
-      });
-      document.getElementById('btnClearForm').addEventListener('click', ()=>{
-        localStorage.removeItem(KEY_FORM); formUrl.value=''; formFrame.removeAttribute('src');
-        showToast('Form URL cleared');
-      });
-
-      document.getElementById('btnChart').addEventListener('click', ()=>{
-        const u = safeURL(chartUrl.value.trim());
-        if(!u) return showToast('Enter a valid published chart URL','warn');
-        localStorage.setItem(KEY_CHART, u);
-        chartFrame.src = u; showToast('Chart embedded','success');
-      });
-      document.getElementById('btnOpenChart').addEventListener('click', ()=>{
-        const u = safeURL(chartUrl.value.trim() || localStorage.getItem(KEY_CHART)||'');
-        if(!u) return showToast('No chart URL yet','warn');
-        window.open(u, '_blank', 'noopener');
-      });
-      document.getElementById('btnClearChart').addEventListener('click', ()=>{
-        localStorage.removeItem(KEY_CHART); chartUrl.value=''; chartFrame.removeAttribute('src');
-        showToast('Chart URL cleared');
-      });
-
-      /* ---------- Demo Poll ---------- */
-      const KEY_DEMO_DATA = 'ahs28_demo_data_v2';
-      const KEY_DEMO_Q    = 'ahs28_demo_q_v2';
-      const KEY_VOTES     = 'ahs28_demo_votes_left_v2';
+      /* ---------- Demo Poll (local only) ---------- */
+      const KEY_DEMO_DATA = 'ahs28_demo_data_v3';
+      const KEY_DEMO_Q    = 'ahs28_demo_q_v3';
+      const KEY_VOTES     = 'ahs28_demo_votes_left_v3';
       const MAX_VOTES     = 10;
 
       const qInput   = document.getElementById('demoQuestion');
@@ -380,9 +313,16 @@
       const choicesWrap = document.getElementById('choicesWrap');
       const resultsWrap = document.getElementById('resultsWrap');
 
+      const toast = document.getElementById('toast');
+      function showToast(msg, cls='info'){
+        toast.textContent = msg;
+        toast.className = 'toast ' + cls;
+        toast.classList.remove('hidden');
+        setTimeout(()=> toast.classList.add('hidden'), 1600);
+      }
+
       function readObj(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }catch{ return fallback; } }
       function writeObj(key, v){ localStorage.setItem(key, JSON.stringify(v)); }
-
       function votesLeft(){ const v = parseInt(localStorage.getItem(KEY_VOTES),10); return Number.isFinite(v)?v:MAX_VOTES; }
       function setVotesLeft(v){ localStorage.setItem(KEY_VOTES, String(v)); }
 
@@ -396,10 +336,8 @@
           b.addEventListener('click', ()=>{
             let left = votesLeft();
             if(left<=0){ showToast('You’ve used all your votes!','warn'); return; }
-            data[name] = (data[name]||0)+1;
-            writeObj(KEY_DEMO_DATA, data);
-            setVotesLeft(--left);
-            renderResults();
+            data[name] = (data[name]||0)+1; writeObj(KEY_DEMO_DATA, data);
+            setVotesLeft(--left); renderResults();
           });
           choicesWrap.appendChild(b);
         });
@@ -426,11 +364,8 @@
               <div class="pct">${count} vote${count!==1?'s':''} • ${pct}%</div>
             </div>
             <div class="progress-rail">
-              <div class="progress-fill" style="width:${pct}%">
-                <span class="ship">🚀</span>
-              </div>
-            </div>
-          `;
+              <div class="progress-fill" style="width:${pct}%"><span class="ship">🚀</span></div>
+            </div>`;
           resultsWrap.appendChild(card);
         });
         votesLeftNote.textContent = `You have ${votesLeft()} vote${votesLeft()!==1?'s':''} left.`;
@@ -445,17 +380,8 @@
         renderChoices(); renderResults(); showToast('Choice added','success');
       }
 
-      btnAdd.addEventListener('click', ()=>{
-        const name = prompt('New choice name:');
-        addChoice(name);
-      });
-
-      btnReset.addEventListener('click', ()=>{
-        if(!confirm('Reset your local demo votes?')) return;
-        setVotesLeft(MAX_VOTES);
-        renderResults(); showToast('Demo votes reset');
-      });
-
+      btnAdd.addEventListener('click', ()=> addChoice(prompt('New choice name:')));
+      btnReset.addEventListener('click', ()=>{ if(confirm('Reset your local demo votes?')){ setVotesLeft(MAX_VOTES); renderResults(); showToast('Demo votes reset'); } });
       btnResetAll.addEventListener('click', ()=>{
         if(!confirm('Reset ALL demo data (question, choices, votes)?')) return;
         writeObj(KEY_DEMO_DATA, {});
@@ -463,10 +389,8 @@
         setVotesLeft(MAX_VOTES);
         initDemo(); showToast('Demo cleared','success');
       });
-
       btnSetQ.addEventListener('click', ()=>{
-        const v = qInput.value.trim();
-        if(!v) return showToast('Type a question first','warn');
+        const v = qInput.value.trim(); if(!v) return showToast('Type a question first','warn');
         writeObj(KEY_DEMO_Q, v); showToast('Question saved','success');
       });
 
@@ -484,11 +408,11 @@
     })();
   </script>
 
-  <!-- ===== Starfield (identical gradient/colors to other pages) ===== -->
+  <!-- ===== Starfield (same as other pages) ===== -->
   <script>
     (function(){
       const cvs = document.getElementById('starfield');
-      const ctx = cvs.getContext('2d', { alpha:false }); // solid gradient like others
+      const ctx = cvs.getContext('2d', { alpha:false });
       let stars=[];
       function resize(){
         cvs.width = innerWidth; cvs.height = innerHeight;
@@ -514,7 +438,6 @@
     })();
   </script>
 
-  <!-- Site JS (if needed) -->
   <script src="script.js" defer></script>
 </body>
 </html>
