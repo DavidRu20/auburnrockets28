@@ -5,19 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Rocket Clicker</title>
 <style>
-  /* ============================
-     Dark / Minimal / Performance
-     ============================ */
   :root{
-    --bg-top:#02040b;
-    --bg-bottom:#000109;
-    --muted:#7f9fb5;
-    --accent:#ff8a2b;
-    --panel: rgba(255,255,255,0.02);
+    --bg-top:#02040b; --bg-bottom:#000109; --muted:#7f9fb5; --accent:#ff8a2b; --panel: rgba(255,255,255,0.02);
   }
   html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;color:#dfeffb}
   .app{max-width:1200px;margin:14px auto;display:grid;grid-template-columns:1fr 360px;gap:14px;padding:12px}
-  header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between}
+  header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px}
   h1{margin:0;font-size:18px}
   .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:10px;padding:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
   main.left{padding:8px}
@@ -28,27 +21,20 @@
   #planets{position:absolute;inset:0;pointer-events:none}
   .planet{position:absolute;border-radius:50%;filter:blur(1.6px);opacity:0.06}
 
-  /* Rocket wrapper */
   .rocket-wrap{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);transition:transform .28s cubic-bezier(.2,.9,.2,1);will-change:left,bottom,transform}
   .rocket-el{width:200px;height:320px;pointer-events:none;transform-origin:center}
-  /* GPU bounce implemented via CSS keyframe - toggled with .bounce */
   .bounce{animation:rocket-bounce 140ms ease-out}
-  @keyframes rocket-bounce{
-    0%{ transform: translateY(0) scale(1) }
-    30%{ transform: translateY(-8px) scale(1.02) }
-    100%{ transform: translateY(0) scale(1) }
-  }
+  @keyframes rocket-bounce{0%{transform:translateY(0) scale(1)}30%{transform:translateY(-8px) scale(1.02)}100%{transform:translateY(0) scale(1)}}
 
   .flame{position:absolute;left:50%;bottom:-28px;transform:translateX(-50%) scaleY(1);transform-origin:50% 0%;pointer-events:none;transition:transform 120ms}
   #fx{position:absolute;inset:0;pointer-events:none}
-  .particle, .shoot, .trail{position:absolute;pointer-events:none;border-radius:50%;will-change:transform,opacity}
+  .particle,.shoot,.trail{position:absolute;pointer-events:none;border-radius:50%;will-change:transform,opacity}
   .trail{filter:blur(1.2px);border-radius:6px}
   .shoot{box-shadow:0 0 10px rgba(255,255,255,0.04)}
   .hit-flash{position:absolute;inset:0;pointer-events:none;background:rgba(255,255,255,0);transition:background 110ms}
   .shake{animation:shake 260ms linear}
   @keyframes shake{0%{transform:translate(0)}20%{transform:translate(-6px,3px)}40%{transform:translate(6px,-3px)}60%{transform:translate(-4px,2px)}80%{transform:translate(4px,-2px)}100%{transform:translate(0)}}
 
-  /* HUD/shop */
   .hud{margin-top:10px;display:flex;justify-content:space-between;align-items:center}
   .fuel-counter{font-weight:800;font-size:20px}
   .muted{color:var(--muted);font-size:13px}
@@ -60,7 +46,7 @@
   .name{font-weight:700}
   .num{color:var(--muted)}
   button{background:linear-gradient(180deg,#0d2830,#08131a);border:1px solid rgba(255,255,255,0.03);padding:8px 10px;border-radius:8px;color:#cfeefb;cursor:pointer}
-  .settings{display:flex;gap:8px;align-items:center}
+  .settings{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .toggle{width:44px;height:24px;background:#0b2530;border-radius:14px;position:relative;cursor:pointer}
   .toggle-dot{position:absolute;top:3px;left:3px;width:18px;height:18px;background:#dff6ff;border-radius:50%;transition:left .18s}
   .toggle.on{background:#153a46}
@@ -68,24 +54,30 @@
 
   footer{grid-column:1/-1;margin-top:8px;text-align:center;color:var(--muted);font-size:13px}
   @media (max-width:980px){.app{grid-template-columns:1fr}.sky{height:520px}}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+    .trail{display:none!important}
+  }
 </style>
 </head>
 <body>
   <div class="app" id="appRoot">
     <header>
       <h1>🚀 Rocket Clicker — Fast & Dark</h1>
-      <div style="display:flex;gap:10px;align-items:center">
+      <div class="settings">
         <div class="muted">Fuel: <span id="fuelTop">0</span></div>
-        <div class="settings">
-          <div id="perfToggle" class="toggle" title="Performance Mode"><div class="toggle-dot"></div></div>
-          <button id="saveBtn">Save</button>
-          <button id="resetBtn">Reset</button>
-        </div>
+        <div id="perfToggle" class="toggle" role="switch" aria-label="Performance Mode" aria-checked="false" title="Performance Mode"><div class="toggle-dot"></div></div>
+        <div id="muteToggle" class="toggle" role="switch" aria-label="Mute" aria-checked="false" title="Mute SFX"><div class="toggle-dot"></div></div>
+        <button id="pauseBtn" aria-pressed="false">Pause</button>
+        <button id="saveBtn" aria-label="Save">Save</button>
+        <button id="resetBtn" aria-label="Reset">Reset</button>
+        <span id="saveToast" class="muted" style="opacity:.7"></span>
       </div>
     </header>
 
     <main class="left panel">
-      <div class="sky" id="sky">
+      <div class="sky" id="sky" aria-label="Game area" tabindex="0">
         <div class="star-layer" id="stars-far"></div>
         <canvas id="nebula"></canvas>
         <div class="star-layer" id="stars-mid"></div>
@@ -94,7 +86,6 @@
 
         <div class="rocket-wrap" id="rocketWrap">
           <div class="rocket-el" id="rocketEl" aria-hidden="true">
-            <!-- single parametric SVG; cleaned silhouette -->
             <svg id="rocketSVG" viewBox="0 0 200 320" width="200" height="320" preserveAspectRatio="xMidYMid meet">
               <defs><linearGradient id="gBody" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#eaf7ff"/><stop offset="100%" stop-color="#cfeefb" stop-opacity="0.06"/></linearGradient></defs>
               <ellipse id="shadow" cx="100" cy="292" rx="36" ry="10" fill="#000" opacity="0.12"/>
@@ -143,23 +134,21 @@
           <div id="altitude" class="fuel-counter">0%</div>
         </div>
         <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:space-between">
-          <div class="muted small">Prestige</div>
+          <div class="muted small">Prestige <span id="prestigeInfo" class="muted small"></span></div>
           <div id="prestigeWrap"><button id="prestigeBtn" style="display:none">Prestige (1,000,000)</button></div>
         </div>
       </div>
     </aside>
 
-    <footer class="muted small">Tip: Click to glide. Buy Gyro Stabilizer to enable WASD/Arrow controls. Toggle perf mode to reduce effects.</footer>
+    <footer class="muted small">
+      Tip: Click to glide. Hold <b>Space</b> to thrust. Buy <b>Gyro</b> for WASD/Arrows. Toggle perf mode to reduce effects.
+    </footer>
   </div>
 
 <script>
-/* ============================
-   Final Click-optimized JS
-   - particle pooling
-   - CSS GPU bounce
-   - immediate UI update on click (minimal DOM writes)
-   - rAF visual loop + slower economic tick
-   ============================ */
+/* ==========================
+   Rocket Clicker — Enhanced
+   ========================== */
 
 /* --------- CONFIG & TIERS ---------- */
 const TIERS = [
@@ -205,16 +194,21 @@ const STAR_SPAWN_MIN = 18000;
 const STAR_SPAWN_MAX = 42000;
 const MAX_PARTICLES = 24;
 const MAX_STARS = 8;
-const SAVE_KEY = 'rocket_final_v1';
+const SAVE_KEY = 'rocket_final_v2';  // bumped key (safe migration)
 const PERF_KEY = 'rocket_perf_v1';
+const MUTE_KEY = 'rocket_mute_v1';
 
 /* ----------- STATE -------------- */
 const state = {
-  fuel:0, perClick:1, perSecond:0, lastTick:Date.now(), clickBurst:0, prestige:0,
+  fuel:0, perClick:1, perSecond:0, lastTick:Date.now(), clickBurst:0,
+  prestige:0, prestigeMult:1,
+  paused:false, muted: (localStorage.getItem(MUTE_KEY)==='1'),
   items: SHOP.map(x=>Object.assign({qty:0},x)),
   rocket:{x:0,y:0,tx:null,ty:null,easing:0.13, useWASD:false},
   perfMode: (localStorage.getItem(PERF_KEY) === '1'),
-  lastFuelShown: null
+  lastFuelShown: null,
+  timers: { raf: null, econ: null, autosave: null, stars: null },
+  lastSaveAt: null
 };
 
 /* ----------- DOM refs ----------- */
@@ -230,16 +224,21 @@ const flameWrap = document.getElementById('flameWrap');
 const fx = document.getElementById('fx');
 const hitFlash = document.getElementById('hitFlash');
 const perfToggle = document.getElementById('perfToggle');
+const muteToggle = document.getElementById('muteToggle');
+const pauseBtn = document.getElementById('pauseBtn');
 const altitudeEl = document.getElementById('altitude');
+const prestigeBtn = document.getElementById('prestigeBtn');
+const prestigeInfo = document.getElementById('prestigeInfo');
+const saveToast = document.getElementById('saveToast');
 
-/* --------- Audio (preload / simple) ------------ */
+/* --------- Audio ------------ */
 let audioCtx = null;
 function ensureAudio(){
-  if(audioCtx) return;
+  if(audioCtx || state.muted) return;
   try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
 }
 function sfx(freq, type='sine', dur=0.08, vol=0.06){
-  if(!audioCtx) return;
+  if(!audioCtx || state.muted) return;
   const t = audioCtx.currentTime;
   const o = audioCtx.createOscillator();
   const g = audioCtx.createGain();
@@ -250,14 +249,18 @@ function sfx(freq, type='sine', dur=0.08, vol=0.06){
 
 /* ---------- UTIL ---------- */
 function fmt(n){ if(n<1000) return Math.round(n*100)/100; const si=['','K','M','B','T']; let i=0; while(n>=1000 && i<si.length-1){ n/=1000; i++; } return (Math.round(n*100)/100)+si[i]; }
-function now(){ return Date.now(); }
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 /* -------- SAVE / LOAD ------- */
-function saveGame(){
+function saveGame(toast=true){
   try{
-    const payload = { fuel: state.fuel, prestige: state.prestige, items: state.items.map(i=>({id:i.id,qty:i.qty})), useWASD: state.rocket.useWASD, perf: state.perfMode };
+    const payload = {
+      fuel: state.fuel, prestige: state.prestige, items: state.items.map(i=>({id:i.id,qty:i.qty})),
+      useWASD: state.rocket.useWASD, perf: state.perfMode, muted: state.muted, last: Date.now()
+    };
     localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
-    spawnPopup('Saved');
+    state.lastSaveAt = payload.last;
+    if (toast) { saveToast.textContent = 'Saved ✓'; setTimeout(()=> saveToast.textContent='', 1200); }
   }catch(e){console.error(e);}
 }
 function loadGame(){
@@ -268,13 +271,47 @@ function loadGame(){
     if(Array.isArray(s.items)) s.items.forEach(si=>{ const it = state.items.find(x=>x.id===si.id); if(it) it.qty = si.qty||0; });
     if(s.useWASD) state.rocket.useWASD = true;
     if(s.perf) state.perfMode = true;
+    if(s.muted) state.muted = true;
+    if(s.last){ // offline progress (cap 2 hours)
+      const elapsed = clamp((Date.now()-s.last)/1000, 0, 7200);
+      recalc();
+      const gained = state.perSecond * elapsed;
+      if (gained > 0) { state.fuel += gained; spawnPopup('Offline gains +' + fmt(gained)); }
+    }
   }catch(e){console.error(e);}
 }
 
-/* ---------- SHOP ---------- */
+/* ---------- Prestige ---------- */
+function prestigeGainFromFuel(fuel){
+  // Log-ish curve: 1 prestige per 1M fuel (rounded), scaled
+  return Math.floor(fuel / 1_000_000);
+}
+function applyPrestigeMult(){
+  // +20% per prestige (tweakable)
+  state.prestigeMult = 1 + (state.prestige * 0.20);
+}
+function doPrestige(){
+  const gain = prestigeGainFromFuel(state.fuel);
+  if (gain <= 0) return;
+  if (!confirm(`Prestige now for +${gain} point(s)? This resets fuel & items but increases all production permanently.`)) return;
+  state.prestige += gain;
+  applyPrestigeMult();
+  // soft reset
+  state.fuel = 0;
+  state.items.forEach(i => i.qty = 0);
+  state.rocket.useWASD = false;
+  recalc();
+  renderStore();
+  applyTierVisuals();
+  immediateFuelUpdate();
+  spawnPopup(`Prestiged! (+${gain})`);
+  saveGame();
+}
+
+/* ---------- Shop & economy ---------- */
 function itemCost(it){ return Math.ceil(it.base * Math.pow(1.135, it.qty)); }
 function sortedItems(){ return state.items.map(it=>({ ...it, cost: itemCost(it) })).sort((a,b)=>a.cost-b.cost); }
-function unlocked(i){ if(i===0) return true; return state.items[i-1].qty > 0; }
+function unlockedByIndex(i){ if(i===0) return true; return state.items[i-1].qty > 0; }
 function recalc(){
   let pc = 1, ps = 0;
   state.items.forEach(it=>{
@@ -282,18 +319,45 @@ function recalc(){
     if(it.cps) ps += it.cps * it.qty;
     if(it.type === 'mult' && it.qty>0) pc *= Math.pow(it.mult, it.qty);
   });
-  state.perClick = pc; state.perSecond = ps;
+  // Prestige affects both
+  state.perClick = pc * state.prestigeMult;
+  state.perSecond = ps * state.prestigeMult;
+  updatePrestigeUI();
+}
+function updatePrestigeUI(){
+  prestigeInfo.textContent = `(${state.prestige} pts • x${(state.prestigeMult).toFixed(2)})`;
+  prestigeBtn.style.display = (state.fuel >= 1_000_000) ? 'inline-block' : 'none';
 }
 
-/* render store (not heavy) */
+/* render store */
 function renderStore(){
   storeList.innerHTML = '';
   sortedItems().forEach(si=>{
     const idx = state.items.findIndex(x=>x.id===si.id);
-    const ok = unlocked(idx);
+    const ok = unlockedByIndex(idx);
+    const canAfford = state.fuel >= si.cost;
     const el = document.createElement('div'); el.className = 'item' + (ok ? '' : ' locked');
-    el.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><div><div class="name">${si.name}</div><div class="muted small">${si.desc}</div></div></div><div style="text-align:right"><div class="num">${ ok ? fmt(si.cost) : '<span class="locked-tag">Locked</span>' }</div><div class="muted small">Owned: ${si.qty}</div></div>`;
-    el.addEventListener('click', ()=> { if(!ok){ lockedFeedback(); return; } buy(si.id); });
+    el.innerHTML =
+      `<div style="display:flex;gap:10px;align-items:center">
+         <div>
+           <div class="name">${si.name}</div>
+           <div class="muted small">${si.desc}</div>
+         </div>
+       </div>
+       <div style="text-align:right">
+         <div class="num">${ ok ? fmt(si.cost) : '<span class="locked-tag">Locked</span>' }</div>
+         <div class="muted small">Owned: ${si.qty}</div>
+       </div>`;
+    if (ok) {
+      el.style.outline = canAfford ? '1px solid rgba(255,255,255,.06)' : 'none';
+      el.addEventListener('click', ()=> buy(si.id));
+      el.addEventListener('keydown', (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); buy(si.id); }});
+      el.setAttribute('tabindex','0');
+      el.setAttribute('role','button');
+      el.setAttribute('aria-label', `Buy ${si.name} for ${si.cost}`);
+    } else {
+      el.title = 'Buy previous item to unlock';
+    }
     storeList.appendChild(el);
   });
 }
@@ -302,14 +366,14 @@ function buy(id){
   const c = itemCost(it);
   if(state.fuel >= c){
     state.fuel -= c; it.qty++;
-    if(it.special === 'enableWASD' || it.id === 'gyro'){ state.rocket.useWASD = true; spawnPopup('Gyro Stabilizer — WASD enabled'); }
+    if(it.special === 'enableWASD' || it.id === 'gyro'){ state.rocket.useWASD = true; spawnPopup('Gyro — WASD enabled'); }
     if(it.special === 'hudSkin' || it.id === 'hud'){ document.documentElement.classList.add('hud-skin'); spawnPopup('Command Bridge active'); }
     recalc(); renderStore(); spawnSparkles(10); sfx(1200,'sine',0.12,0.06);
-    immediateFuelUpdate(); // immediate visual feedback
+    immediateFuelUpdate();
   } else { lockedFeedback(); }
 }
 
-/* ---------- PARTICLE POOL (reused) ---------- */
+/* ---------- PARTICLE POOL ---------- */
 const PARTICLES = [];
 for(let i=0;i<MAX_PARTICLES;i++){
   const el = document.createElement('div'); el.className='particle'; el.style.opacity=0; el._busy=false; fx.appendChild(el); PARTICLES.push(el);
@@ -318,12 +382,11 @@ function getParticle(){ return PARTICLES.find(p=>!p._busy); }
 function spawnParticle(x,y,size,color,dx,dy,dur=700){
   const p = getParticle(); if(!p) return;
   p._busy = true; p.style.left = x + 'px'; p.style.top = y + 'px'; p.style.width = size + 'px'; p.style.height = size + 'px'; p.style.background = color; p.style.opacity = 1;
-  // animate with Web Animations API (fast)
   p.animate([{ transform:'translate(0,0) scale(1)', opacity:1 }, { transform:`translate(${dx}px, ${dy}px) scale(0.2)`, opacity:0 }], { duration:dur, easing:'cubic-bezier(.2,.9,.2,1)' });
   setTimeout(()=>{ p._busy = false; p.style.opacity = 0; }, dur);
 }
 function spawnSparkles(n=8){
-  if(state.perfMode) n = Math.max(4, Math.floor(n/2));
+  if(state.perfMode) n = Math.max(3, Math.floor(n/2));
   const fxr = fx.getBoundingClientRect(); const rwrap = rocketWrap.getBoundingClientRect();
   const cx = rwrap.left + rwrap.width/2 - fxr.left; const cy = rwrap.top + rwrap.height - fxr.top - 18;
   for(let i=0;i<n;i++){
@@ -334,18 +397,18 @@ function spawnSparkles(n=8){
 function spawnExhaust(intensity=1){
   const fxr = fx.getBoundingClientRect(); const rwrap = rocketWrap.getBoundingClientRect();
   const cx = rwrap.left + rwrap.width/2 - fxr.left; const cy = rwrap.top + rwrap.height - fxr.top - 16;
-  const count = Math.max(1, Math.round(3 * Math.min(intensity, state.perfMode ? 0.9 : intensity)));
+  const count = Math.max(1, Math.round(3 * Math.min(intensity, state.perfMode ? 0.7 : intensity)));
   for(let i=0;i<count;i++){
     const angle = Math.PI + (Math.random()-0.5)*0.9;
     const speed = (16 + Math.random()*40) * intensity;
     const dx = Math.cos(angle)*speed + (Math.random()*10-5);
     const dy = Math.sin(angle)*speed + (Math.random()*8-4);
     const size = 5 + Math.random()*7;
-    spawnParticle(cx + (Math.random()*18-9), cy + (Math.random()*6-3), size, getCurrentTier().flame1, dx, dy, 580 + Math.random()*240);
+    spawnParticle(cx + (Math.random()*18-9), cy + (Math.random()*6-3), size, getCurrentTier().flame1, dx, dy, 520 + Math.random()*200);
   }
 }
 
-/* ---------- SHOOTING STARS (pooled) ---------- */
+/* ---------- SHOOTING STARS ---------- */
 const STAR_POOL = [];
 for(let i=0;i<MAX_STARS;i++){
   const el = document.createElement('div'); el.className='shoot'; el.style.width='8px'; el.style.height='8px'; el.style.opacity=0; el._busy=false; fx.appendChild(el);
@@ -354,25 +417,28 @@ for(let i=0;i<MAX_STARS;i++){
 }
 function getFreeStar(){ return STAR_POOL.find(s=>!s._busy); }
 function spawnShootingStar(){
+  if (state.perfMode) return; // skip in perf mode
   const s = getFreeStar(); if(!s) return;
   const rect = sky.getBoundingClientRect();
   const types = [
     {name:'white', color:'#fff5d6', trail:'#ffd8a8', speed:[520,920], size:[6,10], penalty:0.06},
     {name:'blue', color:'#a6e0ff', trail:'#9fd9ff', speed:[700,1100], size:[4,8], penalty:0.05},
-    {name:'red', color:'#ffb3b3', trail:'#ffb3b3', speed:[260,460], size:[10,16], penalty:0.11},
+    {name:'red', color:'#ffb3b3', trail:'#ffb3b3', speed:[260,460], size:[10,16], penalty:0.08},
     {name:'green', color:'#bfffd6', trail:'#bfffd6', speed:[520,760], size:[5,9], penalty:0.045}
   ];
   let r = Math.random(), t = types[0];
   if(r < 0.6) t = types[0]; else if(r < 0.82) t = types[1]; else if(r < 0.95) t = types[2]; else t = types[3];
-  // spawn top/left/right
+
   let sx, sy, angle;
   if(Math.random() < 0.7){ sx = Math.random()*rect.width*0.85 + rect.width*0.075; sy = -20; angle = 30 + Math.random()*80; if(Math.random() < 0.5) angle = 120 + Math.random()*40; }
   else { if(Math.random() < 0.5){ sx = -40; sy = Math.random()*rect.height*0.7 + 20; angle = 10 + Math.random()*60; } else { sx = rect.width + 40; sy = Math.random()*rect.height*0.7 + 20; angle = 200 + Math.random()*60; } }
-  const speed = t.speed[0] + Math.random()*(t.speed[1]-t.speed[0]); const size = t.size[0] + Math.random()*(t.size[1]-t.size[0]);
+
+  const speed = t.speed[0] + Math.random()*(t.speed[1]-t.speed[0]);
+  const size = t.size[0] + Math.random()*(t.size[1]-t.size[0]);
   const rad = angle * Math.PI / 180; const vx = Math.cos(rad)*speed, vy = Math.sin(rad)*speed;
   s._busy = true; s.x = sx; s.y = sy; s.vx = vx; s.vy = vy; s.size = size; s.type = t;
   s.el.style.left = sx + 'px'; s.el.style.top = sy + 'px'; s.el.style.width = size + 'px'; s.el.style.height = size + 'px'; s.el.style.background = t.color; s.el.style.opacity = 1;
-  s.tr.style.left = sx + 'px'; s.tr.style.top = sy + 'px'; s.tr.style.width = (size*5) + 'px'; s.tr.style.height = Math.max(4, size/1.6) + 'px'; s.tr.style.background = `linear-gradient(90deg, ${t.trail}, rgba(0,0,0,0))`; s.tr.style.opacity = state.perfMode ? 0 : 0.9;
+  s.tr.style.left = sx + 'px'; s.tr.style.top = sy + 'px'; s.tr.style.width = (size*5) + 'px'; s.tr.style.height = Math.max(4, size/1.6) + 'px'; s.tr.style.background = `linear-gradient(90deg, ${t.trail}, rgba(0,0,0,0))`; s.tr.style.opacity = 0.9;
 }
 function updateShootingStars(dt){
   const rect = sky.getBoundingClientRect();
@@ -389,9 +455,11 @@ function updateShootingStars(dt){
     const dx = s.x - rcx, dy = s.y - rcy; const dist = Math.hypot(dx,dy);
     const hitRadius = Math.max(24, rwrap.width*0.22) + s.size*0.6;
     if(dist < hitRadius){
-      const lost = Math.max(1, Math.round(state.fuel * s.type.penalty));
+      // cap penalty to keep it fair
+      const basePenalty = Math.max(1, Math.round(state.fuel * s.type.penalty));
+      const lost = Math.min(basePenalty, 250000 + state.prestige*50000);
       state.fuel = Math.max(0, state.fuel - lost);
-      appShake(0.26); spawnFloating(`-${fmt(lost)} fuel`, s.x + fxr.left, s.y + fxr.top); spawnSparkles(10); sfx(160,'square',0.08,0.18);
+      appShake(0.26); spawnFloating(`-${fmt(lost)} fuel`, s.x + fxr.left, s.y + fxr.top); spawnSparkles(6); sfx(160,'square',0.08,0.18);
       s.el.style.opacity = 0; s.tr.style.opacity = 0; s._busy = false; immediateFuelUpdate();
       continue;
     }
@@ -399,8 +467,8 @@ function updateShootingStars(dt){
   }
 }
 function starSpawnerLoop(){
-  const next = STAR_SPAWN_MIN + Math.random()*(STAR_SPAWN_MAX - STAR_SPAWN_MIN);
-  setTimeout(()=>{ spawnShootingStar(); if(Math.random()>0.4) setTimeout(spawnShootingStar, 200 + Math.random()*800); starSpawnerLoop(); }, next);
+  const next = (STAR_SPAWN_MIN + Math.random()*(STAR_SPAWN_MAX - STAR_SPAWN_MIN)) * (state.perfMode ? 1.6 : 1);
+  state.timers.stars = setTimeout(()=>{ spawnShootingStar(); if(Math.random()>0.4) setTimeout(spawnShootingStar, 200 + Math.random()*800); starSpawnerLoop(); }, next);
 }
 
 /* ---------- ROCKET VISUALS ---------- */
@@ -410,6 +478,8 @@ function getCurrentTierIndex(){
   for(let i=0;i<TIERS.length;i++){ if(state.fuel >= TIERS[i].threshold) idx = i; else break; }
   return Math.min(idx, TIERS.length-1);
 }
+function getCurrentTier(){ return TIERS[getCurrentTierIndex()]; }
+
 function applyTierVisuals(){
   const idx = getCurrentTierIndex();
   if(idx !== lastTierIdx){
@@ -436,32 +506,32 @@ function applyTierVisuals(){
       for(let L=0;L<lc;L++){ const cx = 92 + L*6; const c = document.createElementNS('http://www.w3.org/2000/svg','circle'); c.setAttribute('cx', cx); c.setAttribute('cy', 72); c.setAttribute('r', 2.4); c.setAttribute('fill', '#ffd7b3'); lights.appendChild(c); }
       // flame
       document.getElementById('flameOuter').setAttribute('fill', t.flame1); document.getElementById('flameInner').setAttribute('fill', t.flame2);
-      flameWrap.style.transform = `translateX(-50%) scaleY(${t.flameScale})`;
       rocketEl.style.transform = 'scale(1.02)'; rocketEl.style.opacity = 1;
       setTimeout(()=> rocketEl.style.transform = 'scale(1)', 300);
     }, 120);
     lastTierIdx = idx;
   }
   // subtle background shift
-  const tt = TIERS[getCurrentTierIndex()];
+  const tt = getCurrentTier();
   document.documentElement.style.setProperty('--bg-top', tt.body);
 }
 
-/* ---------- ROCKET MOVEMENT & CLICK ---------- */
+/* ---------- ROCKET MOVEMENT & INPUT ---------- */
 function initRocketPosition(){
   const r = sky.getBoundingClientRect(); state.rocket.x = r.width/2; state.rocket.y = r.height*0.72; state.rocket.tx = state.rocket.x; state.rocket.ty = state.rocket.y; updateRocketDOM();
 }
 function skyToLocal(e){
   const r = sky.getBoundingClientRect(); let x,y;
   if(e.touches && e.touches[0]){ x = e.touches[0].clientX; y = e.touches[0].clientY; } else { x = e.clientX; y = e.clientY; }
-  x -= r.left; y -= r.top; x = Math.max(40, Math.min(r.width-40, x)); y = Math.max(40, Math.min(r.height-40, y)); return {x,y};
+  x -= r.left; y -= r.top; x = clamp(x, 40, r.width-40); y = clamp(y, 40, r.height-40); return {x,y};
 }
 sky.addEventListener('click', (e)=>{ const p = skyToLocal(e); state.rocket.tx = p.x; state.rocket.ty = p.y; });
 sky.addEventListener('touchstart', (e)=>{ const p = skyToLocal(e); state.rocket.tx = p.x; state.rocket.ty = p.y; }, { passive:true });
 
 const keys = {};
-window.addEventListener('keydown', (e)=>{ keys[e.key] = true; if(e.code === 'Space'){ e.preventDefault(); clickAction(); }});
-window.addEventListener('keyup', (e)=>{ keys[e.key] = false; });
+let spaceHeld = false;
+window.addEventListener('keydown', (e)=>{ keys[e.key] = true; if(e.code === 'Space'){ e.preventDefault(); spaceHeld = true; }});
+window.addEventListener('keyup', (e)=>{ keys[e.key] = false; if(e.code === 'Space'){ spaceHeld = false; }});
 
 function handleWASD(dt){
   if(!state.rocket.useWASD) return;
@@ -472,7 +542,7 @@ function handleWASD(dt){
   if(keys['d']||keys['ArrowRight']){ state.rocket.tx += speed*dt; moved=true; }
   if(moved) constrainRocketTargets();
 }
-function constrainRocketTargets(){ const r = sky.getBoundingClientRect(); state.rocket.tx = Math.max(40, Math.min(r.width-40, state.rocket.tx)); state.rocket.ty = Math.max(40, Math.min(r.height-40, state.rocket.ty)); }
+function constrainRocketTargets(){ const r = sky.getBoundingClientRect(); state.rocket.tx = clamp(state.rocket.tx,40,r.width-40); state.rocket.ty = clamp(state.rocket.ty,40,r.height-40); }
 
 function updateRocket(dt){
   handleWASD(dt);
@@ -485,29 +555,23 @@ function updateRocket(dt){
 function updateRocketDOM(){
   const r = sky.getBoundingClientRect(); const px = state.rocket.x; const py = state.rocket.y; const bottom = r.height - py;
   rocketWrap.style.left = px + 'px'; rocketWrap.style.bottom = bottom + 'px';
-  const tilt = Math.max(-10, Math.min(10, (state.rocket.tx - state.rocket.x) / 18));
+  const tilt = clamp((state.rocket.tx - state.rocket.x) / 18, -10, 10);
   rocketWrap.style.transform = `translateX(-50%) translateY(0) rotate(${tilt}deg)`;
 }
 
-/* ---------- clickAction (snappy) ---------- */
+/* ---------- Click / Thrust ---------- */
 function clickAction(){
-  // minimal JS work here so it's instant
+  if (state.paused) return;
   state.clickBurst = Math.min(8, state.clickBurst + 1);
   state.fuel += state.perClick;
-  // immediate UI feedback (only fuel display)
   immediateFuelUpdate();
-  // GPU bounce: toggle class briefly, no layout thrash
-  rocketEl.classList.add('bounce');
-  setTimeout(()=> rocketEl.classList.remove('bounce'), 140);
-  // spawn modest particles (pooled)
-  spawnExhaust(1.2); spawnSparkles(6);
-  // audio
-  ensureAudio(); sfx(880,'triangle',0.06,0.05);
+  rocketEl.classList.add('bounce'); setTimeout(()=> rocketEl.classList.remove('bounce'), 140);
+  spawnExhaust(1.1); spawnSparkles(5);
+  ensureAudio(); sfx(880,'triangle',0.05,0.05);
 }
 
-/* immediate fuel display update (avoids waiting for tick) */
+/* ---------- UI updates ---------- */
 function immediateFuelUpdate(){
-  // only update if significantly different to avoid redundant writes
   if(state.lastFuelShown !== state.fuel){
     fuelEl.textContent = fmt(state.fuel);
     fuelTop.textContent = Math.round(state.fuel);
@@ -529,95 +593,155 @@ function spawnFloating(text, px, py){
 function appShake(duration=0.26){ appRoot.classList.add('shake'); hitFlash.style.background = 'rgba(255,255,255,0.06)'; setTimeout(()=>{ appRoot.classList.remove('shake'); hitFlash.style.background = 'rgba(255,255,255,0)'; }, duration*1000); }
 function lockedFeedback(){ rocketWrap.style.transform = 'translateX(-50%) translateY(-8px)'; setTimeout(()=> rocketWrap.style.transform = 'translateX(-50%)', 120); }
 
-/* ---------- TICK & Loops ---------- */
+/* ---------- Loops ---------- */
 let lastRAF = performance.now();
 function rafLoop(ts){
+  state.timers.raf = requestAnimationFrame(rafLoop);
   const dt = (ts - lastRAF) / 1000; lastRAF = ts;
-  // visuals - particles & stars
+  if (state.paused) return;
   updateShootingStars(dt);
-  // flame intensity smoothing (not expensive)
   updateFlameVisual();
-  requestAnimationFrame(rafLoop);
+  updateRocket(dt);
+  // Space held = auto thrust
+  if (spaceHeld) clickAction();
 }
 function slowTick(){
+  if (state.paused) return;
   // economy tick (every 500ms)
   if(state.perSecond > 0) state.fuel += state.perSecond * 0.5;
   state.clickBurst = Math.max(0, state.clickBurst - 0.5);
-  recalc(); // recalculation is cheap
-  // UI updates every tick (but fuel has immediate updates too)
+  recalc();
   perClickEl.textContent = fmt(state.perClick); perSecondEl.textContent = fmt(state.perSecond);
   renderStore(); applyTierVisuals();
-  // altitude and prestige
   const alt = Math.min(99, Math.sqrt(state.fuel / (1800 + state.prestige*700)) * 100);
   altitudeEl.textContent = Math.round(alt) + '%';
-  document.getElementById('prestigeBtn').style.display = (state.fuel >= 1_000_000) ? 'inline-block' : 'none';
-  // ensure fuel display remains current if tick changed it
   immediateFuelUpdate();
 }
 
-/* flame visual smoothing */
+/* flame visual */
 function updateFlameVisual(){
-  // subtle bob or brightness based on clickBurst (cheap)
   const intensity = 1 + Math.min(7, state.clickBurst) * 0.18;
-  const idx = getCurrentTierIndex(); const t = TIERS[idx];
+  const t = getCurrentTier();
   flameWrap.style.transform = `translateX(-50%) scaleY(${t.flameScale * intensity})`;
 }
 
-/* ---------- INIT / BOOT ---------- */
-function boot(){
-  // load state
-  loadGame();
-  recalc();
-  renderStore();
-  applyTierVisuals();
-  // star layers
+/* ---------- Nebula / Background ---------- */
+function setupSky(){
   const far = document.getElementById('stars-far'), mid = document.getElementById('stars-mid'), near = document.getElementById('stars-near');
   for(let i=0;i<70;i++){ const s=document.createElement('div'); s.className='star'; s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%'; const r=0.6+Math.random()*1.2; s.style.width=s.style.height=r+'px'; s.style.opacity=0.06 + Math.random()*0.12; far.appendChild(s); }
   for(let i=0;i<36;i++){ const s=document.createElement('div'); s.className='star'; s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%'; const r=1+Math.random()*1.6; s.style.width=s.style.height=r+'px'; s.style.opacity=0.08 + Math.random()*0.18; mid.appendChild(s); }
   for(let i=0;i<12;i++){ const s=document.createElement('div'); s.className='star'; s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%'; const r=1.6+Math.random()*3; s.style.width=s.style.height=r+'px'; s.style.opacity=0.12 + Math.random()*0.28; near.appendChild(s); }
 
-  // nebula canvas
-  const canvas = document.getElementById('nebula'), ctx = canvas.getContext('2d');
-  function resize(){ const r = sky.getBoundingClientRect(); canvas.width = r.width; canvas.height = r.height; }
-  resize(); window.addEventListener('resize', resize);
-  const blobs = []; for(let i=0;i<4;i++) blobs.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height*0.8, r:120+Math.random()*220, color:['#26478f','#3b2b6f','#2b6f6f','#5f2b5f'][i%4], vx:(Math.random()-0.5)*2, vy:(Math.random()-0.5)*0.4, a:0.03 + Math.random()*0.04});
-  (function drawNeb(){ ctx.clearRect(0,0,canvas.width,canvas.height); blobs.forEach(b=>{ b.x += b.vx*0.06; b.y += b.vy*0.06; if(b.x > canvas.width + b.r) b.x = -b.r; if(b.x < -b.r) b.x = canvas.width + b.r; const g = ctx.createRadialGradient(b.x,b.y,b.r*0.02,b.x,b.y,b.r); g.addColorStop(0, hexToRgba(b.color, b.a*1.6)); g.addColorStop(0.45, hexToRgba(b.color, b.a)); g.addColorStop(1, hexToRgba('#000',0)); ctx.globalCompositeOperation='lighter'; ctx.fillStyle=g; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(drawNeb); })();
-
   // planets
   const planets = document.getElementById('planets'); planets.innerHTML=''; const p = document.createElement('div'); p.className='planet'; p.style.left='10%'; p.style.top='10%'; p.style.width='160px'; p.style.height='160px'; p.style.background='radial-gradient(circle,#2b2b44,#07101a)'; planets.appendChild(p);
 
-  // perf toggle UI
-  perfToggle.classList.toggle('on', state.perfMode);
-  perfToggle.addEventListener('click', ()=>{ state.perfMode = !state.perfMode; localStorage.setItem(PERF_KEY, state.perfMode ? '1' : '0'); perfToggle.classList.toggle('on', state.perfMode); spawnPopup(state.perfMode ? 'Performance Mode ON' : 'Performance Mode OFF'); });
+  // nebula canvas
+  const canvas = document.getElementById('nebula');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d', { alpha:true, willReadFrequently:false });
+  function resize(){ const r = sky.getBoundingClientRect(); canvas.width = r.width; canvas.height = r.height; }
+  const resizeObs = new ResizeObserver(()=> resize());
+  resize(); resizeObs.observe(sky);
 
-  // rocket pos init
-  const r = sky.getBoundingClientRect(); state.rocket.x = r.width/2; state.rocket.y = r.height*0.72; state.rocket.tx = state.rocket.x; state.rocket.ty = state.rocket.y; updateRocketDOM();
-
-  // events
-  document.getElementById('saveBtn').addEventListener('click', ()=>{ saveGame(); ensureAudio(); sfx(900,'sine',0.12,0.06); });
-  document.getElementById('resetBtn').addEventListener('click', ()=>{ if(confirm('Reset progress?')){ localStorage.removeItem(SAVE_KEY); location.reload(); }});
-  rocketWrap.addEventListener('click', (e)=>{ e.stopPropagation(); clickAction(); });
-  document.addEventListener('keydown', (e)=>{ if(e.code === 'Space'){ e.preventDefault(); clickAction(); }});
-  // start loops
-  requestAnimationFrame(rafLoop);
-  setInterval(slowTick, 500);
-  setInterval(saveGame, 15000);
-  setTimeout(starSpawnerLoop, 1200);
-  // warm audio when user interacts first time
-  document.addEventListener('pointerdown', ()=> ensureAudio(), { once:true });
+  const blobs = []; const colors = state.perfMode ? ['#2b2b44','#2b2b44','#2b2b44','#2b2b44'] : ['#26478f','#3b2b6f','#2b6f6f','#5f2b5f'];
+  for(let i=0;i<4;i++) blobs.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height*0.8, r:120+Math.random()*220, color:colors[i%4], vx:(Math.random()-0.5)*2, vy:(Math.random()-0.5)*0.4, a: state.perfMode ? 0.015 : 0.035});
+  (function drawNeb(){
+    if (state.paused) { requestAnimationFrame(drawNeb); return; }
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    blobs.forEach(b=>{
+      b.x += b.vx*0.06; b.y += b.vy*0.06;
+      if(b.x > canvas.width + b.r) b.x = -b.r; if(b.x < -b.r) b.x = canvas.width + b.r;
+      const g = ctx.createRadialGradient(b.x,b.y,b.r*0.02,b.x,b.y,b.r);
+      g.addColorStop(0, hexToRgba(b.color, b.a*1.6));
+      g.addColorStop(0.45, hexToRgba(b.color, b.a));
+      g.addColorStop(1, hexToRgba('#000',0));
+      ctx.globalCompositeOperation='lighter'; ctx.fillStyle=g; ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(drawNeb);
+  })();
 }
 
-/* ---------- misc helpers ---------- */
+/* ---------- Boot / Events ---------- */
+function boot(){
+  loadGame();
+  applyPrestigeMult();
+  recalc();
+  renderStore();
+  applyTierVisuals();
+  setupSky();
+
+  // toggles
+  perfToggle.classList.toggle('on', state.perfMode);
+  perfToggle.setAttribute('aria-checked', state.perfMode?'true':'false');
+  perfToggle.addEventListener('click', ()=>{
+    state.perfMode = !state.perfMode;
+    localStorage.setItem(PERF_KEY, state.perfMode ? '1' : '0');
+    perfToggle.classList.toggle('on', state.perfMode);
+    perfToggle.setAttribute('aria-checked', state.perfMode?'true':'false');
+    spawnPopup(state.perfMode ? 'Performance Mode ON' : 'Performance Mode OFF');
+  });
+
+  muteToggle.classList.toggle('on', state.muted);
+  muteToggle.setAttribute('aria-checked', state.muted?'true':'false');
+  muteToggle.addEventListener('click', ()=>{
+    state.muted = !state.muted;
+    localStorage.setItem(MUTE_KEY, state.muted ? '1' : '0');
+    muteToggle.classList.toggle('on', state.muted);
+    muteToggle.setAttribute('aria-checked', state.muted?'true':'false');
+    spawnPopup(state.muted ? 'Muted' : 'Unmuted');
+    if(!state.muted) ensureAudio();
+  });
+
+  pauseBtn.addEventListener('click', ()=>{
+    state.paused = !state.paused;
+    pauseBtn.textContent = state.paused ? 'Resume' : 'Pause';
+    pauseBtn.setAttribute('aria-pressed', state.paused?'true':'false');
+    spawnPopup(state.paused ? 'Paused' : 'Resumed');
+  });
+
+  // rocket pos
+  initRocketPosition();
+
+  // controls
+  document.getElementById('saveBtn').addEventListener('click', ()=>{ saveGame(); ensureAudio(); sfx(900,'sine',0.12,0.06); });
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    if(confirm('Reset progress?')){
+      Object.keys(localStorage).forEach(k=>{ if(k.startsWith('rocket_')||k===SAVE_KEY) localStorage.removeItem(k); });
+      location.reload();
+    }
+  });
+  prestigeBtn.addEventListener('click', doPrestige);
+
+  rocketWrap.addEventListener('click', (e)=>{ e.stopPropagation(); clickAction(); });
+  document.addEventListener('keydown', (e)=>{ if(e.code === 'Enter' && document.activeElement===sky){ clickAction(); } });
+
+  // loops
+  const raf = (ts)=> rafLoop(ts);
+  state.timers.raf = requestAnimationFrame(raf);
+  state.timers.econ = setInterval(slowTick, 500);
+  state.timers.autosave = setInterval(()=> saveGame(false), 15000);
+  state.timers.stars = setTimeout(starSpawnerLoop, 1200);
+
+  // wake audio on first interaction
+  document.addEventListener('pointerdown', ()=> ensureAudio(), { once:true });
+
+  // pause when tab hidden (keeps autosave)
+  document.addEventListener('visibilitychange', ()=>{
+    if (document.hidden) { state.paused = true; pauseBtn.textContent='Resume'; pauseBtn.setAttribute('aria-pressed','true'); }
+  });
+
+  window.addEventListener('beforeunload', ()=> saveGame(false));
+}
+
+/* ---------- helpers ---------- */
 function hexToRgba(hex,a){ const c=hex.replace('#',''); const num=parseInt(c,16); const r=(num>>16)&255,g=(num>>8)&255,b=num&255; return `rgba(${r},${g},${b},${a})`; }
-function getCurrentTierIndex(){ let idx=0; for(let i=0;i<TIERS.length;i++){ if(state.fuel >= TIERS[i].threshold) idx = i; else break; } return Math.min(idx, TIERS.length-1); }
 
-boot(); // start
+boot();
 
-// expose small utilities for debugging
+// expose tiny debug hooks
 window._state = state;
 window._save = saveGame;
 window._spawnStar = spawnShootingStar;
-
 </script>
 </body>
 </html>
