@@ -3,34 +3,164 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Vote • AHS Class of ’28</title>
+  <title>Community • AHS Class of ’28</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-local starfield style -->
   <style>
-    #starfield{
-      position:fixed; inset:0; width:100%; height:100%;
-      z-index:-1; pointer-events:none; display:block;
+    /* --- Header hardening: consistent layout + reliable mobile menu --- */
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
+    .menu-btn{ display:none; }
+    @media (max-width:980px){
+      .header .links{ display:none; }
+      .menu-btn{
+        display:inline-flex; align-items:center; justify-content:center;
+        width:42px; height:42px; border-radius:12px; border:1px solid var(--border);
+        background:var(--panel);
+      }
     }
-    @media (prefers-reduced-motion: reduce){ #starfield{ animation:none !important; } }
+    .mobile-menu{
+      position:fixed; inset:64px 10px auto 10px; z-index:9999;
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:14px; box-shadow:var(--shadow-2); padding:12px;
+      backdrop-filter:blur(10px);
+    }
+    .mobile-menu a{ display:block; padding:12px 10px; border-radius:10px; color:var(--text); }
+    .mobile-menu a:hover{ background:rgba(255,255,255,.06); }
+    .hidden{ display:none !important; }
+    html.menu-open, body.menu-open { overflow:hidden; }
+
+    /* Page base (match others + no sideways scroll) */
+    html, body { max-width:100%; overflow-x:hidden; }
+    body{ color:var(--text); background:transparent; }
+
+    /* Starfield canvas (identical gradient/colors to the other pages) */
+    #starfield{ position:fixed; inset:0; z-index:-1; pointer-events:none; display:block; }
+
+    /* ======= Futuristic deck layout ======= */
+    .wrap{ width:min(1200px, 96vw); margin-inline:auto; padding:28px 0 44px; }
+    .heroX{
+      display:grid; gap:14px; justify-items:center; text-align:center;
+      padding:80px 12px 30px;
+    }
+    .heroX h1{ font-size:clamp(2.1rem, 4.5vw, 3.2rem); margin:0; letter-spacing:.4px; }
+    .heroX .sub{ opacity:.9; margin:6px 0 0; }
+
+    /* Tabs */
+    .tabs{
+      display:flex; gap:10px; justify-content:center; margin: 12px auto 24px;
+      position:sticky; top:64px; z-index:5; padding:6px 6px;
+      background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:999px;
+      backdrop-filter:blur(8px);
+      width:max-content; max-width:100%;
+    }
+    .tab{
+      border:1px solid var(--border); border-radius:999px; padding:8px 14px; cursor:pointer; user-select:none;
+      background:var(--panel); font-weight:800; letter-spacing:.2px;
+      transition: transform var(--t-base), background var(--t-base), box-shadow var(--t-base);
+      box-shadow:var(--shadow-1);
+    }
+    .tab[aria-selected="true"]{
+      background:linear-gradient(135deg,#0d6efd,#2b8cff);
+      color:#fff; border-color:transparent; transform:translateY(-1px);
+      box-shadow:0 8px 24px rgba(13,110,253,.30);
+    }
+
+    /* Panels grid */
+    .grid-2x{
+      display:grid; gap:18px; grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    @media (max-width:900px){ .grid-2x{ grid-template-columns:1fr; } }
+
+    /* Neo-glass panels */
+    .neo{
+      border-radius:22px; padding:18px; position:relative;
+      background: radial-gradient(1000px 450px at -10% -20%, rgba(13,110,253,.18), transparent 60%),
+                  radial-gradient(600px 300px at 110% 120%, rgba(255,255,255,.06), transparent 60%),
+                  rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 10px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .neo h2, .neo h3{ margin:6px 0 8px; }
+    .neo .subtle{ color:var(--muted); }
+
+    /* Inputs row */
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .row .input{ flex:1 1 320px; }
+    .input input{
+      width:100%; padding:12px 12px; border-radius:12px; border:1px solid var(--border);
+      background:var(--panel); color:var(--text);
+    }
+    .btn.small{ height:36px; padding:0 12px; font-weight:800; }
+    .btn.glow{ box-shadow:0 8px 28px rgba(13,110,253,.33); }
+
+    /* Embeds */
+    .embed{ aspect-ratio: 16/10; border-radius:14px; overflow:hidden; border:1px solid var(--border); background:var(--panel); }
+    .embed iframe{ width:100%; height:100%; border:0; display:block; }
+
+    /* Divider text */
+    .divider{
+      text-align:center; opacity:.85; margin:4px 0 18px;
+      font-weight:800; letter-spacing:.25px;
+    }
+
+    /* Demo poll styles */
+    .choices{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+    .progress-rail{
+      height:10px; border-radius:999px; background:rgba(255,255,255,.10);
+      overflow:hidden; position:relative; border:1px solid rgba(255,255,255,.12);
+    }
+    .progress-fill{
+      height:100%; width:0%;
+      background: linear-gradient(90deg,#52a8ff,#7ab8ff);
+      position:relative;
+    }
+    .progress-fill .ship{ position:absolute; right:-12px; top:-12px; filter: drop-shadow(0 0 8px rgba(255,255,255,.35)); }
+    .stat-row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-weight:700; margin-top:6px;
+    }
+    .stat-row .pct{ opacity:.9; }
+
+    /* Help card */
+    .help{
+      border-radius:16px; padding:12px; border:1px dashed var(--border);
+      background:rgba(255,255,255,.04); color:var(--muted);
+    }
   </style>
 </head>
 <body>
 
-  <!-- Starfield background -->
+  <!-- Background -->
   <canvas id="starfield" aria-hidden="true"></canvas>
 
   <!-- ============================ HEADER / NAV ============================ -->
   <header class="header" role="banner">
-  <nav class="nav" aria-label="Primary">
-    <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
-      <span class="logo" aria-hidden="true">A</span>
-      AHS Class of ’28
-    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="./index.html" aria-label="AHS Class of 2028 — Home">
+        <span class="logo" aria-hidden="true">A</span>
+        AHS Class of ’28
+      </a>
 
-    <!-- Desktop links -->
-    <div class="links" role="navigation">
+      <div class="links" role="navigation">
+        <a href="./index.html">Home</a>
+        <a href="./fundraisers.html">Fundraisers</a>
+        <a href="./calendar.html">Calendar</a>
+        <a href="./media.html">Media</a>
+        <a href="./achievements.html">Achievements</a>
+        <a href="./about.html">About</a>
+        <a href="./contact.html">Contact</a>
+        <a href="./shop.html">Shop</a>
+        <a href="./announcements.html">Announcements</a>
+        <a class="active" href="./community.html" aria-current="page">Community</a>
+      </div>
+
+      <button id="menuBtn" class="menu-btn" aria-expanded="false"
+              aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+    </nav>
+
+    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
       <a href="./index.html">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
@@ -40,319 +170,351 @@
       <a href="./contact.html">Contact</a>
       <a href="./shop.html">Shop</a>
       <a href="./announcements.html">Announcements</a>
-      <a class="active" href="./community.html">Community</a>
+      <a class="active" href="./community.html" aria-current="page">Community</a>
+      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- HERO -->
+    <section class="heroX">
+      <h1>Community Voting</h1>
+      <div class="sub">Make decisions together. Live forms + live results, or use the built-in demo to test quickly.</div>
+    </section>
+
+    <!-- TABS -->
+    <div class="tabs" role="tablist" aria-label="Community tabs">
+      <button id="tabLive" class="tab" role="tab" aria-selected="true" aria-controls="panelLive">Live Poll (Google)</button>
+      <button id="tabDemo" class="tab" role="tab" aria-selected="false" aria-controls="panelDemo">Quick Demo</button>
     </div>
 
-    <!-- Mobile menu button -->
-    <button id="menuBtn" class="menu-btn" aria-expanded="false"
-            aria-controls="mobileMenu" aria-label="Open menu">☰</button>
-  </nav>
-
-  <!-- Mobile menu -->
-  <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-    <a href="./index.html">Home</a>
-    <a href="./fundraisers.html">Fundraisers</a>
-    <a href="./calendar.html">Calendar</a>
-    <a href="./media.html">Media</a>
-    <a class="active" href="./achievements.html">Achievements</a>
-    <a href="./about.html">About</a>
-    <a href="./contact.html">Contact</a>
-    <a href="./shop.html">Shop</a>
-    <a href="./announcements.html">Announcements</a>
-    <a href="./community.html">Community</a>
-    <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
-  </div>
-</header>
-
-
-  <main>
-    <!-- ============================== HERO ================================= -->
-    <section class="hero" aria-labelledby="voteTitle">
-      <div class="card hover-up" style="max-width:860px; margin-inline:auto;">
-        <h1 id="voteTitle">Student Vote</h1>
-        <p class="small" style="margin-top:6px;">
-          Vote on class decisions. Live results appear below when the poll is active.
-        </p>
-      </div>
-    </section>
-
-    <!-- ====================== LIVE (GOOGLE) EMBEDS ========================= -->
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">Live Poll</h2>
-        <p class="section-sub">When you’re ready, paste your Google Form link here (takes 2 minutes — I’ll show you in the next step).</p>
-
-        <div class="grid grid-2">
-          <article class="panel glass hover-up">
-            <h3 style="margin:6px 0 8px;">Vote Here</h3>
-            <div class="small" style="margin-bottom:8px; color:var(--muted);">
-              This form is an embed. Students submit here; results auto-update in the chart.
-            </div>
-            <!-- GOOGLE FORM EMBED goes here -->
-            <div class="media-item" style="aspect-ratio: 4/3;">
-              <iframe
-                src="#"
-                title="Class Vote Form (Google)"
-                style="width:100%;height:100%;border:0;border-radius:14px;background:var(--panel);"
-                loading="lazy"
-                allow="clipboard-write"
-              ></iframe>
-            </div>
-          </article>
-
-          <article class="panel glass hover-up">
-            <h3 style="margin:6px 0 8px;">Live Results</h3>
-            <div class="small" style="margin-bottom:8px; color:var(--muted);">
-              This chart is published from Google Sheets and updates as votes come in.
-            </div>
-            <!-- GOOGLE SHEETS CHART EMBED goes here -->
-            <div class="media-item" style="aspect-ratio: 4/3;">
-              <iframe
-                src="#"
-                title="Live Results (Google Sheets)"
-                style="width:100%;height:100%;border:0;border-radius:14px;background:var(--panel);"
-                loading="lazy"
-              ></iframe>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== BACKUP DEMO (LOCAL) ========================== -->
-    <section class="section">
-      <div class="container">
-        <h2 class="section-title">Quick Demo Poll (local only)</h2>
-        <p class="section-sub">This counts only on the device you’re using. Good for testing the layout.</p>
-
-        <article class="panel hover-up" style="max-width:860px; margin-inline:auto;">
-          <h3 id="demoQ">Which merch should we drop first?</h3>
-          <div class="inline" style="flex-wrap:wrap; gap:10px; margin-top:10px;">
-            <button class="btn" data-opt="Hoodie">Hoodie</button>
-            <button class="btn" data-opt="Script Tee">Script Tee</button>
-            <button class="btn" data-opt="Basketball Jersey">Basketball Jersey</button>
-            <button class="btn" data-opt="Striped Polo">Striped Polo</button>
+    <!-- ======== PANEL: LIVE POLL ======== -->
+    <section id="panelLive" role="tabpanel" aria-labelledby="tabLive">
+      <div class="grid-2x">
+        <article class="neo">
+          <h2>Vote Here</h2>
+          <p class="subtle">Paste your Google Form link and hit <strong>Embed</strong>. We’ll remember it for next time.</p>
+          <div class="row" style="margin-top:8px;">
+            <div class="input"><input id="formUrl" type="url" placeholder="https://docs.google.com/forms/d/e/…/viewform" aria-label="Google Form URL"></div>
+            <button class="btn small glow" id="btnForm">Embed</button>
+            <button class="btn small" id="btnOpenForm">Open</button>
+            <button class="btn small" id="btnClearForm" title="Forget saved form URL">Clear</button>
           </div>
-
-          <div class="card-list" id="demoResults" style="margin-top:12px;"></div>
-
-          <div class="inline" style="margin-top:10px; gap:8px;">
-            <button id="resetVotes" class="btn">Reset my demo votes</button>
+          <div class="embed" style="margin-top:12px;">
+            <iframe id="formFrame" title="Class Vote Form (Google)"></iframe>
           </div>
+          <div class="help" style="margin-top:12px;">
+            Tip: In Google Forms, click <em>Send</em> → <em>Link icon</em> → copy the URL. If embedding is blocked at your school, use “Open”.
+          </div>
+        </article>
 
-          <div class="small" style="margin-top:6px;color:var(--muted);">Tip: results save in your browser only.</div>
+        <article class="neo">
+          <h2>Live Results</h2>
+          <p class="subtle">Publish a chart from Google Sheets and paste the “Published” link.</p>
+          <div class="row" style="margin-top:8px;">
+            <div class="input"><input id="chartUrl" type="url" placeholder="https://docs.google.com/spreadsheets/d/…/pubchart?…" aria-label="Google Sheets chart URL"></div>
+            <button class="btn small glow" id="btnChart">Embed</button>
+            <button class="btn small" id="btnOpenChart">Open</button>
+            <button class="btn small" id="btnClearChart" title="Forget saved chart URL">Clear</button>
+          </div>
+          <div class="embed" style="margin-top:12px;">
+            <iframe id="chartFrame" title="Live Results (Google Sheets)"></iframe>
+          </div>
+          <div class="help" style="margin-top:12px;">
+            In Google Sheets: <em>File → Share → Publish to web → Chart</em>, then copy the link.
+          </div>
         </article>
       </div>
+    </section>
+
+    <!-- ======== PANEL: DEMO POLL ======== -->
+    <section id="panelDemo" class="hidden" role="tabpanel" aria-labelledby="tabDemo">
+      <article class="neo">
+        <h2>Quick Demo Poll</h2>
+        <p class="subtle">Local demo only (saves to your browser). Great for testing the layout or running a quick vote in class.</p>
+
+        <div class="divider">Question</div>
+        <div class="row" style="margin-bottom:10px;">
+          <div class="input"><input id="demoQuestion" type="text" placeholder="Which merch should we drop first?" aria-label="Demo poll question"></div>
+          <button class="btn small glow" id="btnSetQ">Set</button>
+          <button class="btn small" id="btnResetAll">Reset All</button>
+        </div>
+
+        <div id="choicesWrap" class="choices"></div>
+
+        <div class="divider">Results</div>
+        <div id="resultsWrap" class="card-list"></div>
+
+        <div class="row" style="margin-top:12px;">
+          <button class="btn" id="btnAddChoice">Add choice</button>
+          <button class="btn" id="btnResetVotes">Reset my demo votes</button>
+          <div class="small" style="margin-left:auto; color:var(--muted);" id="votesLeftNote"></div>
+        </div>
+      </article>
     </section>
   </main>
 
   <footer class="footer">
     <div class="container">
-      <div class="small">AHS Class of ’28 • Voting</div>
+      <div class="small">AHS Class of ’28 • Community Voting</div>
     </div>
   </footer>
 
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
 
-  <!-- Demo poll (localStorage) -->
+  <!-- ===== Mobile menu (robust) ===== -->
   <script>
     (function(){
-      const KEY = "ahs28_demo_poll_v1";
-      const KEY_VOTES_LEFT = "ahs28_demo_votes_left_v1";
-      const MAX_VOTES = 10;
+      const btn  = document.getElementById('menuBtn');
+      const menu = document.getElementById('mobileMenu');
+      if (!btn || !menu) return;
+      if (btn.dataset.bound === "1") return;
+      btn.dataset.bound = "1";
 
-      const resultsEl = document.getElementById("demoResults");
-      const buttons = document.querySelectorAll("[data-opt]");
-      const resetBtn = document.getElementById("resetVotes");
-      const toast = document.getElementById("toast");
+      const DESKTOP_W = 980;
+      let open = false;
+      function setOpen(v){
+        open = v;
+        menu.classList.toggle('hidden', !open);
+        btn.setAttribute('aria-expanded', String(open));
+        document.documentElement.classList.toggle('menu-open', open);
+        document.body.classList.toggle('menu-open', open);
+      }
+      btn.addEventListener('click', (e)=>{ e.stopPropagation(); setOpen(!open); }, {passive:true});
+      document.addEventListener('click', (e)=>{ if(open && !menu.contains(e.target) && e.target !== btn) setOpen(false); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') setOpen(false); });
+      menu.addEventListener('click', (e)=>{ if (e.target.closest('a')) setOpen(false); });
+      window.addEventListener('resize', ()=>{ if (innerWidth > DESKTOP_W) setOpen(false); });
+    })();
+  </script>
 
-      function showToast(msg, cls="info"){
-        if(!toast) return;
+  <!-- ===== Tabs + Embeds + Demo logic ===== -->
+  <script>
+    (function(){
+      /* ---------- Tabs ---------- */
+      const tabLive = document.getElementById('tabLive');
+      const tabDemo = document.getElementById('tabDemo');
+      const panelLive = document.getElementById('panelLive');
+      const panelDemo = document.getElementById('panelDemo');
+      function select(tab){
+        const live = (tab === 'live');
+        tabLive.setAttribute('aria-selected', live ? 'true':'false');
+        tabDemo.setAttribute('aria-selected', !live ? 'true':'false');
+        panelLive.classList.toggle('hidden', !live);
+        panelDemo.classList.toggle('hidden', live);
+      }
+      tabLive.addEventListener('click', ()=> select('live'));
+      tabDemo.addEventListener('click', ()=> select('demo'));
+
+      /* ---------- Toast ---------- */
+      const toast = document.getElementById('toast');
+      function showToast(msg, cls='info'){
         toast.textContent = msg;
-        toast.className = "toast " + cls;
-        toast.classList.remove("hidden");
-        setTimeout(()=> toast.classList.add("hidden"), 1600);
+        toast.className = 'toast ' + cls;
+        toast.classList.remove('hidden');
+        setTimeout(()=> toast.classList.add('hidden'), 1600);
       }
 
-      function read(){
-        try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
-        catch { return {}; }
-      }
-      function write(obj){
-        localStorage.setItem(KEY, JSON.stringify(obj));
-      }
-      function readVotesLeft(){
-        const v = parseInt(localStorage.getItem(KEY_VOTES_LEFT), 10);
-        return Number.isFinite(v) ? v : MAX_VOTES;
-      }
-      function writeVotesLeft(v){
-        localStorage.setItem(KEY_VOTES_LEFT, String(v));
-      }
+      /* ---------- Live Poll (Embeds) ---------- */
+      const KEY_FORM  = 'ahs28_comm_form_url';
+      const KEY_CHART = 'ahs28_comm_chart_url';
+      const formUrl   = document.getElementById('formUrl');
+      const chartUrl  = document.getElementById('chartUrl');
+      const formFrame = document.getElementById('formFrame');
+      const chartFrame= document.getElementById('chartFrame');
 
-      function render(){
-        const data = read();
-        const total = Object.values(data).reduce((a,b)=>a+b,0) || 0;
-        const votesLeft = readVotesLeft();
-        resultsEl.innerHTML = "";
+      function safeURL(u){ try{ return new URL(u).href; }catch{ return ''; } }
+
+      function loadSaved(){
+        const f = localStorage.getItem(KEY_FORM)  || '';
+        const c = localStorage.getItem(KEY_CHART) || '';
+        if (f){ formUrl.value = f; formFrame.src = f; }
+        if (c){ chartUrl.value = c; chartFrame.src = c; }
+      }
+      loadSaved();
+
+      document.getElementById('btnForm').addEventListener('click', ()=>{
+        const u = safeURL(formUrl.value.trim());
+        if(!u) return showToast('Enter a valid Google Form URL','warn');
+        localStorage.setItem(KEY_FORM, u);
+        formFrame.src = u; showToast('Form embedded','success');
+      });
+      document.getElementById('btnOpenForm').addEventListener('click', ()=>{
+        const u = safeURL(formUrl.value.trim() || localStorage.getItem(KEY_FORM)||'');
+        if(!u) return showToast('No form URL yet','warn');
+        window.open(u, '_blank', 'noopener');
+      });
+      document.getElementById('btnClearForm').addEventListener('click', ()=>{
+        localStorage.removeItem(KEY_FORM); formUrl.value=''; formFrame.removeAttribute('src');
+        showToast('Form URL cleared');
+      });
+
+      document.getElementById('btnChart').addEventListener('click', ()=>{
+        const u = safeURL(chartUrl.value.trim());
+        if(!u) return showToast('Enter a valid published chart URL','warn');
+        localStorage.setItem(KEY_CHART, u);
+        chartFrame.src = u; showToast('Chart embedded','success');
+      });
+      document.getElementById('btnOpenChart').addEventListener('click', ()=>{
+        const u = safeURL(chartUrl.value.trim() || localStorage.getItem(KEY_CHART)||'');
+        if(!u) return showToast('No chart URL yet','warn');
+        window.open(u, '_blank', 'noopener');
+      });
+      document.getElementById('btnClearChart').addEventListener('click', ()=>{
+        localStorage.removeItem(KEY_CHART); chartUrl.value=''; chartFrame.removeAttribute('src');
+        showToast('Chart URL cleared');
+      });
+
+      /* ---------- Demo Poll ---------- */
+      const KEY_DEMO_DATA = 'ahs28_demo_data_v2';
+      const KEY_DEMO_Q    = 'ahs28_demo_q_v2';
+      const KEY_VOTES     = 'ahs28_demo_votes_left_v2';
+      const MAX_VOTES     = 10;
+
+      const qInput   = document.getElementById('demoQuestion');
+      const btnSetQ  = document.getElementById('btnSetQ');
+      const btnAdd   = document.getElementById('btnAddChoice');
+      const btnReset = document.getElementById('btnResetVotes');
+      const btnResetAll = document.getElementById('btnResetAll');
+      const votesLeftNote = document.getElementById('votesLeftNote');
+      const choicesWrap = document.getElementById('choicesWrap');
+      const resultsWrap = document.getElementById('resultsWrap');
+
+      function readObj(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }catch{ return fallback; } }
+      function writeObj(key, v){ localStorage.setItem(key, JSON.stringify(v)); }
+
+      function votesLeft(){ const v = parseInt(localStorage.getItem(KEY_VOTES),10); return Number.isFinite(v)?v:MAX_VOTES; }
+      function setVotesLeft(v){ localStorage.setItem(KEY_VOTES, String(v)); }
+
+      function renderChoices(){
+        const data = readObj(KEY_DEMO_DATA, {});
+        choicesWrap.innerHTML='';
         Object.keys(data).forEach(name=>{
-          const count = data[name] || 0;
-          const pct = total ? Math.round((count/total)*100) : 0;
-          const row = document.createElement("div");
-          row.className = "card-item";
-          row.innerHTML = `
-            <div class="row">
-              <div class="title">${name}</div>
-              <span class="status ${count ? 'success' : ''}">${count} vote${count!==1?'s':''} • ${pct}%</span>
-            </div>
-            <div class="progress" style="height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;position:relative;">
-              <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#52a8ff,#7ab8ff);position:relative;">
-                <span style="position:absolute;right:-12px;top:-10px;">🚀</span>
-              </div>
-            </div>`;
-          resultsEl.appendChild(row);
+          const b = document.createElement('button');
+          b.className = 'btn';
+          b.textContent = name;
+          b.addEventListener('click', ()=>{
+            let left = votesLeft();
+            if(left<=0){ showToast('You’ve used all your votes!','warn'); return; }
+            data[name] = (data[name]||0)+1;
+            writeObj(KEY_DEMO_DATA, data);
+            setVotesLeft(--left);
+            renderResults();
+          });
+          choicesWrap.appendChild(b);
         });
-
-        const info = document.createElement("div");
-        info.className = "small";
-        info.style.marginTop = "6px";
-        info.style.color = "var(--muted)";
-        info.textContent = `You have ${votesLeft} vote${votesLeft !== 1 ? "s" : ""} left.`;
-        resultsEl.appendChild(info);
-      }
-
-      buttons.forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          let votesLeft = readVotesLeft();
-          if (votesLeft <= 0) {
-            showToast("You’ve used all your votes!", "warn");
-            return;
-          }
-          const data = read();
-          const k = btn.dataset.opt;
-          data[k] = (data[k]||0) + 1;
-          write(data);
-          writeVotesLeft(--votesLeft);
-          render();
-        });
-      });
-
-      resetBtn.addEventListener("click", ()=>{
-        if (confirm("Reset your local demo votes?")) {
-          const init = {};
-          buttons.forEach(b => init[b.dataset.opt] = 0);
-          write(init);
-          writeVotesLeft(MAX_VOTES);
-          render();
-          showToast("Demo votes reset");
+        if (!Object.keys(data).length){
+          const none = document.createElement('div');
+          none.className = 'help';
+          none.textContent = 'Add choices to start voting.';
+          choicesWrap.appendChild(none);
         }
+      }
+
+      function renderResults(){
+        const data = readObj(KEY_DEMO_DATA, {});
+        const total = Object.values(data).reduce((a,b)=>a+b,0);
+        resultsWrap.innerHTML='';
+        Object.keys(data).forEach(name=>{
+          const count = data[name]||0;
+          const pct = total? Math.round(count*100/total):0;
+          const card = document.createElement('div');
+          card.className = 'card-item';
+          card.innerHTML = `
+            <div class="stat-row">
+              <div class="title">${name}</div>
+              <div class="pct">${count} vote${count!==1?'s':''} • ${pct}%</div>
+            </div>
+            <div class="progress-rail">
+              <div class="progress-fill" style="width:${pct}%">
+                <span class="ship">🚀</span>
+              </div>
+            </div>
+          `;
+          resultsWrap.appendChild(card);
+        });
+        votesLeftNote.textContent = `You have ${votesLeft()} vote${votesLeft()!==1?'s':''} left.`;
+      }
+
+      function addChoice(name){
+        name = (name||'').trim();
+        if(!name) return;
+        const data = readObj(KEY_DEMO_DATA, {});
+        if (data[name] != null) { showToast('That choice already exists','warn'); return; }
+        data[name] = 0; writeObj(KEY_DEMO_DATA, data);
+        renderChoices(); renderResults(); showToast('Choice added','success');
+      }
+
+      btnAdd.addEventListener('click', ()=>{
+        const name = prompt('New choice name:');
+        addChoice(name);
       });
 
-      // initialize storage if empty
-      const init = {};
-      buttons.forEach(b=> init[b.dataset.opt]= 0);
-      write(Object.assign(init, read()));
-      if (localStorage.getItem(KEY_VOTES_LEFT) === null) {
-        writeVotesLeft(MAX_VOTES);
+      btnReset.addEventListener('click', ()=>{
+        if(!confirm('Reset your local demo votes?')) return;
+        setVotesLeft(MAX_VOTES);
+        renderResults(); showToast('Demo votes reset');
+      });
+
+      btnResetAll.addEventListener('click', ()=>{
+        if(!confirm('Reset ALL demo data (question, choices, votes)?')) return;
+        writeObj(KEY_DEMO_DATA, {});
+        writeObj(KEY_DEMO_Q, 'Which merch should we drop first?');
+        setVotesLeft(MAX_VOTES);
+        initDemo(); showToast('Demo cleared','success');
+      });
+
+      btnSetQ.addEventListener('click', ()=>{
+        const v = qInput.value.trim();
+        if(!v) return showToast('Type a question first','warn');
+        writeObj(KEY_DEMO_Q, v); showToast('Question saved','success');
+      });
+
+      function initDemo(){
+        const q = readObj(KEY_DEMO_Q, 'Which merch should we drop first?');
+        qInput.value = q;
+        if (localStorage.getItem(KEY_VOTES) === null) setVotesLeft(MAX_VOTES);
+        const data = readObj(KEY_DEMO_DATA, {});
+        if (!Object.keys(data).length){
+          writeObj(KEY_DEMO_DATA, { 'Hoodie':0, 'Script Tee':0, 'Basketball Jersey':0, 'Striped Polo':0 });
+        }
+        renderChoices(); renderResults();
       }
-      render();
+      initDemo();
     })();
   </script>
 
-  <!-- Starfield script (parallax + twinkle; theme-aware; respects reduced motion) -->
+  <!-- ===== Starfield (identical gradient/colors to other pages) ===== -->
   <script>
     (function(){
-      const canvas = document.getElementById('starfield');
-      const ctx = canvas.getContext('2d', { alpha:true });
-      const prefersReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let w=0,h=0, stars=[], raf=0, last=performance.now();
-
-      const LAYERS = [
-        { n:70,  spd:0.03, size:[0.6,1.2], a:[0.10,0.20] }, // far
-        { n:40,  spd:0.06, size:[0.8,1.6], a:[0.12,0.26] }, // mid
-        { n:18,  spd:0.10, size:[1.2,2.4], a:[0.16,0.32] }  // near
-      ];
-      const rand = (min,max)=> min + Math.random()*(max-min);
-
-      function theme(){
-        const light = document.documentElement.getAttribute('data-theme') === 'light';
-        return {
-          bgTop: light ? '#eaf2ff' : '#05070d',
-          bgMid: light ? '#f7fbff' : '#0a0f1b',
-          bgBot: light ? '#ffffff' : '#05070d',
-          star:  light ? '#6a86b8' : '#e8f1ff'
-        };
-      }
-
+      const cvs = document.getElementById('starfield');
+      const ctx = cvs.getContext('2d', { alpha:false }); // solid gradient like others
+      let stars=[];
       function resize(){
-        const dpr = devicePixelRatio || 1;
-        canvas.width  = Math.floor(innerWidth * dpr);
-        canvas.height = Math.floor(innerHeight * dpr);
-        canvas.style.width = '100%'; canvas.style.height = '100%';
-        ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
-        w = innerWidth; h = innerHeight;
-
-        stars = [];
-        LAYERS.forEach((L,li)=>{
-          for(let i=0;i<L.n;i++){
-            stars.push({
-              x: Math.random()*w, y: Math.random()*h,
-              r: rand(L.size[0], L.size[1]),
-              a: rand(L.a[0], L.a[1]),
-              tw: rand(0, Math.PI*2),
-              spd: L.spd, layer: li
-            });
-          }
-        });
-        paint(true);
+        cvs.width = innerWidth; cvs.height = innerHeight;
+        stars = Array.from({length:220},()=>({
+          x:Math.random()*cvs.width, y:Math.random()*cvs.height,
+          r:Math.random()*1.6, v:Math.random()*0.3+0.05
+        }));
       }
-
-      function paint(staticOnly=false){
-        const c = theme();
-        const g = ctx.createLinearGradient(0,0,0,h);
-        g.addColorStop(0,c.bgTop); g.addColorStop(.5,c.bgMid); g.addColorStop(1,c.bgBot);
-        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
-
+      addEventListener('resize', resize); resize();
+      (function tick(){
+        const light = document.documentElement.getAttribute('data-theme')==='light';
+        const g = ctx.createLinearGradient(0,0,0,cvs.height);
+        if(light){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
+        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
+        ctx.fillStyle=g; ctx.fillRect(0,0,cvs.width,cvs.height);
+        ctx.fillStyle = light? 'rgba(60,90,140,.85)' : 'rgba(180,200,255,.85)';
         for(const s of stars){
-          s.tw += .8 * (staticOnly?0:1/60);
-          const tw = 0.5 + 0.5 * Math.sin(s.tw + s.layer);
-          const alpha = Math.max(.08, Math.min(1, s.a * (0.85 + 0.25 * tw)));
-          ctx.globalAlpha = alpha;
-          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-          ctx.fillStyle = c.star; ctx.fill();
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+          s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; }
         }
-        ctx.globalAlpha = 1;
-      }
-
-      function tick(ts){
-        const dt = Math.min(.05, (ts - last)/1000); last = ts;
-        for(const s of stars){
-          s.x += s.spd * 24 * dt;
-          s.y += s.spd * 6  * dt;
-          if (s.x > w+2) s.x = -2;
-          if (s.y > h+2) s.y = -2;
-        }
-        paint();
-        raf = requestAnimationFrame(tick);
-      }
-
-      resize();
-      addEventListener('resize', resize);
-      const mo = new MutationObserver(resize);
-      mo.observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
-
-      if (!prefersReduce){
-        raf = requestAnimationFrame(tick);
-        document.addEventListener('visibilitychange', ()=> {
-          if (document.hidden) cancelAnimationFrame(raf);
-          else { last = performance.now(); raf = requestAnimationFrame(tick); }
-        });
-      } else {
-        paint(true);
-      }
+        requestAnimationFrame(tick);
+      })();
     })();
   </script>
 
-  <!-- Site JS (menu, clock, etc.) -->
+  <!-- Site JS (if needed) -->
   <script src="script.js" defer></script>
 </body>
 </html>
