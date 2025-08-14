@@ -5,35 +5,22 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=24" />
 
   <style>
     /* Page base */
     body { color: var(--text); background: transparent; overflow-x: hidden; }
+    #starfield{ position: fixed; inset: 0; z-index:-1; }
 
-    /* ---------- STARFIELD (fixed behind everything) ---------- */
-    #starfield { position: fixed; inset: 0; z-index: -1; display:block; }
-
-    /* Subtle parallax spark layer (no layout thrash) */
-    .spark-layer {
-      position: fixed; inset:0; pointer-events:none; z-index:-1;
-      background: radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.18), transparent 60%),
-                  radial-gradient(1.5px 1.5px at 70% 60%, rgba(82,168,255,.22), transparent 60%),
-                  radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,.16), transparent 60%);
-      mix-blend-mode: screen; opacity:.25;
-    }
-
-    /* ================== LAYOUT ================== */
+    /* ================== LAYOUT (fills page) ================== */
     main{
       display: grid;
       grid-template-columns: clamp(260px, 22vw, 340px) minmax(0, 1fr); /* sidebar | calendar */
       gap: 24px;
       width: min(96vw, 1800px);
+      max-width: none;
       margin-inline: auto;
       padding: 24px clamp(12px, 2vw, 28px);
-    }
-    @media (max-width: 900px){
-      main{ grid-template-columns: 1fr; gap: 16px; padding: 16px; width: 100%; }
     }
 
     /* ---------------- Sidebar ---------------- */
@@ -45,12 +32,13 @@
       border-radius: 18px;
       background: rgba(255,255,255,0.05);
       box-shadow: var(--shadow-1);
+      width: auto; max-width: 360px;
     }
     :root[data-theme="light"] .sidebar{
       background: var(--panel);
       border: 1px solid var(--border);
     }
-    .sidebar h2{ font-size: 1.3rem; margin-bottom: 10px; }
+    .sidebar h2{ font-size: 1.5rem; margin-bottom: 12px; }
     .countdown-item{
       background: rgba(255,255,255,0.08);
       border-radius: 12px;
@@ -75,44 +63,19 @@
       display: grid;
       grid-template-columns: 44px 1fr 44px;
       align-items: center;
-      margin-bottom: 14px;
-      gap: 8px;
+      margin-bottom: 18px;
     }
     .calendar-title{
       text-align: center;
-      font-weight: 800;
-      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+      font-weight: 700;
+      font-size: 1.4rem;
       letter-spacing: .3px;
     }
     .nav-btn{
       height: 44px; width: 44px;
       border: 0; border-radius: 12px;
-      background: linear-gradient(135deg, var(--blue), var(--blue-2)); color: #fff;
-      cursor: pointer; font-size: 1.2rem; font-weight: 800;
-      box-shadow: 0 10px 30px rgba(13,110,253,.35);
-    }
-    .toolbar{
-      display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-      margin: 8px 0 16px;
-    }
-    .filters{ display:flex; gap:8px; flex-wrap:wrap; }
-    .chip{
-      padding:6px 10px; border-radius:999px; border:1px solid var(--border);
-      background:var(--panel); color:var(--muted); font-weight:700; cursor:pointer;
-      transition:transform var(--t-base), background var(--t-base);
-      user-select:none;
-    }
-    .chip[aria-pressed="true"]{ background:linear-gradient(135deg,#0d6efd,#2b8cff); color:#fff; border-color:transparent; }
-    .search{
-      display:flex; gap:8px; align-items:center; min-width: 210px; flex:1; justify-content:flex-end;
-    }
-    .search input{
-      width: clamp(210px, 30vw, 360px);
-      padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:var(--panel); color:var(--text);
-    }
-    .today-btn{
-      height: 36px; padding: 0 12px; border-radius:10px; border:1px solid var(--border);
-      background: var(--panel); color: var(--text); font-weight:800; cursor:pointer;
+      background: #0d6efd; color: #fff;
+      cursor: pointer; font-size: 1.2rem;
     }
 
     /* ---------------- Month grid ---------------- */
@@ -122,56 +85,52 @@
       gap: 14px;
     }
     .day-name{
-      text-align:center; font-weight:700; opacity:.9; padding: 6px 0;
+      text-align:center; font-weight:600; opacity:.9; padding: 6px 0;
     }
     .day{
-      position: relative;
       background: rgba(255,255,255,0.08);
       border-radius: 16px;
       min-height: clamp(110px, 12vw, 180px);
       padding: 12px;
       display:flex; flex-direction:column;
       transition: transform .15s ease, background .15s ease;
-      cursor: default;
     }
     :root[data-theme="light"] .day{ background: rgba(0,0,0,.04); }
-    .day:hover{ transform: translateY(-2px); }
+    .day:hover{ transform: scale(1.02); }
     .day.today{ background:#0d6efd; color:#fff; font-weight:700; }
-    .day .date-num{ font-weight: 800; opacity:.95; }
+    .day.event{ background: rgba(82,168,255,.14); border:1px solid rgba(82,168,255,.35); }
+    .day.break{ background: rgba(255,165,0,.18); border:1px solid orange; }
+    .day.half { background: rgba(13,110,253,.18); border:1px solid var(--blue-2); }
+    .day.lunch{ outline: 1px dashed rgba(255,255,255,.25); }
+    .day.no-school { background: rgba(255, 80, 80, .18); border:1px solid rgba(255,80,80,.6); }
+    .day.holiday   { background: rgba(60, 220, 120, .18); border:1px solid rgba(60,220,120,.6); }
+    /* NEW: sport */
+    .day.sport  { background: rgba(82,168,255,.16); border: 1px solid rgba(82,168,255,.40); }
 
-    /* Highlight classes (match your theme) */
-    .day.event{ background: rgba(82,168,255,.12); border:1px solid rgba(82,168,255,.35); }
-    .day.break{ background: rgba(255,165,0,.16); border:1px solid rgba(255,165,0,.55); }
-    .day.half { background: rgba(13,110,253,.16); border:1px solid var(--blue-2); }
-    .day.no-school { background: rgba(255, 80, 80, .16); border:1px solid rgba(255,80,80,.6); }
-    .day.holiday   { background: rgba(60, 220, 120, .16); border:1px solid rgba(60,220,120,.6); }
-
-    /* stacked labels */
-    .event-list { margin-top:auto; display:grid; gap:6px; }
+    .event-list { margin-top:auto; display:grid; gap:4px; }
     .event-chip {
-      font-size:.78rem;
-      padding:4px 6px; border-radius:8px; width:fit-content;
-      background: rgba(255,255,255,.10);
-      line-height:1.1;
+      font-size:.75rem; opacity:.95;
+      padding:3px 6px; border-radius:8px; width:fit-content;
+      background: rgba(255,255,255,.09);
     }
     .day.today .event-chip { background: rgba(0,0,0,.18); }
+    /* NEW: chip accents */
+    .event-chip.sport { background: rgba(82,168,255,.22); }
+    .event-chip.lunch { background: rgba(255,255,255,.10); }
 
     .empty{ background: transparent !important; border:0; }
 
-    /* Legend */
-    .legend{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:.85rem; color:var(--muted); }
-    .lg{ display:inline-flex; align-items:center; gap:6px; padding:3px 8px; border-radius: 999px; border:1px solid var(--border); }
-    .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
-    .d-event{ background:rgba(82,168,255,.9); }
-    .d-break{ background:orange; }
-    .d-half{ background:var(--blue-2); }
-    .d-ns{ background:#ff5050; }
-    .d-hol{ background:#31d07a; }
+    /* ---------------- Mobile stack ---------------- */
+    @media (max-width: 900px){
+      main{ grid-template-columns: 1fr; gap: 16px; padding: 16px; width: 100%; }
+      .sidebar{ position: static; height:auto; max-width:none; }
+      .calendar-grid{ grid-template-columns: repeat(7, minmax(0,1fr)); gap: 8px; }
+      .day{ min-height: clamp(80px, 12vw, 120px); padding: 8px; }
+    }
   </style>
 </head>
 <body>
   <canvas id="starfield"></canvas>
-  <div class="spark-layer" aria-hidden="true"></div>
 
   <!-- ================= Header / Nav ================= -->
   <header class="header" role="banner">
@@ -215,9 +174,9 @@
 
   <!-- ================= Main ================= -->
   <main>
-    <aside class="sidebar">
-      <h2>Upcoming</h2>
-      <div id="upcomingList" class="card-list"></div>
+    <aside class="sidebar" id="holidayCountdowns">
+      <h2>Upcoming Holidays</h2>
+      <!-- items injected by JS -->
     </aside>
 
     <section class="calendar-wrap">
@@ -225,28 +184,6 @@
         <button id="prevMonth" class="nav-btn" type="button" aria-label="Previous month">‹</button>
         <h2 id="calendarMonth" class="calendar-title" aria-live="polite">Loading…</h2>
         <button id="nextMonth" class="nav-btn" type="button" aria-label="Next month">›</button>
-      </div>
-
-      <div class="toolbar">
-        <div class="filters" role="group" aria-label="Filter event types">
-          <button class="chip" data-filter="event" aria-pressed="true">Events</button>
-          <button class="chip" data-filter="break" aria-pressed="true">Breaks</button>
-          <button class="chip" data-filter="half"  aria-pressed="true">Half Days</button>
-          <button class="chip" data-filter="no-school" aria-pressed="true">No School</button>
-          <button class="chip" data-filter="holiday" aria-pressed="true">Holidays</button>
-        </div>
-        <div class="search">
-          <input id="searchBox" type="search" placeholder="Search events…" aria-label="Search events" />
-          <button id="todayBtn" class="today-btn" type="button">Today</button>
-        </div>
-      </div>
-
-      <div class="legend" style="margin-bottom:8px;">
-        <span class="lg"><span class="dot d-event"></span> Event</span>
-        <span class="lg"><span class="dot d-break"></span> Break</span>
-        <span class="lg"><span class="dot d-half"></span> Half Day</span>
-        <span class="lg"><span class="dot d-ns"></span> No School</span>
-        <span class="lg"><span class="dot d-hol"></span> Holiday</span>
       </div>
 
       <div class="calendar-grid" id="calendarGrid">
@@ -257,22 +194,25 @@
     </section>
   </main>
 
-  <!-- Event Modal -->
-  <div id="eventModal" class="modal" role="dialog" aria-modal="true" aria-label="Event">
-    <div class="modal-content" style="max-width:min(96vw,720px);">
-      <div class="modal-head">
-        <div id="emTitle" class="video-title">Event</div>
-        <button id="emClose" class="x-btn" aria-label="Close">✕</button>
-      </div>
-      <div class="modal-body" style="padding:14px;">
-        <div id="emDate" class="small" style="color:var(--muted)"></div>
-        <div id="emBody" style="margin-top:10px;"></div>
-      </div>
-    </div>
-  </div>
-
   <script>
-    /* ========= STARFIELD (theme-aware, cheap) ========= */
+    /* Mobile menu */
+    (function(){
+      const btn = document.getElementById('menuBtn');
+      const menu = document.getElementById('mobileMenu');
+      if (!btn || !menu) return;
+      btn.addEventListener('click', e=>{
+        e.stopPropagation();
+        const hidden = menu.classList.toggle('hidden');
+        btn.setAttribute('aria-expanded', String(!hidden));
+      });
+      document.addEventListener('click', e=>{
+        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && e.target !== btn){
+          btn.setAttribute('aria-expanded','false'); menu.classList.add('hidden');
+        }
+      });
+    })();
+
+    /* Starfield (theme-aware) */
     (function(){
       const cvs = document.getElementById('starfield');
       const ctx = cvs.getContext('2d', { alpha: false });
@@ -281,7 +221,7 @@
         cvs.width = innerWidth; cvs.height = innerHeight;
         stars = Array.from({length: 220}, ()=>({
           x: Math.random()*cvs.width, y: Math.random()*cvs.height,
-          r: Math.random()*1.6 + 0.2, v: Math.random()*0.28 + 0.05, a: Math.random()*0.6+0.35
+          r: Math.random()*1.6, v: Math.random()*0.3+0.05
         }));
       }
       addEventListener('resize', resize); resize();
@@ -289,34 +229,42 @@
         const isLight = document.documentElement.getAttribute('data-theme')==='light';
         const g = ctx.createLinearGradient(0,0,0,cvs.height);
         if(isLight){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
-        else{ g.addColorStop(0,'#060914'); g.addColorStop(1,'#000209'); }
+        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
         ctx.fillStyle = g; ctx.fillRect(0,0,cvs.width,cvs.height);
-
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        for(const s of stars){
-          ctx.beginPath();
-          ctx.fillStyle = isLight ? `rgba(60,90,140,${s.a})` : `rgba(180,200,255,${s.a})`;
-          ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
-          s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; }
-        }
-        ctx.restore();
+        ctx.fillStyle = isLight ? 'rgba(60,90,140,.85)' : 'rgba(180,200,255,.85)';
+        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; } }
         requestAnimationFrame(tick);
       })();
     })();
 
-    /* ========= DATA LOADING ========= */
-    // Uses your real path:
-    const EVENTS_URL = 'data/calendar-events.json?v=' + Date.now().toString().slice(0,10);
+    /* ====== EVENTS: robust loader (array OR object JSON) ====== */
+    // IMPORTANT: points to your confirmed filename
+    const EVENTS_URL = 'data/calendar-events.json';
 
-    // normalized events: [{ date:'YYYY-MM-DD', type:'event|break|half|no-school|holiday', label:'...' }]
+    // eventsByDate: { "YYYY-MM-DD": [ {type,label}, ... ] }
+    let eventsByDate = {};
+
+    function groupEvents(list){
+      const by = {};
+      for (const e of list){
+        if (!e || !e.date) continue;
+        if (!by[e.date]) by[e.date] = [];
+        by[e.date].push({ type: (e.type || 'event'), label: (e.label || '') });
+      }
+      return by;
+    }
+
+    // Accept array OR object-shaped JSON
     function normalizeEvents(input){
       if (Array.isArray(input)) return input;
+
       const out = [];
       if (input && typeof input === 'object'){
         for (const [date, value] of Object.entries(input)){
           if (Array.isArray(value)){
-            for (const v of value){ if (v && typeof v === 'object') out.push({ date, ...v }); }
+            for (const v of value){
+              if (v && typeof v === 'object') out.push({ date, ...v });
+            }
           } else if (value && typeof value === 'object'){
             out.push({ date, ...value });
           } else if (value != null){
@@ -326,211 +274,157 @@
       }
       return out;
     }
-    function groupByDate(list){
-      const by={};
-      for(const e of list){
-        if(!e || !e.date) continue;
-        (by[e.date] ||= []).push({ type: e.type || 'event', label: e.label || '' });
-      }
-      return by;
-    }
 
-    /* ========= STATE ========= */
-    const filters = new Set(['event','break','half','no-school','holiday']);
-    let eventsByDate = {};
-    let allEvents = [];
-    let search = '';
-    let current = new Date();
+    /* ====== CALENDAR RENDER ====== */
+    (function(){
+      const grid = document.getElementById("calendarGrid");
+      const monthLabel = document.getElementById("calendarMonth");
+      const prevBtn = document.getElementById("prevMonth");
+      const nextBtn = document.getElementById("nextMonth");
+      let current = new Date();
 
-    /* ========= UI REFS ========= */
-    const grid = document.getElementById("calendarGrid");
-    const monthLabel = document.getElementById("calendarMonth");
-    const prevBtn = document.getElementById("prevMonth");
-    const nextBtn = document.getElementById("nextMonth");
-    const todayBtn = document.getElementById("todayBtn");
-    const chips = Array.from(document.querySelectorAll('.chip[data-filter]'));
-    const searchBox = document.getElementById('searchBox');
-    const upcomingList = document.getElementById('upcomingList');
+      function render(date){
+        const y = date.getFullYear(), m = date.getMonth();
+        monthLabel.textContent = date.toLocaleString("default", { month:"long", year:"numeric" });
 
-    /* ========= RENDER ========= */
-    function renderMonth(date){
-      const y = date.getFullYear(), m = date.getMonth();
-      monthLabel.textContent = date.toLocaleString("default", { month:"long", year:"numeric" });
+        // clear old cells
+        grid.querySelectorAll(".day:not(.day-name)").forEach(el => el.remove());
 
-      // clear old cells
-      grid.querySelectorAll(".day:not(.day-name)").forEach(el => el.remove());
+        const first = new Date(y,m,1), last = new Date(y,m+1,0);
+        const start = first.getDay(), total = last.getDate();
 
-      const first = new Date(y,m,1), last = new Date(y,m+1,0);
-      const start = first.getDay(), total = last.getDate();
+        for(let i=0;i<start;i++){
+          const e = document.createElement("div"); e.className="day empty"; grid.appendChild(e);
+        }
 
-      for(let i=0;i<start;i++){
-        const e = document.createElement("div"); e.className="day empty"; grid.appendChild(e);
-      }
+        const today = new Date(); today.setHours(0,0,0,0);
 
-      const today = new Date(); today.setHours(0,0,0,0);
-      for(let d=1; d<=total; d++){
-        const cell = document.createElement("div");
-        cell.className = "day";
-        const num = document.createElement('div');
-        num.className = 'date-num';
-        num.textContent = d;
-        cell.appendChild(num);
+        for(let d=1; d<=total; d++){
+          const cell = document.createElement("div");
+          cell.className = "day";
+          cell.textContent = d;
 
-        const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const items = (eventsByDate[key] || []).filter(it => filters.has(it.type))
-          .filter(it => !search || (it.label||'').toLowerCase().includes(search));
+          const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+          const items = eventsByDate[key] || [];
+          if (items.length){
+            // choose a primary style for the day
+            const priority = { "no-school": 5, holiday:4, sport:3, event:3, break:2, half:1, lunch:0 };
+            const primary = items.slice().sort((a,b)=>(priority[b.type]||0)-(priority[a.type]||0))[0];
+            if (primary?.type) cell.classList.add(primary.type);
 
-        if (items.length){
-          // primary style by type priority
-          const priority = { "no-school": 5, holiday:4, event:3, break:2, half:1 };
-          const primary = items.slice().sort((a,b)=>(priority[b.type]||0)-(priority[a.type]||0))[0];
-          if (primary?.type) cell.classList.add(primary.type);
-
-          const list = document.createElement('div');
-          list.className = 'event-list';
-          items.slice(0, 4).forEach(it => {
-            const chip = document.createElement('div');
-            chip.className = 'event-chip';
-            chip.textContent = it.label || '';
-            list.appendChild(chip);
-          });
-          if(items.length > 4){
-            const more = document.createElement('div');
-            more.className = 'event-chip';
-            more.textContent = `+${items.length-4} more`;
-            list.appendChild(more);
+            // stack labels
+            const list = document.createElement('div');
+            list.className = 'event-list';
+            items.forEach(it => {
+              const chip = document.createElement('div');
+              chip.className = 'event-chip ' + (it.type || 'event');  /* type-based chip styling */
+              chip.textContent = it.label || '';
+              list.appendChild(chip);
+            });
+            cell.appendChild(list);
           }
-          cell.appendChild(list);
 
-          // click to open modal with the full list
-          cell.style.cursor = 'pointer';
-          cell.addEventListener('click', ()=> openModal(key, items));
+          const thisDay = new Date(y,m,d); thisDay.setHours(0,0,0,0);
+          if (+thisDay === +today) cell.classList.add("today");
+
+          grid.appendChild(cell);
         }
-
-        const thisDay = new Date(y,m,d); thisDay.setHours(0,0,0,0);
-        if (+thisDay === +today) cell.classList.add("today");
-
-        grid.appendChild(cell);
-      }
-    }
-
-    /* ========= UPCOMING ========= */
-    function renderUpcoming(){
-      upcomingList.innerHTML = '';
-      const today0 = new Date(); today0.setHours(0,0,0,0);
-      const rows = [];
-
-      for(const e of allEvents){
-        if(!filters.has(e.type)) continue;
-        if(search && !(e.label||'').toLowerCase().includes(search)) continue;
-        const dt = new Date(e.date);
-        if(dt >= today0) rows.push({ dt, ...e });
       }
 
-      rows.sort((a,b) => a.dt - b.dt);
+      prevBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()-1); render(current); });
+      nextBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()+1); render(current); });
 
-      if(!rows.length){
-        const none = document.createElement('div');
-        none.className = 'small';
-        none.style.color = 'var(--muted)';
-        none.textContent = 'No upcoming items match your filters.';
-        upcomingList.appendChild(none);
-        return;
-      }
-
-      rows.slice(0, 12).forEach(row=>{
-        const wrap = document.createElement('div');
-        wrap.className = 'countdown-item';
-        const diffMs = row.dt - new Date();
-        const days  = Math.max(0, Math.floor(diffMs / (1000*60*60*24)));
-        const hours = Math.max(0, Math.floor((diffMs % (1000*60*60*24)) / (1000*60*60)));
-        wrap.innerHTML = `
-          <div style="font-weight:800">${row.label}</div>
-          <div class="small" style="opacity:.85">${row.dt.toLocaleDateString()}</div>
-          <div class="small" style="margin-top:4px;color:var(--muted)">${days}d ${hours}h</div>
-        `;
-        upcomingList.appendChild(wrap);
-      });
-    }
-
-    /* ========= MODAL ========= */
-    const modal = document.getElementById('eventModal');
-    const emTitle = document.getElementById('emTitle');
-    const emDate  = document.getElementById('emDate');
-    const emBody  = document.getElementById('emBody');
-    const emClose = document.getElementById('emClose');
-
-    function openModal(iso, items){
-      const dt = new Date(iso);
-      emTitle.textContent = dt.toLocaleDateString(undefined, { weekday:'long', month:'long', day:'numeric', year:'numeric' });
-      emDate.textContent = iso;
-      emBody.innerHTML = items.map(it => `
-        <div class="card-item"><div class="row">
-          <div class="title">${escapeHtml(it.label||'')}</div>
-          <span class="badge">${escapeHtml(it.type)}</span>
-        </div></div>`).join('');
-      modal.classList.add('open');
-    }
-    function closeModal(){ modal.classList.remove('open'); }
-    emClose.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
-
-    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;' }[c])); }
-
-    /* ========= FILTERS / SEARCH / NAV ========= */
-    chips.forEach(ch => {
-      ch.addEventListener('click', ()=>{
-        const type = ch.dataset.filter;
-        const on = ch.getAttribute('aria-pressed') === 'true';
-        ch.setAttribute('aria-pressed', String(!on));
-        if(on) filters.delete(type); else filters.add(type);
-        renderMonth(current); renderUpcoming();
-        localStorage.setItem('cal_filters', JSON.stringify([...filters]));
-      });
-    });
-
-    searchBox.addEventListener('input', ()=>{
-      search = searchBox.value.trim().toLowerCase();
-      renderMonth(current); renderUpcoming();
-    });
-
-    prevBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()-1); renderMonth(current); });
-    nextBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()+1); renderMonth(current); });
-    todayBtn.addEventListener("click", ()=>{ current = new Date(); renderMonth(current); });
-
-    /* ========= LOAD + BOOT ========= */
-    // restore filters
-    (function restoreFilters(){
-      try{
-        const saved = JSON.parse(localStorage.getItem('cal_filters') || '[]');
-        if(Array.isArray(saved) && saved.length){
-          filters.clear(); saved.forEach(t=>filters.add(t));
-          chips.forEach(ch => ch.setAttribute('aria-pressed', String(filters.has(ch.dataset.filter))));
-        }
-      }catch{}
+      // Load JSON, then draw
+      fetch(EVENTS_URL, { cache:'no-store' })
+        .then(r => {
+          if (!r.ok) throw new Error(`Fetch failed: ${r.status} ${r.statusText}`);
+          return r.json();
+        })
+        .then(raw => {
+          const list = normalizeEvents(raw);
+          eventsByDate = groupEvents(list);
+          console.log('[Calendar] Loaded', list.length, 'events');
+        })
+        .catch(err => {
+          console.error('[Calendar] Event load error:', err);
+          eventsByDate = {};
+        })
+        .finally(()=>{ render(current); });
     })();
 
-    fetch(EVENTS_URL, { cache:'no-store' })
-      .then(r => { if(!r.ok) throw new Error(`Fetch failed: ${r.status}`); return r.json(); })
-      .then(raw => {
-        allEvents = normalizeEvents(raw).map(e => ({
-          date: e.date,
-          type: (e.type || 'event'),
-          label: (e.label || '')
-        }));
-        eventsByDate = groupByDate(allEvents);
-      })
-      .catch(err => {
-        console.error('[Calendar] load error:', err);
-        allEvents = [];
-        eventsByDate = {};
-      })
-      .finally(()=>{ renderMonth(current); renderUpcoming(); });
+    /* ====== SIDEBAR COUNTDOWNS (holidays only) ====== */
+    (function () {
+      const wrap = document.getElementById("holidayCountdowns");
+      const HOLIDAY_TYPES = new Set(["break", "holiday", "half", "no-school"]); // hide sport/lunch/etc
+
+      function startOfToday() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+      function fmtDiff(ms) {
+        const days  = Math.floor(ms / (1000*60*60*24));
+        const hours = Math.floor((ms % (1000*60*60*24)) / (1000*60*60));
+        return `${days} days, ${hours} hours`;
+      }
+
+      function update() {
+        // wipe previous items (keep heading)
+        wrap.querySelectorAll(".countdown-item").forEach(n => n.remove());
+
+        const today0 = startOfToday();
+        const upcoming = [];
+
+        for (const [iso, list] of Object.entries(eventsByDate || {})) {
+          const arr = Array.isArray(list) ? list : [list];
+          for (const ev of arr) {
+            if (!ev || !ev.type) continue;
+            if (!HOLIDAY_TYPES.has(ev.type)) continue;
+            const dt = new Date(iso);
+            if (dt >= today0) upcoming.push({ date: dt, label: ev.label, type: ev.type, iso });
+          }
+        }
+
+        // group per-day
+        const byDay = new Map();
+        for (const e of upcoming) {
+          if (!byDay.has(e.iso)) byDay.set(e.iso, []);
+          byDay.get(e.iso).push(e);
+        }
+
+        const rows = [...byDay.entries()]
+          .map(([iso, items]) => ({ iso, date: items[0].date, items }))
+          .sort((a,b) => a.date - b.date)
+          .slice(0, 8);
+
+        if (!rows.length) {
+          const none = document.createElement("div");
+          none.className = "countdown-item";
+          none.textContent = "No upcoming holidays found.";
+          wrap.appendChild(none);
+          return;
+        }
+
+        for (const row of rows) {
+          const diff = row.date - new Date();
+          const item = document.createElement("div");
+          item.className = "countdown-item";
+          const labels = row.items.map(i => i.label).join(", ");
+          item.innerHTML = `
+            <div style="font-weight:700;">${labels}</div>
+            <div style="opacity:.8">${fmtDiff(diff)}</div>
+          `;
+          wrap.appendChild(item);
+        }
+      }
+
+      const ready = setInterval(() => {
+        if (eventsByDate && Object.keys(eventsByDate).length > 0) {
+          update();
+          clearInterval(ready);
+        }
+      }, 200);
+      setInterval(update, 60*1000);
+    })();
   </script>
 
-  <!-- your site scripts (menu toggle, clock, etc.) -->
-  <script src="script.js"></script>
+  <script src="script.js?v=24"></script>
 </body>
 </html>
 
