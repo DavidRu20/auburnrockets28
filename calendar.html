@@ -6,10 +6,17 @@
   <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css?v=24" />
+
   <style>
+    /* --- Global header hardening (prevents Community from wrapping) --- */
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
+    .mobile-menu{ z-index:1000; }
+    .hidden{ display:none !important; }
+
     /* Page base */
     body { color: var(--text); background: transparent; overflow-x: hidden; }
-    #starfield{ position: fixed; inset: 0; z-index:-1; }
+    #starfield{ position: fixed; inset: 0; z-index:-1; pointer-events:none; display:block; }
 
     /* ================== LAYOUT (fills page) ================== */
     main{
@@ -83,9 +90,7 @@
       display:flex; flex-wrap:wrap; gap:10px; align-items:center;
       margin: 8px 0 18px;
     }
-    .search{
-      flex:1; min-width: 220px;
-    }
+    .search{ flex:1; min-width: 220px; }
     .search input{
       width:100%; padding:10px 12px; border:1px solid var(--border);
       border-radius:12px; background:var(--panel); color:var(--text);
@@ -232,21 +237,38 @@
   </main>
 
   <script>
-    /* Mobile menu */
-    (function(){
-      const btn = document.getElementById('menuBtn');
-      const menu = document.getElementById('mobileMenu');
-      if (!btn || !menu) return;
-      btn.addEventListener('click', e=>{
-        e.stopPropagation();
-        const hidden = menu.classList.toggle('hidden');
-        btn.setAttribute('aria-expanded', String(!hidden));
-      });
-      document.addEventListener('click', e=>{
-        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && e.target !== btn){
-          btn.setAttribute('aria-expanded','false'); menu.classList.add('hidden');
-        }
-      });
+    /* ===== Universal mobile menu (idempotent & robust) ===== */
+    (function initMobileMenu(){
+      if (window.__ahsMenuBound) return; 
+      window.__ahsMenuBound = true;
+
+      function bind(){
+        const btn  = document.getElementById('menuBtn');
+        const menu = document.getElementById('mobileMenu');
+        if (!btn || !menu) return;
+
+        let open = false;
+        const set = (v)=>{
+          open = v;
+          menu.classList.toggle('hidden', !open);
+          btn.setAttribute('aria-expanded', String(open));
+        };
+
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); set(!open); }, {passive:true});
+        document.addEventListener('click', (e)=>{
+          if (!open) return;
+          if (!menu.contains(e.target) && e.target !== btn) set(false);
+        });
+        document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') set(false); });
+        menu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> set(false)));
+        window.addEventListener('hashchange', ()=> set(false));
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bind, {once:true});
+      } else {
+        bind();
+      }
     })();
 
     /* Starfield (theme-aware) */
@@ -269,7 +291,10 @@
         else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
         ctx.fillStyle = g; ctx.fillRect(0,0,cvs.width,cvs.height);
         ctx.fillStyle = isLight ? 'rgba(60,90,140,.85)' : 'rgba(180,200,255,.85)';
-        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; } }
+        for(const s of stars){
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+          s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; }
+        }
         requestAnimationFrame(tick);
       })();
     })();
@@ -346,7 +371,6 @@
       });
 
       clearBtn.addEventListener('click', ()=>{
-        // reset: all on except lunch
         ['event','sport','holiday','break','half','no-school','lunch'].forEach(t=>{
           const wantOn = (t !== 'lunch');
           const btn = chipsWrap.querySelector(`[data-type="${t}"]`);
@@ -386,12 +410,10 @@
           const items = itemsRaw.filter(matchesFilters);
 
           if (items.length){
-            // choose a primary style for the day
             const priority = { "no-school": 5, holiday:4, event:3, break:2, half:1, sport:3, lunch:0 };
             const primary = items.slice().sort((a,b)=>(priority[b.type]||0)-(priority[a.type]||0))[0];
             if (primary?.type) cell.classList.add(primary.type);
 
-            // stack labels
             const list = document.createElement('div');
             list.className = 'event-list';
             items.forEach(it => {
@@ -500,6 +522,7 @@
     })();
   </script>
 
-  <script src="script.js?v=24"></script>
+  <!-- Keep your site JS deferred -->
+  <script src="script.js?v=24" defer></script>
 </body>
 </html>
