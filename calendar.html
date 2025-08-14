@@ -5,13 +5,32 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Calendar</title>
   <meta name="theme-color" content="#0d6efd" />
-  <link rel="stylesheet" href="styles.css?v=24" />
+  <link rel="stylesheet" href="styles.css?v=29" />
 
   <style>
-    /* --- Global header hardening (prevents Community from wrapping) --- */
-    .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
-    .mobile-menu{ z-index:1000; }
+    /* === Global header hardening (prevents wrapping & sets breakpoints) === */
+    .header .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:nowrap; }
+    .header .brand{ flex:0 0 auto; }
+    .header .links{
+      display:flex; align-items:center; gap:16px;
+      flex:1 1 auto; min-width:0; white-space:nowrap; flex-wrap:nowrap;
+    }
+    .header{ overflow:hidden; }
+    .menu-btn{ display:none !important; }
+    @media (max-width: 980px){
+      .header .links{ display:none; }
+      .menu-btn{ display:inline-flex !important; }
+    }
+
+    /* Consistent mobile menu panel */
+    .mobile-menu{
+      position:fixed; inset:64px 10px auto 10px; z-index:9999;
+      background:var(--panel);
+      border:1px solid var(--border); border-radius:14px;
+      box-shadow:var(--shadow-2); padding:12px; backdrop-filter:blur(10px);
+    }
+    .mobile-menu a{ display:block; padding:12px 10px; border-radius:10px; color:var(--text); }
+    .mobile-menu a:hover{ background:rgba(255,255,255,.06); }
     .hidden{ display:none !important; }
 
     /* Page base */
@@ -28,6 +47,8 @@
       margin-inline: auto;
       padding: 24px clamp(12px, 2vw, 28px);
     }
+    /* allow columns to actually shrink/grow */
+    .sidebar, .calendar-wrap{ min-width:0; }
 
     /* ---------------- Sidebar ---------------- */
     .sidebar{
@@ -111,7 +132,7 @@
     /* ---------------- Month grid ---------------- */
     .calendar-grid{
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr)); /* stretch evenly */
+      grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 14px;
     }
     .day-name{
@@ -237,38 +258,36 @@
   </main>
 
   <script>
-    /* ===== Universal mobile menu (idempotent & robust) ===== */
-    (function initMobileMenu(){
-      if (window.__ahsMenuBound) return; 
-      window.__ahsMenuBound = true;
+    /* ===== Universal mobile menu (with scroll lock) ===== */
+    (function(){
+      const btn  = document.getElementById('menuBtn');
+      const menu = document.getElementById('mobileMenu');
+      if (!btn || !menu) return;
 
-      function bind(){
-        const btn  = document.getElementById('menuBtn');
-        const menu = document.getElementById('mobileMenu');
-        if (!btn || !menu) return;
+      const DESKTOP_W = 980;
+      let open = false;
 
-        let open = false;
-        const set = (v)=>{
-          open = v;
-          menu.classList.toggle('hidden', !open);
-          btn.setAttribute('aria-expanded', String(open));
-        };
-
-        btn.addEventListener('click', (e)=>{ e.stopPropagation(); set(!open); }, {passive:true});
-        document.addEventListener('click', (e)=>{
-          if (!open) return;
-          if (!menu.contains(e.target) && e.target !== btn) set(false);
-        });
-        document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') set(false); });
-        menu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> set(false)));
-        window.addEventListener('hashchange', ()=> set(false));
+      function openMenu(){
+        open = true;
+        menu.classList.remove('hidden');
+        btn.setAttribute('aria-expanded','true');
+        document.body.style.overflow = 'hidden';   // lock background scroll
+      }
+      function closeMenu(){
+        open = false;
+        menu.classList.add('hidden');
+        btn.setAttribute('aria-expanded','false');
+        document.body.style.overflow = '';         // unlock
       }
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', bind, {once:true});
-      } else {
-        bind();
-      }
+      btn.addEventListener('click', (e)=>{ e.stopPropagation(); open ? closeMenu() : openMenu(); });
+      document.addEventListener('click', (e)=>{
+        if (!open) return;
+        if (!menu.contains(e.target) && e.target !== btn) closeMenu();
+      });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeMenu(); });
+      menu.addEventListener('click', (e)=>{ if (e.target.closest('a')) closeMenu(); });
+      window.addEventListener('resize', ()=>{ if (innerWidth > DESKTOP_W) closeMenu(); });
     })();
 
     /* Starfield (theme-aware) */
@@ -522,7 +541,7 @@
     })();
   </script>
 
-  <!-- Keep your site JS deferred -->
-  <script src="script.js?v=24" defer></script>
+  <script src="script.js?v=29" defer></script>
 </body>
 </html>
+
