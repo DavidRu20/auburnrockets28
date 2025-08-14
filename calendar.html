@@ -8,18 +8,11 @@
   <link rel="stylesheet" href="styles.css?v=29" />
 
   <style>
-    /* === Global header hardening (prevents wrapping & sets breakpoints) === */
-    .header .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:nowrap; }
-    .header .brand{ flex:0 0 auto; }
-    .header .links{
-      display:flex; align-items:center; gap:16px;
-      flex:1 1 auto; min-width:0; white-space:nowrap; flex-wrap:nowrap;
-    }
-    .header{ overflow:hidden; }
-
-    /* show burger only on mobile */
+    /* --- Header hardening: consistent layout + reliable mobile menu (matches Announcements) --- */
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
     .menu-btn{ display:none; }
-    @media (max-width: 980px){
+    @media (max-width:980px){
       .header .links{ display:none; }
       .menu-btn{
         display:inline-flex; align-items:center; justify-content:center;
@@ -27,21 +20,20 @@
         background:var(--panel);
       }
     }
-
-    /* Consistent mobile menu panel */
     .mobile-menu{
       position:fixed; inset:64px 10px auto 10px; z-index:9999;
-      background:var(--panel);
-      border:1px solid var(--border); border-radius:14px;
-      box-shadow:var(--shadow-2); padding:12px; backdrop-filter:blur(10px);
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:14px; box-shadow:var(--shadow-2); padding:12px;
+      backdrop-filter:blur(10px);
     }
     .mobile-menu a{ display:block; padding:12px 10px; border-radius:10px; color:var(--text); }
     .mobile-menu a:hover{ background:rgba(255,255,255,.06); }
     .hidden{ display:none !important; }
     html.menu-open, body.menu-open { overflow:hidden; } /* scroll-lock while open */
 
-    /* Page base */
-    body { color: var(--text); background: transparent; overflow-x: hidden; }
+    /* Page base (match background + remove horizontal scroll) */
+    html, body { max-width:100%; overflow-x:hidden; }
+    body { color: var(--text); background: transparent; }
     #starfield{ position: fixed; inset: 0; z-index:-1; pointer-events:none; display:block; }
 
     /* ================== LAYOUT (fills page) ================== */
@@ -54,7 +46,6 @@
       margin-inline: auto;
       padding: 24px clamp(12px, 2vw, 28px);
     }
-    /* allow columns to actually shrink/grow */
     .sidebar, .calendar-wrap{ min-width:0; }
 
     /* ---------------- Sidebar ---------------- */
@@ -183,12 +174,12 @@
   </style>
 </head>
 <body>
-  <canvas id="starfield"></canvas>
+  <canvas id="starfield" aria-hidden="true"></canvas>
 
-  <!-- ================= Header / Nav ================= -->
+  <!-- ================= Header / Nav (same structure as other pages) ================= -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+      <a class="brand" href="./index.html" aria-label="AHS Class of 2028 — Home">
         <span class="logo" aria-hidden="true">A</span>
         AHS Class of ’28
       </a>
@@ -196,7 +187,7 @@
       <div class="links" role="navigation">
         <a href="./index.html">Home</a>
         <a href="./fundraisers.html">Fundraisers</a>
-        <a class="active" href="./calendar.html">Calendar</a>
+        <a class="active" href="./calendar.html" aria-current="page">Calendar</a>
         <a href="./media.html">Media</a>
         <a href="./achievements.html">Achievements</a>
         <a href="./about.html">About</a>
@@ -213,7 +204,7 @@
     <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
       <a href="./index.html">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
-      <a class="active" href="./calendar.html">Calendar</a>
+      <a class="active" href="./calendar.html" aria-current="page">Calendar</a>
       <a href="./media.html">Media</a>
       <a href="./achievements.html">Achievements</a>
       <a href="./about.html">About</a>
@@ -264,7 +255,7 @@
     </section>
   </main>
 
-    <script>
+  <script>
     /* ============ Robust mobile menu (guarded; scroll-lock; desktop auto-close) ============ */
     (function(){
       const btn  = document.getElementById('menuBtn');
@@ -290,8 +281,7 @@
       window.addEventListener('resize', ()=>{ if (innerWidth > DESKTOP_W) setOpen(false); });
     })();
 
-
-    /* Starfield (theme-aware) */
+    /* Starfield Background (identical gradient/colors to Announcements) */
     (function(){
       const cvs = document.getElementById('starfield');
       const ctx = cvs.getContext('2d', { alpha: false });
@@ -322,7 +312,6 @@
     /* ====== EVENTS loader ====== */
     const EVENTS_URL = 'data/calendar-events.json';
 
-    // eventsByDate: { "YYYY-MM-DD": [ {type,label}, ... ] }
     let eventsByDate = {};
 
     function groupEvents(list){
@@ -371,7 +360,6 @@
       const prevBtn = document.getElementById("prevMonth");
       const nextBtn = document.getElementById("nextMonth");
 
-      // Toolbar bindings
       const chipsWrap = document.getElementById('typeChips');
       const searchBox = document.getElementById('searchBox');
       const clearBtn  = document.getElementById('clearFilters');
@@ -408,7 +396,6 @@
         const y = date.getFullYear(), m = date.getMonth();
         monthLabel.textContent = date.toLocaleString("default", { month:"long", year:"numeric" });
 
-        // clear old cells
         grid.querySelectorAll(".day:not(.day-name)").forEach(el => el.remove());
 
         const first = new Date(y,m,1), last = new Date(y,m+1,0);
@@ -455,8 +442,7 @@
       prevBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()-1); render(current); });
       nextBtn.addEventListener("click", ()=>{ current.setMonth(current.getMonth()+1); render(current); });
 
-      // Load JSON, then draw
-      fetch(EVENTS_URL, { cache:'no-store' })
+      fetch('data/calendar-events.json', { cache:'no-store' })
         .then(r => {
           if (!r.ok) throw new Error(`Fetch failed: ${r.status} ${r.statusText}`);
           return r.json();
@@ -545,3 +531,4 @@
   <script src="script.js?v=29" defer></script>
 </body>
 </html>
+
