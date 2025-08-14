@@ -264,13 +264,13 @@
     </section>
   </main>
 
-  <script>
+    <script>
     /* ============ Robust mobile menu (guarded; scroll-lock; desktop auto-close) ============ */
     (function(){
       const btn  = document.getElementById('menuBtn');
       const menu = document.getElementById('mobileMenu');
       if (!btn || !menu) return;
-      if (btn.dataset.bound === "1") return; // avoid double-binding if script.js also binds
+      if (btn.dataset.bound === "1") return; // avoid double-binding
       btn.dataset.bound = "1";
 
       const DESKTOP_W = 980;
@@ -284,11 +284,12 @@
       }
 
       btn.addEventListener('click', (e)=>{ e.stopPropagation(); setOpen(!open); }, {passive:true});
-      document.addEventListener('click', (e)=>{ if (open && !menu.contains(e.target) && e.target !== btn) setOpen(false); });
+      document.addEventListener('click', (e)=>{ if(open && !menu.contains(e.target) && e.target !== btn) setOpen(false); });
       document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') setOpen(false); });
       menu.addEventListener('click', (e)=>{ if (e.target.closest('a')) setOpen(false); });
       window.addEventListener('resize', ()=>{ if (innerWidth > DESKTOP_W) setOpen(false); });
     })();
+
 
     /* Starfield (theme-aware) */
     (function(){
