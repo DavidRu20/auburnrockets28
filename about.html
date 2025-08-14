@@ -7,24 +7,62 @@
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Starfield CSS -->
+  <!-- Page-local styles (starfield + flip cards) -->
   <style>
-    body { background: transparent; overflow-x: hidden; }
+    /* Starfield sits behind everything */
     #starfield {
       position: fixed;
       inset: 0;
-      z-index: -1;
-      pointer-events: none;
+      z-index: -1; /* behind site UI */
+      display: block;
+    }
+
+    /* Optional: improve focus-ring visibility on dark bg */
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+      border-radius: 10px;
+    }
+
+    /* Flip card effect for officer tiles */
+    [data-flip] {
+      perspective: 1000px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    [data-flip] .front,
+    [data-flip] .back {
+      transition: transform 400ms cubic-bezier(.2,.8,.2,1), opacity 400ms;
+      transform-style: preserve-3d;
+    }
+    [data-flip] .back {
+      position: absolute;
+      inset: 16px; /* match panel padding visually */
+      display: none;
+      opacity: 0;
+    }
+    [data-flip].is-flipped .front {
+      transform: rotateY(180deg);
+      opacity: 0;
+    }
+    [data-flip].is-flipped .back {
+      display: block;
+      transform: rotateY(0deg);
+      opacity: 1;
+    }
+
+    /* Improve tap targets on mobile for the officer grid */
+    @media (max-width: 560px){
+      [data-flip] { padding: 12px; }
     }
   </style>
 </head>
 <body>
-
-  <!-- Starfield background -->
+  <!-- Background stars -->
   <canvas id="starfield" aria-hidden="true"></canvas>
 
   <!-- ============================ HEADER / NAV ============================ -->
-  <!-- ===== Global Header (regular site header) ===== -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -39,7 +77,7 @@
         <a href="./calendar.html">Calendar</a>
         <a href="./media.html">Media</a>
         <a href="./achievements.html">Achievements</a>
-        <a class="active" href="./about.html">About</a>
+        <a class="active" href="./about.html" aria-current="page">About</a>
         <a href="./contact.html">Contact</a>
         <a href="./shop.html">Shop</a>
         <a href="./announcements.html">Announcements</a>
@@ -58,7 +96,7 @@
       <a href="./calendar.html">Calendar</a>
       <a href="./media.html">Media</a>
       <a href="./achievements.html">Achievements</a>
-      <a class="active" href="./about.html">About</a>
+      <a class="active" href="./about.html" aria-current="page">About</a>
       <a href="./contact.html">Contact</a>
       <a href="./shop.html">Shop</a>
       <a href="./announcements.html">Announcements</a>
@@ -69,8 +107,180 @@
 
   <!-- ============================== HERO ================================= -->
   <main role="main">
-    <!-- (everything in your main stays exactly the same) -->
-    <!-- ... existing sections for About This Site, Mission, Officers, Guidelines ... -->
+    <section class="hero" aria-labelledby="aboutTitle">
+      <div class="card hover-up" style="max-width:860px; margin-inline:auto;">
+        <h1 id="aboutTitle">About This Site</h1>
+        <p class="small" style="margin-top:6px;">
+          Built by and for the Auburn High School Class of 2028.
+        </p>
+        <div class="inline" style="justify-content:center; margin-top:14px;">
+          <a class="btn primary" href="https://instagram.com/ahs.class.of28" target="_blank" rel="noopener noreferrer">
+            Instagram @ahs.class.of28
+          </a>
+          <a class="btn" href="./contact.html">Contact Officers</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ MISSION =============================== -->
+    <section class="section">
+      <div class="container">
+        <div class="grid grid-3">
+          <article class="panel glass hover-up">
+            <h2 class="section-title">Why it exists</h2>
+            <p class="small">Phones aren’t allowed during school. This site gives students a fast way to:</p>
+            <ul class="small" style="margin:8px 0 0 18px; line-height:1.6;">
+              <li>See what fundraisers are live right now</li>
+              <li>Check the event calendar & no-school days</li>
+              <li>Submit media for highlights</li>
+              <li>Contact class officers quickly</li>
+            </ul>
+          </article>
+
+          <article class="panel glass hover-up">
+            <h2 class="section-title">What’s here</h2>
+            <ul class="small" style="margin:0 0 0 18px; line-height:1.6;">
+              <li><strong>Fundraisers:</strong> Live/Upcoming/Past with times</li>
+              <li><strong>Calendar:</strong> Today highlighted + next/previous event</li>
+              <li><strong>Media:</strong> Photos & video grid; student submissions</li>
+              <li><strong>Achievements:</strong> Wall of recognition</li>
+              <li><strong>Merch:</strong> Class gear (coming soon)</li>
+              <li><strong>Admin:</strong> Quick edits to data (officers only)</li>
+            </ul>
+          </article>
+
+          <article class="panel glass hover-up">
+            <h2 class="section-title">How it’s built</h2>
+            <p class="small">
+              Fast static pages with a glass UI and starfield background. Fundraisers and events
+              load from simple JSON so dates/times are easy to update on GitHub—no coding needed.
+            </p>
+            <div class="chips">
+              <span class="badge blue">Blue / White / Black / Grey</span>
+              <span class="badge">Glass UI</span>
+              <span class="badge">Starfield</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ OFFICERS =============================== -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Class Officers</h2>
+        <p class="section-sub">Tap a card for a quick detail. Email is best during the school day.</p>
+
+        <div class="grid grid-4">
+          <article class="panel hover-up" data-flip tabindex="0" role="button" aria-label="Flip card: President — Patrick Haroian">
+            <div class="front">
+              <div class="chips"><span class="badge yellow">President</span></div>
+              <h3 style="margin:8px 0 6px;">Patrick Haroian</h3>
+              <p class="small">The leader.</p>
+              <div class="inline" style="margin-top:10px;">
+                <a class="btn" href="https://www.instagram.com/ilovetombrady74/?next=%2F" target="_blank" rel="noopener noreferrer">Patrick's Instagram</a>
+              </div>
+            </div>
+            <div class="back small" style="display:none;">
+              Fun fact: Nasty at Monster Legends
+            </div>
+          </article>
+
+          <article class="panel hover-up" data-flip tabindex="0" role="button" aria-label="Flip card: Vice President — Michael Atiemo">
+            <div class="front">
+              <div class="chips"><span class="badge purple">Vice President</span></div>
+              <h3 style="margin:8px 0 6px;">Michael Atiemo</h3>
+              <p class="small">Keeps everything organized and working well</p>
+              <div class="inline" style="margin-top:10px;">
+                <a class="btn" href="https://www.instagram.com/michael__atiemo/?next=%2F" target="_blank" rel="noopener noreferrer">Michael's Instagram</a>
+              </div>
+            </div>
+            <div class="back small" style="display:none;">
+              Fun fact: I set up all the fundraisers
+            </div>
+          </article>
+
+          <article class="panel hover-up" data-flip tabindex="0" role="button" aria-label="Flip card: Treasurer — David Ruco">
+            <div class="front">
+              <div class="chips"><span class="badge blue">Treasurer</span></div>
+              <h3 style="margin:8px 0 6px;">David Ruco</h3>
+              <p class="small">Budget & purchasing—transparent and responsible.</p>
+              <div class="inline" style="margin-top:10px;">
+                <a class="btn" href="https://www.instagram.com/david.ruco/?next=%2F" target="_blank" rel="noopener noreferrer">David's Instagram</a>
+              </div>
+            </div>
+            <div class="back small" style="display:none;">
+              Fun fact: I made the website
+            </div>
+          </article>
+
+          <article class="panel hover-up" data-flip tabindex="0" role="button" aria-label="Flip card: Secretary — Matias Gonzalez">
+            <div class="front">
+              <div class="chips"><span class="badge red">Secretary</span></div>
+              <h3 style="margin:8px 0 6px;">Matias Gonzalez</h3>
+              <p class="small">Notes, records, and announcements.</p>
+              <div class="inline" style="margin-top:10px;">
+                <a class="btn" href="https://www.instagram.com/matiasgonzalez2028/?next=%2F" target="_blank" rel="noopener noreferrer">Matias's Instagram</a>
+              </div>
+            </div>
+            <div class="back small" style="display:none;">
+              Fun fact: I design the clothes
+            </div>
+          </article>
+
+          <!-- Advisor: J. Berg -->
+          <article class="panel hover-up">
+            <div class="chips"><span class="badge">Advisor</span></div>
+            <h3 style="margin:8px 0 6px;">J. Berg</h3>
+            <p class="small">Faculty advisor and guidance for Student Gov.</p>
+          </article>
+
+          <!-- Class Advisor: Mr. Martin -->
+          <article class="panel hover-up">
+            <div class="chips"><span class="badge">Class Advisor</span></div>
+            <h3 style="margin:8px 0 6px;">Mr. Martin</h3>
+            <p class="small">Class advisor — supports Class of ’28 activities.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ GUIDELINES ============================ -->
+    <section class="section">
+      <div class="container">
+        <div class="grid grid-2">
+          <article class="panel glass hover-up">
+            <h2 class="section-title">Media & Submissions</h2>
+            <p class="small">
+              Students can submit photos/videos for the Media page. Submissions are reviewed
+              by officers before posting.
+            </p>
+            <ul class="small" style="margin:8px 0 0 18px; line-height:1.6;">
+              <li>School-appropriate content only</li>
+              <li>Get permission from people in the photo/video</li>
+              <li>No personal phone numbers or private info</li>
+              <li>We may crop or edit for layout</li>
+            </ul>
+            <div class="inline" style="margin-top:12px;">
+              <a class="btn primary" href="./media.html">Go to Media</a>
+              <a class="btn" href="./contact.html">Submit to Officers</a>
+            </div>
+          </article>
+
+          <article class="panel glass hover-up">
+            <h2 class="section-title">Site Conduct</h2>
+            <p class="small">
+              Be respectful. No harassment, hate speech, or impersonation. Violations may be reported to school staff.
+            </p>
+            <div class="chips">
+              <span class="badge success">Positive</span>
+              <span class="badge warn">Safe</span>
+              <span class="badge danger">Report Issues</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- ============================= FOOTER ================================ -->
@@ -82,86 +292,78 @@
     </div>
   </footer>
 
-  <!-- Toast placeholder -->
+  <!-- Toast placeholder (keeps consistency with your other pages) -->
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
 
-  <!-- Starfield script -->
+  <!-- Page-only scripts: starfield + flip-cards (keeps main script.js untouched) -->
   <script>
-  (function(){
-    const cvs = document.getElementById('starfield');
-    const ctx = cvs.getContext('2d', { alpha: false });
-    let stars = [];
-    const N = 220;
-    const MIN_V = 0.05, MAX_V = 0.35;
+    /* Starfield (theme-aware, GPU-cheap) */
+    (function(){
+      const cvs = document.getElementById('starfield');
+      const ctx = cvs.getContext('2d', { alpha: false });
+      let stars = [];
 
-    function resize(){
-      const { innerWidth:w, innerHeight:h } = window;
-      cvs.width = w; cvs.height = h;
-      stars = Array.from({length:N}, () => ({
-        x: Math.random()*w,
-        y: Math.random()*h,
-        r: Math.random()*1.7 + 0.2,
-        v: Math.random()*(MAX_V-MIN_V)+MIN_V,
-        a: 0.65 + Math.random()*0.35
-      }));
-    }
-
-    function draw(){
-      const light = document.documentElement.getAttribute('data-theme') === 'light';
-      const g = ctx.createLinearGradient(0,0,0,cvs.height);
-      if (light){
-        g.addColorStop(0,'#eaf2ff');
-        g.addColorStop(0.5,'#f7fbff');
-        g.addColorStop(1,'#ffffff');
-      } else {
-        g.addColorStop(0,'#0a0d14');
-        g.addColorStop(0.5,'#070b12');
-        g.addColorStop(1,'#00060c');
+      function resize(){
+        cvs.width = innerWidth;
+        cvs.height = innerHeight;
+        // Density scales mildly with width
+        const count = Math.round(Math.max(140, Math.min(280, innerWidth * 0.18)));
+        stars = Array.from({length: count}, () => ({
+          x: Math.random() * cvs.width,
+          y: Math.random() * cvs.height,
+          r: Math.random() * 1.6 + 0.2,
+          v: Math.random() * 0.3 + 0.05,
+          tw: Math.random() * 2 * Math.PI
+        }));
       }
-      ctx.fillStyle = g;
-      ctx.fillRect(0,0,cvs.width,cvs.height);
 
-      ctx.fillStyle = light ? 'rgba(60,90,140,0.9)' : 'rgba(190,210,255,0.9)';
-
-      const t = performance.now() * 0.0025;
-      for (const s of stars){
-        const twinkle = (Math.sin(t + s.x*0.01 + s.y*0.01)*0.25 + 0.75) * s.a;
-        ctx.globalAlpha = Math.min(1, Math.max(0.08, twinkle));
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-        ctx.fill();
-        s.y += s.v;
-        if (s.y > cvs.height + 2){
-          s.y = -2; s.x = Math.random()*cvs.width;
-        }
-      }
-      ctx.globalAlpha = 1;
-      requestAnimationFrame(draw);
-    }
-
-    const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-    function boot(){
-      resize();
-      if (prefersReduce.matches) {
-        const light = document.documentElement.getAttribute('data-theme') === 'light';
+      function draw(){
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
         const g = ctx.createLinearGradient(0,0,0,cvs.height);
-        (light ? [ '#eaf2ff','#f7fbff','#ffffff' ] : [ '#0a0d14','#070b12','#00060c' ])
-          .forEach((col,i)=>g.addColorStop(i/2, col));
-        ctx.fillStyle = g; ctx.fillRect(0,0,cvs.width,cvs.height);
-        ctx.fillStyle = light ? 'rgba(60,90,140,0.9)' : 'rgba(190,210,255,0.9)';
-        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); }
-      } else {
+        if (isLight) { g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
+        else         { g.addColorStop(0,'#070a13');  g.addColorStop(1,'#000006'); }
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,cvs.width,cvs.height);
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (const s of stars){
+          s.y += s.v; if (s.y > cvs.height) { s.y = -2; s.x = Math.random() * cvs.width; }
+          s.tw += 0.02; const a = 0.6 + Math.sin(s.tw) * 0.35; // subtle twinkle
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = isLight ? `rgba(60,90,140,${a})` : `rgba(180,200,255,${a})`;
+          ctx.fill();
+        }
+        ctx.restore();
+
         requestAnimationFrame(draw);
       }
-    }
 
-    window.addEventListener('resize', resize);
-    const obs = new MutationObserver(boot);
-    obs.observe(document.documentElement,{attributes:true, attributeFilter:['data-theme']});
-    boot();
-  })();
+      addEventListener('resize', resize);
+      resize(); draw();
+    })();
+
+    /* Card flip (click / Enter / Space) */
+    (function(){
+      function toggle(el){
+        el.classList.toggle('is-flipped');
+        // Swap live front/back visibility for assistive tech
+        const front = el.querySelector('.front');
+        const back  = el.querySelector('.back');
+        if (back) back.style.display = el.classList.contains('is-flipped') ? 'block' : 'none';
+      }
+      document.querySelectorAll('[data-flip]').forEach(card=>{
+        card.addEventListener('click', () => toggle(card));
+        card.addEventListener('keydown', (e)=>{
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(card); }
+        });
+      });
+    })();
   </script>
 
+  <!-- Your main site script (menu, clocks, countdowns, etc.) -->
   <script src="script.js"></script>
 </body>
 </html>
+
