@@ -10,7 +10,9 @@
   <style>
     /* Page base */
     body { color: var(--text); background: transparent; overflow-x: hidden; }
-    #starfield{ position: fixed; inset: 0; z-index:-1; }
+    #starfield{
+      position: fixed; inset: 0; z-index:-1; pointer-events:none; display:block;
+    }
 
     /* ================== LAYOUT (fills page) ================== */
     main{
@@ -127,7 +129,8 @@
   </style>
 </head>
 <body>
-  <canvas id="starfield"></canvas>
+  <!-- starry background -->
+  <canvas id="starfield" aria-hidden="true"></canvas>
 
   <!-- ================= Header / Nav ================= -->
   <header class="header" role="banner">
@@ -140,7 +143,7 @@
       <div class="links" role="navigation">
         <a href="./index.html">Home</a>
         <a href="./fundraisers.html">Fundraisers</a>
-        <a class="active" href="./calendar.html">Calendar</a>
+        <a class="active" href="./calendar.html" aria-current="page">Calendar</a>
         <a href="./media.html">Media</a>
         <a href="./achievements.html">Achievements</a>
         <a href="./about.html">About</a>
@@ -157,7 +160,7 @@
     <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
       <a href="./index.html">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
-      <a class="active" href="./calendar.html">Calendar</a>
+      <a class="active" href="./calendar.html" aria-current="page">Calendar</a>
       <a href="./media.html">Media</a>
       <a href="./achievements.html">Achievements</a>
       <a href="./about.html">About</a>
@@ -209,34 +212,102 @@
       });
     })();
 
-    /* Starfield (theme-aware) */
+    /* ========= STARFIELD (parallax + twinkle; theme-aware) ========= */
     (function(){
-      const cvs = document.getElementById('starfield');
-      const ctx = cvs.getContext('2d', { alpha: false });
-      let stars=[];
-      function resize(){
-        cvs.width = innerWidth; cvs.height = innerHeight;
-        stars = Array.from({length: 200}, ()=>({
-          x: Math.random()*cvs.width, y: Math.random()*cvs.height,
-          r: Math.random()*1.6, v: Math.random()*0.3+0.05
-        }));
+      const canvas = document.getElementById('starfield');
+      const ctx = canvas.getContext('2d', { alpha:true });
+      const prefersReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let w=0,h=0, stars=[], raf=0, last=performance.now();
+
+      const LAYERS = [
+        { n:70,  spd:0.03, size:[0.6,1.2], a:[0.10,0.20] }, // far
+        { n:40,  spd:0.06, size:[0.8,1.6], a:[0.12,0.26] }, // mid
+        { n:18,  spd:0.10, size:[1.2,2.4], a:[0.16,0.32] }  // near
+      ];
+      const rnd = (min,max)=> min + Math.random()*(max-min);
+
+      function theme(){
+        const light = document.documentElement.getAttribute('data-theme') === 'light';
+        return {
+          bgTop: light ? '#eaf2ff' : '#05070d',
+          bgMid: light ? '#f7fbff' : '#0a0f1b',
+          bgBot: light ? '#ffffff' : '#05070d',
+          star:  light ? '#6a86b8' : '#e8f1ff'
+        };
       }
-      addEventListener('resize', resize); resize();
-      (function tick(){
-        const isLight = document.documentElement.getAttribute('data-theme')==='light';
-        const g = ctx.createLinearGradient(0,0,0,cvs.height);
-        if(isLight){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
-        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
-        ctx.fillStyle = g; ctx.fillRect(0,0,cvs.width,cvs.height);
-        ctx.fillStyle = isLight ? 'rgba(60,90,140,.85)' : 'rgba(180,200,255,.85)';
-        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; } }
-        requestAnimationFrame(tick);
-      })();
+
+      function resize(){
+        const dpr = devicePixelRatio || 1;
+        canvas.width  = Math.floor(innerWidth * dpr);
+        canvas.height = Math.floor(innerHeight * dpr);
+        canvas.style.width = '100%'; canvas.style.height = '100%';
+        ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
+        w = innerWidth; h = innerHeight;
+
+        stars = [];
+        LAYERS.forEach((L,li)=>{
+          for(let i=0;i<L.n;i++){
+            stars.push({
+              x: Math.random()*w, y: Math.random()*h,
+              r: rnd(L.size[0], L.size[1]),
+              a: rnd(L.a[0], L.a[1]),
+              tw: rnd(0, Math.PI*2),
+              spd: L.spd, layer: li
+            });
+          }
+        });
+        paint(true);
+      }
+
+      function paint(staticOnly=false){
+        const c = theme();
+        const g = ctx.createLinearGradient(0,0,0,h);
+        g.addColorStop(0,c.bgTop); g.addColorStop(.5,c.bgMid); g.addColorStop(1,c.bgBot);
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+
+        for(const s of stars){
+          s.tw += .8 * (staticOnly?0:1/60);
+          const tw = 0.5 + 0.5 * Math.sin(s.tw + s.layer);
+          const alpha = Math.max(.08, Math.min(1, s.a * (0.85 + 0.25 * tw)));
+          ctx.globalAlpha = alpha;
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+          ctx.fillStyle = c.star; ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      function tick(ts){
+        const dt = Math.min(.05, (ts - last)/1000); last = ts;
+        for(const s of stars){
+          s.x += s.spd * 24 * dt;
+          s.y += s.spd *  6 * dt;
+          if (s.x > w+2) s.x = -2;
+          if (s.y > h+2) s.y = -2;
+        }
+        paint();
+        raf = requestAnimationFrame(tick);
+      }
+
+      resize();
+      addEventListener('resize', resize);
+      // re-draw when theme toggles
+      const mo = new MutationObserver(resize);
+      mo.observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+
+      if (!prefersReduce){
+        raf = requestAnimationFrame(tick);
+        document.addEventListener('visibilitychange', ()=> {
+          if (document.hidden) cancelAnimationFrame(raf);
+          else { last = performance.now(); raf = requestAnimationFrame(tick); }
+        });
+      } else {
+        paint(true);
+      }
     })();
 
     /* ====== EVENTS: robust loader (array OR object JSON) ====== */
     // Make sure this matches your real file path & name:
-    const EVENTS_URL = 'data/calender.json'; // change to 'data/calendar-events.json' if you rename it
+    const EVENTS_URL = 'data/calendar.json'; // ← fixed filename
 
     // eventsByDate: { "YYYY-MM-DD": [ {type,label}, ... ] }
     let eventsByDate = {};
@@ -285,7 +356,7 @@
         monthLabel.textContent = date.toLocaleString("default", { month:"long", year:"numeric" });
 
         // clear old cells
-        grid.querySelectorAll(".day:not(.day-name)").forEach(el => el.remove());
+        grid.querySelectorAll(".day").forEach(el => el.remove());
 
         const first = new Date(y,m,1), last = new Date(y,m+1,0);
         const start = first.getDay(), total = last.getDate();
@@ -299,6 +370,7 @@
         for(let d=1; d<=total; d++){
           const cell = document.createElement("div");
           cell.className = "day";
+          cell.setAttribute('aria-label', `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
           cell.textContent = d;
 
           const key = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -412,13 +484,13 @@
         }
       }
 
-      // call after events load (wait until we actually have events)
+      // call after events load (wait until we actually have events or we at least rendered once)
       const ready = setInterval(() => {
-        if (eventsByDate && Object.keys(eventsByDate).length > 0) {
+        if (eventsByDate) {
           update();
           clearInterval(ready);
         }
-      }, 200);
+      }, 300);
       setInterval(update, 60*1000);
     })();
   </script>
@@ -426,4 +498,5 @@
   <script src="script.js?v=23"></script>
 </body>
 </html>
+
 
