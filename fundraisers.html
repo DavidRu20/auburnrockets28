@@ -8,15 +8,15 @@
   <link rel="stylesheet" href="styles.css" />
 
   <style>
-    /* Page-local polish */
+
     :root { color-scheme: dark light; }
     body{
       margin:0; font-family:Arial,system-ui,Segoe UI,Roboto,sans-serif;
       overflow-x:hidden; color:var(--text);
-      background: transparent; /* stars show through */
+      background: transparent; 
     }
 
-    /* Fullscreen starfield behind everything */
+ 
     #starfield{
       position:fixed; inset:0; z-index:-1; width:100%; height:100%;
       pointer-events:none; display:block;
@@ -43,7 +43,7 @@
     }
     .fundraiser-box h2{ margin:6px 0 8px; }
 
-    /* Hover effects only on devices that support hover */
+
     @media (hover:hover){
       .crumbl:hover{ transform: rotate3d(1,1,0,8deg) scale(1.05); box-shadow:0 0 18px rgba(255,215,0,.6); background: rgba(255,215,0,.12); }
       .panera:hover{ transform: scale(1.06) rotate(-6deg); box-shadow:0 0 22px rgba(0,255,150,.55); background: rgba(0,255,150,.12); }
@@ -63,7 +63,7 @@
       color:#ffd700; font-weight:800;
     }
 
-    /* Goal bar */
+
     .goal-container{ margin-top:50px; text-align:center; }
     .goal-bar{
       position:relative; height:40px; margin:10px auto; width:min(860px,80%);
@@ -83,7 +83,7 @@
     }
     .goal-text{ margin-top:8px; font-size:1rem; color:#ffd700; }
 
-    /* Mobile-friendly sizing */
+
     @media (max-width:480px){
       .fundraiser-box{ padding:16px; max-width:92%; font-size:.95rem; }
     }
@@ -91,10 +91,10 @@
 </head>
 <body>
 
-  <!-- Starfield background -->
+
   <canvas id="starfield" aria-hidden="true"></canvas>
 
-  <!-- ===== Global Header ===== -->
+
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -166,7 +166,7 @@
       </div>
     </div>
 
-    <!-- Goal Progress Bar -->
+
     <div class="goal-container" aria-live="polite">
       <div class="goal-bar" aria-label="Fundraising progress toward goal">
         <div class="goal-fill" id="goalFill"></div>
@@ -176,7 +176,6 @@
     </div>
   </main>
 
-  <!-- Starfield script (parallax + twinkle; theme-aware; respects reduced motion) -->
   <script>
     (function(){
       const canvas = document.getElementById('starfield');
@@ -185,9 +184,9 @@
       let w=0,h=0, stars=[], raf=0, last=performance.now();
 
       const LAYERS = [
-        { n:70,  spd:0.03, size:[0.6,1.2], a:[0.10,0.20] }, // far
-        { n:40,  spd:0.06, size:[0.8,1.6], a:[0.12,0.26] }, // mid
-        { n:18,  spd:0.10, size:[1.2,2.4], a:[0.16,0.32] }  // near
+        { n:70,  spd:0.03, size:[0.6,1.2], a:[0.10,0.20] }, 
+        { n:40,  spd:0.06, size:[0.8,1.6], a:[0.12,0.26] }, 
+        { n:18,  spd:0.10, size:[1.2,2.4], a:[0.16,0.32] }  
       ];
       const rand = (min,max)=> min + Math.random()*(max-min);
 
@@ -231,7 +230,7 @@
         ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
 
         for(const s of stars){
-          // twinkle
+     
           s.tw += .8 * (staticOnly?0:1/60);
           const tw = 0.5 + 0.5 * Math.sin(s.tw + s.layer);
           const alpha = Math.max(.08, Math.min(1, s.a * (0.85 + 0.25 * tw)));
@@ -271,9 +270,9 @@
     })();
   </script>
 
-  <!-- Page logic (countdowns + goal bar) -->
+
   <script>
-    // Countdowns (reads ISO date from data-deadline)
+
     function startCountdown(el, iso){
       if(!iso){ el.textContent = 'TBA'; return; }
       const target = new Date(iso).getTime();
@@ -298,8 +297,8 @@
     startCountdown(document.getElementById('cd-leaves'),
                    document.querySelector('.leaves')?.dataset.deadline);
 
-    // Goal bar (change these values as progress updates)
-    let currentAmount = 0;      // update dynamically if you want
+  
+    let currentAmount = 0;     
     const goalAmount = 10000;
 
     function updateGoalBar(){
@@ -313,11 +312,11 @@
     }
     updateGoalBar();
 
-    // Optional: expose a helper to update live from console or future admin UI
+ 
     window.setFundraiserProgress = (amount)=>{ currentAmount = Math.max(0, amount|0); updateGoalBar(); };
   </script>
 
-  <!-- Site JS (menu, clock, etc.) -->
+
   <script src="script.js" defer></script>
 </body>
 </html>
