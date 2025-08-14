@@ -1,6 +1,6 @@
 [
 
-  { "date": "2025-08-27", "type": "lunch", "label": "First Day of School"},
+  { "date": "2025-08-27", "type": "event", "label": "First Day of School"},
   { "date": "2025-08-27", "type": "lunch", "label": "Chicken Tenders • Fries, Carrots • Fruit Cup / Salad Bar • Milk/Water" },
   { "date": "2025-08-28", "type": "lunch", "label": "Big Daddy Pizza • Assorted Fruits / Salad Bar • Milk/Water" },
   { "date": "2025-08-28", "type": "sport", "label": "Varsity Football (Scrimmage) vs Grafton —  Thu" },
