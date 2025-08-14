@@ -13,7 +13,7 @@
     .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
     .menu-btn{ display:none; }
     @media (max-width:980px){
-      .header .links{ display:none; }
+      .header .links{ display:none; } /* hand off to mobile menu */
       .menu-btn{
         display:inline-flex; align-items:center; justify-content:center;
         width:42px; height:42px; border-radius:12px; border:1px solid var(--border);
@@ -29,30 +29,29 @@
     .mobile-menu a{ display:block; padding:12px 10px; border-radius:10px; color:var(--text); }
     .mobile-menu a:hover{ background:rgba(255,255,255,.06); }
     .hidden{ display:none !important; }
-    html.menu-open, body.menu-open { overflow:hidden; }
+    html.menu-open, body.menu-open { overflow:hidden; } /* lock scroll when menu open */
 
-    /* Page base */
-    body { color: var(--text); background: transparent; overflow-x:hidden; }
+    /* Page base (remove horizontal scroll) */
+    html, body { max-width:100%; overflow-x:hidden; }
+    body { color: var(--text); background: transparent; }
     #starfield{ position: fixed; inset:0; z-index:-1; pointer-events:none; display:block; }
 
-    /* Main container spacing for hero */
+    /* Main spacing */
     main{ padding: 0 18px 44px; }
   </style>
 </head>
 <body>
 
-  <!-- Animated starfield background -->
+  <!-- Background -->
   <canvas id="starfield" aria-hidden="true"></canvas>
 
-  <!-- ============================ HEADER / NAV ============================ -->
+  <!-- Header / Nav (identical pattern to Announcements) -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
         <span class="logo" aria-hidden="true">A</span>
         AHS Class of ’28
       </a>
-
-      <!-- Desktop links -->
       <div class="links" role="navigation">
         <a class="active" href="./">Home</a>
         <a href="./fundraisers.html">Fundraisers</a>
@@ -65,13 +64,9 @@
         <a href="./announcements.html">Announcements</a>
         <a href="./community.html">Community</a>
       </div>
-
-      <!-- Mobile menu button -->
-      <button id="menuBtn" class="menu-btn" aria-expanded="false"
-              aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
 
-    <!-- Mobile menu -->
     <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
       <a class="active" href="./">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
@@ -87,8 +82,7 @@
     </div>
   </header>
 
-
-  <!-- ============================== HERO ================================= -->
+  <!-- Main -->
   <main role="main">
     <section
       class="hero"
@@ -98,11 +92,9 @@
       <div class="card hover-up" style="max-width:820px; margin: 40px auto 0;">
         <h1 id="homeTitle">Auburn Class of ’28</h1>
 
-        <!-- Live date/time (America/New_York) -->
         <p id="date" aria-live="polite">Loading date…</p>
         <p id="time" aria-live="polite">Loading time…</p>
 
-        <!-- Countdown -->
         <div class="countdown" aria-label="Countdown to end of school">
           <div class="box" aria-label="Days remaining">
             <div class="num" id="cd-days">0</div>
@@ -122,7 +114,6 @@
           </div>
         </div>
 
-        <!-- Quick actions -->
         <div class="inline" style="justify-content:center; margin-top:16px;">
           <a class="btn primary" href="./fundraisers.html">See What’s Live</a>
           <a class="btn" href="./calendar.html">Event Calendar</a>
@@ -130,11 +121,9 @@
       </div>
     </section>
 
-    <!-- ======================== STATUS / ANNOUNCEMENTS ==================== -->
     <section class="section">
       <div class="container">
         <div class="grid grid-2">
-          <!-- Happening Now -->
           <article class="panel glass hover-up" aria-labelledby="nowTitle">
             <div class="fundraiser-header" style="display:flex;align-items:center;justify-content:space-between;">
               <h2 id="nowTitle" class="section-title">Happening Now</h2>
@@ -145,7 +134,6 @@
             </div>
           </article>
 
-          <!-- Next Up -->
           <article class="panel glass hover-up" aria-labelledby="nextTitle">
             <h2 id="nextTitle" class="section-title">Next Up</h2>
             <div id="nextContainer">
@@ -156,7 +144,6 @@
       </div>
     </section>
 
-    <!-- ============================ QUICK LINKS =========================== -->
     <section class="section">
       <div class="container">
         <h2 class="section-title">Quick Links</h2>
@@ -185,7 +172,7 @@
     </section>
   </main>
 
-  <!-- ============================= FOOTER ================================ -->
+  <!-- Footer -->
   <footer class="footer">
     <div class="container">
       <div class="small">
@@ -194,16 +181,13 @@
     </div>
   </footer>
 
-  <!-- Toast placeholder -->
-  <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
-
-  <!-- ============ Robust mobile menu (guarded; scroll-lock; desktop auto-close) ============ -->
+  <!-- Mobile menu (same behavior as Announcements) -->
   <script>
     (function(){
       const btn  = document.getElementById('menuBtn');
       const menu = document.getElementById('mobileMenu');
       if (!btn || !menu) return;
-      if (btn.dataset.bound === "1") return; // avoid double-binding
+      if (btn.dataset.bound === "1") return;
       btn.dataset.bound = "1";
 
       const DESKTOP_W = 980;
@@ -224,111 +208,40 @@
     })();
   </script>
 
-  <!-- Subtle starfield script (parallax + twinkle; respects reduced motion) -->
+  <!-- Starfield -->
   <script>
     (function(){
-      const canvas = document.getElementById('starfield');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d', { alpha: true });
-
-      // Layers of stars for depth
-      const LAYERS = [
-        { count: 70,  speed: 0.03, size: [0.6, 1.2],  alpha: [0.10, 0.20] }, // far
-        { count: 40,  speed: 0.06, size: [0.8, 1.6],  alpha: [0.12, 0.26] }, // mid
-        { count: 18,  speed: 0.10, size: [1.2, 2.4],  alpha: [0.16, 0.32] }  // near
-      ];
-      const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let stars = [];
-      let w = 0, h = 0, rafId = 0, last = performance.now();
-
-      function rand(min, max){ return min + Math.random() * (max - min); }
-
-      function makeStars(){
-        stars = [];
-        LAYERS.forEach((L, li) => {
-          for (let i = 0; i < L.count; i++) {
-            stars.push({
-              x: Math.random() * w,
-              y: Math.random() * h,
-              r: rand(L.size[0], L.size[1]),
-              a: rand(L.alpha[0], L.alpha[1]),
-              tw: rand(0, Math.PI * 2), // twinkle phase
-              spd: L.speed,
-              layer: li
-            });
-          }
-        });
-      }
+      const cvs = document.getElementById('starfield');
+      if(!cvs) return;
+      const ctx = cvs.getContext('2d', { alpha:true });
+      let stars=[];
 
       function resize(){
-        w = canvas.width = window.innerWidth * devicePixelRatio;
-        h = canvas.height = window.innerHeight * devicePixelRatio;
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
+        cvs.width = innerWidth * devicePixelRatio;
+        cvs.height = innerHeight * devicePixelRatio;
+        cvs.style.width='100%'; cvs.style.height='100%';
         ctx.setTransform(1,0,0,1,0,0);
         ctx.scale(devicePixelRatio, devicePixelRatio);
-        makeStars();
-        drawStatic(); // immediate paint
+        stars = Array.from({length:160},()=>({
+          x:Math.random()*innerWidth, y:Math.random()*innerHeight,
+          r:Math.random()*1.6+0.4, v:Math.random()*0.25+0.05
+        }));
       }
+      addEventListener('resize', resize); resize();
 
-      function drawStatic(){
-        ctx.clearRect(0, 0, w, h);
-        for (const s of stars){
-          ctx.globalAlpha = s.a;
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fillStyle = '#ffffff';
-          ctx.fill();
-        }
+      (function tick(){
+        ctx.clearRect(0,0,innerWidth,innerHeight);
         ctx.globalAlpha = 1;
-      }
-
-      function tick(ts){
-        const dt = Math.min(0.05, (ts - last) / 1000); // cap delta
-        last = ts;
-        ctx.clearRect(0, 0, w, h);
-
-        for (const s of stars){
-          // gentle parallax drift
-          s.x += s.spd * 24 * dt;
-          s.y += s.spd * 6  * dt;
-          if (s.x > window.innerWidth) s.x = -2;
-          if (s.y > window.innerHeight) s.y = -2;
-
-          // twinkle
-          s.tw += 0.8 * dt;
-          const twinkle = 0.5 + 0.5 * Math.sin(s.tw + s.layer);
-          const alpha = Math.max(0.08, Math.min(1, s.a * (0.85 + 0.25 * twinkle)));
-
-          ctx.globalAlpha = alpha;
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fillStyle = '#ffffff';
-          ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        for(const s of stars){
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+          s.y+=s.v; if(s.y>innerHeight){ s.y=-2; s.x=Math.random()*innerWidth; }
         }
-        ctx.globalAlpha = 1;
-
-        rafId = requestAnimationFrame(tick);
-      }
-
-      // Boot
-      resize();
-      window.addEventListener('resize', resize);
-
-      if (!prefersReduce) {
-        rafId = requestAnimationFrame(tick);
-        document.addEventListener('visibilitychange', () => {
-          if (document.hidden) cancelAnimationFrame(rafId);
-          else { last = performance.now(); rafId = requestAnimationFrame(tick); }
-        });
-      } else {
-        // Static sky if reduced motion
-        drawStatic();
-      }
+        requestAnimationFrame(tick);
+      })();
     })();
   </script>
 
-  <!-- scripts -->
   <script src="script.js" defer></script>
 </body>
 </html>
