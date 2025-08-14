@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html> 
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -8,21 +8,45 @@
   <link rel="stylesheet" href="styles.css" />
 
   <style>
+    /* --- Header hardening: consistent layout + reliable mobile menu (same as Announcements) --- */
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
+    .menu-btn{ display:none; }
+    @media (max-width:980px){
+      .header .links{ display:none; }
+      .menu-btn{
+        display:inline-flex; align-items:center; justify-content:center;
+        width:42px; height:42px; border-radius:12px; border:1px solid var(--border);
+        background:var(--panel);
+      }
+    }
+    .mobile-menu{
+      position:fixed; inset:64px 10px auto 10px; z-index:9999;
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:14px; box-shadow:var(--shadow-2); padding:12px;
+      backdrop-filter:blur(10px);
+    }
+    .mobile-menu a{ display:block; padding:12px 10px; border-radius:10px; color:var(--text); }
+    .mobile-menu a:hover{ background:rgba(255,255,255,.06); }
+    .hidden{ display:none !important; }
+    html.menu-open, body.menu-open { overflow:hidden; }
 
+    /* Page base (match Announcements background + remove horizontal scroll) */
     :root { color-scheme: dark light; }
+    html, body { max-width:100%; overflow-x:hidden; }
     body{
       margin:0; font-family:Arial,system-ui,Segoe UI,Roboto,sans-serif;
-      overflow-x:hidden; color:var(--text);
-      background: transparent; 
+      color:var(--text);
+      background: transparent;
     }
 
- 
+    /* Starfield canvas */
     #starfield{
       position:fixed; inset:0; z-index:-1; width:100%; height:100%;
       pointer-events:none; display:block;
     }
-    @media (prefers-reduced-motion: reduce){ #starfield{ animation:none !important; } }
 
+    /* Layout */
     .section{ padding:60px 20px; text-align:center; }
     .fundraiser-title{ font-size:clamp(2rem,4.5vw,3rem); margin:0 0 10px; }
     .fundraiser-sub{ font-size:1.1rem; margin:0 0 40px; opacity:.9; }
@@ -43,7 +67,6 @@
     }
     .fundraiser-box h2{ margin:6px 0 8px; }
 
-
     @media (hover:hover){
       .crumbl:hover{ transform: rotate3d(1,1,0,8deg) scale(1.05); box-shadow:0 0 18px rgba(255,215,0,.6); background: rgba(255,215,0,.12); }
       .panera:hover{ transform: scale(1.06) rotate(-6deg); box-shadow:0 0 22px rgba(0,255,150,.55); background: rgba(0,255,150,.12); }
@@ -62,7 +85,6 @@
       padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,.35);
       color:#ffd700; font-weight:800;
     }
-
 
     .goal-container{ margin-top:50px; text-align:center; }
     .goal-bar{
@@ -83,7 +105,6 @@
     }
     .goal-text{ margin-top:8px; font-size:1rem; color:#ffd700; }
 
-
     @media (max-width:480px){
       .fundraiser-box{ padding:16px; max-width:92%; font-size:.95rem; }
     }
@@ -91,13 +112,13 @@
 </head>
 <body>
 
-
+  <!-- Background -->
   <canvas id="starfield" aria-hidden="true"></canvas>
 
-
+  <!-- Header / Nav (identical to Announcements) -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+      <a class="brand" href="./index.html" aria-label="AHS Class of 2028 — Home">
         <span class="logo" aria-hidden="true">A</span>
         AHS Class of ’28
       </a>
@@ -120,7 +141,7 @@
     </nav>
 
     <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-      <a href="./">Home</a>
+      <a href="./index.html">Home</a>
       <a class="active" href="./fundraisers.html" aria-current="page">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
       <a href="./media.html">Media</a>
@@ -166,7 +187,6 @@
       </div>
     </div>
 
-
     <div class="goal-container" aria-live="polite">
       <div class="goal-bar" aria-label="Fundraising progress toward goal">
         <div class="goal-fill" id="goalFill"></div>
@@ -176,103 +196,66 @@
     </div>
   </main>
 
+  <!-- Mobile Menu Script (same as Announcements) -->
   <script>
     (function(){
-      const canvas = document.getElementById('starfield');
-      const ctx = canvas.getContext('2d', { alpha:true });
-      const prefersReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let w=0,h=0, stars=[], raf=0, last=performance.now();
+      const btn  = document.getElementById('menuBtn');
+      const menu = document.getElementById('mobileMenu');
+      if (!btn || !menu) return;
+      if (btn.dataset.bound === "1") return; // avoid double-binding
+      btn.dataset.bound = "1";
 
-      const LAYERS = [
-        { n:70,  spd:0.03, size:[0.6,1.2], a:[0.10,0.20] }, 
-        { n:40,  spd:0.06, size:[0.8,1.6], a:[0.12,0.26] }, 
-        { n:18,  spd:0.10, size:[1.2,2.4], a:[0.16,0.32] }  
-      ];
-      const rand = (min,max)=> min + Math.random()*(max-min);
-
-      function theme(){
-        const light = document.documentElement.getAttribute('data-theme') === 'light';
-        return {
-          bgTop: light ? '#eaf2ff' : '#05070d',
-          bgMid: light ? '#f7fbff' : '#0a0f1b',
-          bgBot: light ? '#ffffff' : '#05070d',
-          star:  light ? '#6a86b8' : '#e8f1ff'
-        };
+      const DESKTOP_W = 980;
+      let open = false;
+      function setOpen(v){
+        open = v;
+        menu.classList.toggle('hidden', !open);
+        btn.setAttribute('aria-expanded', String(open));
+        document.documentElement.classList.toggle('menu-open', open);
+        document.body.classList.toggle('menu-open', open);
       }
 
-      function resize(){
-        const dpr = devicePixelRatio || 1;
-        canvas.width  = Math.floor(innerWidth * dpr);
-        canvas.height = Math.floor(innerHeight * dpr);
-        canvas.style.width = '100%'; canvas.style.height = '100%';
-        ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
-        w = innerWidth; h = innerHeight;
-
-        stars = [];
-        LAYERS.forEach((L,li)=>{
-          for(let i=0;i<L.n;i++){
-            stars.push({
-              x: Math.random()*w, y: Math.random()*h,
-              r: rand(L.size[0], L.size[1]),
-              a: rand(L.a[0], L.a[1]),
-              tw: rand(0, Math.PI*2),
-              spd: L.spd, layer: li
-            });
-          }
-        });
-        paint(true);
-      }
-
-      function paint(staticOnly=false){
-        const c = theme();
-        const g = ctx.createLinearGradient(0,0,0,h);
-        g.addColorStop(0,c.bgTop); g.addColorStop(.5,c.bgMid); g.addColorStop(1,c.bgBot);
-        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
-
-        for(const s of stars){
-     
-          s.tw += .8 * (staticOnly?0:1/60);
-          const tw = 0.5 + 0.5 * Math.sin(s.tw + s.layer);
-          const alpha = Math.max(.08, Math.min(1, s.a * (0.85 + 0.25 * tw)));
-          ctx.globalAlpha = alpha;
-          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-          ctx.fillStyle = c.star; ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-      }
-
-      function tick(ts){
-        const dt = Math.min(.05, (ts - last)/1000); last = ts;
-        for(const s of stars){
-          s.x += s.spd * 24 * dt;
-          s.y += s.spd * 6  * dt;
-          if (s.x > w+2) s.x = -2;
-          if (s.y > h+2) s.y = -2;
-        }
-        paint();
-        raf = requestAnimationFrame(tick);
-      }
-
-      resize();
-      addEventListener('resize', resize);
-      const mo = new MutationObserver(resize);
-      mo.observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
-
-      if (!prefersReduce){
-        raf = requestAnimationFrame(tick);
-        document.addEventListener('visibilitychange', ()=> {
-          if (document.hidden) cancelAnimationFrame(raf);
-          else { last = performance.now(); raf = requestAnimationFrame(tick); }
-        });
-      } else {
-        paint(true);
-      }
+      btn.addEventListener('click', (e)=>{ e.stopPropagation(); setOpen(!open); }, {passive:true});
+      document.addEventListener('click', (e)=>{ if(open && !menu.contains(e.target) && e.target !== btn) setOpen(false); });
+      document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') setOpen(false); });
+      menu.addEventListener('click', (e)=>{ if (e.target.closest('a')) setOpen(false); });
+      window.addEventListener('resize', ()=>{ if (innerWidth > DESKTOP_W) setOpen(false); });
     })();
   </script>
 
-
+  <!-- Starfield Background (identical gradient/colors to Announcements) -->
   <script>
+    (function(){
+      const cvs = document.getElementById('starfield');
+      if(!cvs) return;
+      const ctx = cvs.getContext('2d', { alpha:false }); // solid background like Announcements
+      let stars=[];
+      function resize(){
+        cvs.width = innerWidth; cvs.height = innerHeight;
+        stars = Array.from({length:200},()=>({
+          x:Math.random()*cvs.width, y:Math.random()*cvs.height,
+          r:Math.random()*1.6, v:Math.random()*0.3+0.05
+        }));
+      }
+      addEventListener('resize', resize); resize();
+      (function tick(){
+        const light = document.documentElement.getAttribute('data-theme')==='light';
+        const g = ctx.createLinearGradient(0,0,0,cvs.height);
+        if(light){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
+        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
+        ctx.fillStyle=g; ctx.fillRect(0,0,cvs.width,cvs.height);
+        ctx.fillStyle = light? 'rgba(60,90,140,.85)':'rgba(180,200,255,.85)';
+        for(const s of stars){
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+          s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; }
+        }
+        requestAnimationFrame(tick);
+      })();
+    })();
+  </script>
 
+  <!-- Fundraiser logic (unchanged) -->
+  <script>
     function startCountdown(el, iso){
       if(!iso){ el.textContent = 'TBA'; return; }
       const target = new Date(iso).getTime();
@@ -285,7 +268,7 @@
         const m = Math.floor((diff % 3600000) / 60000);
         const s = Math.floor((diff % 60000) / 1000);
         el.textContent = `${d}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
-        requestAnimationFrame(()=> setTimeout(tick, 1000 - (Date.now() - now)));
+        requestAnimationFrame(()=> setTimeout(tick, 1000));
       };
       tick();
     }
@@ -297,7 +280,6 @@
     startCountdown(document.getElementById('cd-leaves'),
                    document.querySelector('.leaves')?.dataset.deadline);
 
-  
     let currentAmount = 0;     
     const goalAmount = 10000;
 
@@ -312,11 +294,11 @@
     }
     updateGoalBar();
 
- 
+    // Call this from console or other scripts to update progress:
     window.setFundraiserProgress = (amount)=>{ currentAmount = Math.max(0, amount|0); updateGoalBar(); };
   </script>
-
 
   <script src="script.js" defer></script>
 </body>
 </html>
+
