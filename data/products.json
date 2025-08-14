@@ -13,4 +13,7 @@
   { "image": "images/shop/basketball-jersey.png",    "title": "Basketball Jersey",           "category": "jersey", "price": 50 },
   { "image": "images/shop/football-jersey-blue.png", "title": "Football Jersey (Blue)",      "category": "jersey", "price": 55 },
   { "image": "images/shop/hockey-jersey.jpg",        "title": "Hockey Jersey",               "category": "jersey", "price": 60 }
+   { "image": "images/shop/Beenie.jpeg",        "title": "Beanie hat",               "category": "hat", "price": 20 }
+   { "image": "images/shop/Jacket.jpeg",          "title": "Jacket",                  "category": "jersey", "price": 50 },
+    { "image": "images/shop/auburnlongsleeve.jpeg",            "title": "Long Sleeve",                    "category": "tee",    "price": 38 },
 ]
