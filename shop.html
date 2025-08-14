@@ -6,9 +6,17 @@
   <title>AHS Class of ’28 — Shop</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
+
   <style>
+    /* --- Header hardening: keep nav on one line, reliable mobile menu --- */
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
+    .mobile-menu{ z-index:1000; }
+    .hidden{ display:none !important; }
+
+    /* Page base */
     body { color: var(--text); background: transparent; overflow-x:hidden; }
-    #starfield{ position: fixed; inset: 0; z-index:-1; }
+    #starfield{ position: fixed; inset: 0; z-index:-1; pointer-events:none; display:block; }
     main{ max-width: 1220px; margin: 0 auto; padding: 26px 18px 44px; }
 
     /* Notice */
@@ -76,18 +84,34 @@
   </style>
 </head>
 <body>
-  <canvas id="starfield"></canvas>
+  <canvas id="starfield" aria-hidden="true"></canvas>
 
   <!-- Header -->
- <header class="header" role="banner">
-  <nav class="nav" aria-label="Primary">
-    <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
-      <span class="logo" aria-hidden="true">A</span>
-      AHS Class of ’28
-    </a>
+  <header class="header" role="banner">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+        <span class="logo" aria-hidden="true">A</span>
+        AHS Class of ’28
+      </a>
 
+      <div class="links" role="navigation">
+        <a href="./index.html">Home</a>
+        <a href="./fundraisers.html">Fundraisers</a>
+        <a href="./calendar.html">Calendar</a>
+        <a href="./media.html">Media</a>
+        <a href="./achievements.html">Achievements</a>
+        <a href="./about.html">About</a>
+        <a href="./contact.html">Contact</a>
+        <a class="active" href="./shop.html">Shop</a>
+        <a href="./announcements.html">Announcements</a>
+        <a href="./community.html">Community</a>
+      </div>
 
-    <div class="links" role="navigation">
+      <button id="menuBtn" class="menu-btn" aria-expanded="false"
+              aria-controls="mobileMenu" aria-label="Open menu">☰</button>
+    </nav>
+
+    <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
       <a href="./index.html">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
@@ -98,28 +122,9 @@
       <a class="active" href="./shop.html">Shop</a>
       <a href="./announcements.html">Announcements</a>
       <a href="./community.html">Community</a>
+      <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
     </div>
-
-    <button id="menuBtn" class="menu-btn" aria-expanded="false"
-            aria-controls="mobileMenu" aria-label="Open menu">☰</button>
-  </nav>
-
-
-  <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-    <a href="./index.html">Home</a>
-    <a href="./fundraisers.html">Fundraisers</a>
-    <a href="./calendar.html">Calendar</a>
-    <a href="./media.html">Media</a>
-    <a href="./achievements.html">Achievements</a>
-    <a href="./about.html">About</a>
-    <a href="./contact.html">Contact</a>
-    <a class="active" href="./shop.html">Shop</a>
-    <a href="./announcements.html">Announcements</a>
-    <a href="./community.html">Community</a>
-    <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
-  </div>
-</header>
-
+  </header>
 
   <main>
     <h1>Shop</h1>
@@ -158,36 +163,51 @@
   </footer>
 
   <script>
-    /* ===== CONFIG: set your GitHub repo for API fallback ===== */
-    const GITHUB_USER = 'davidru20';
-    const GITHUB_REPO = 'auburnrockets28';
-    const SHOP_FOLDER = 'images/shop';     // folder that holds the product images
-    const PRODUCTS_JSON = 'data/products.json'; // preferred data source
+    /* ===== Universal mobile menu (same as Calendar) ===== */
+    (function initMobileMenu(){
+      if (window.__ahsMenuBound) return;
+      window.__ahsMenuBound = true;
 
-    /* Mobile menu */
-    (function(){
-      const btn = document.getElementById('menuBtn');
-      const menu = document.getElementById('mobileMenu');
-      if (!btn || !menu) return;
-      btn.addEventListener('click', e=>{
-        e.stopPropagation();
-        const hidden = menu.classList.toggle('hidden');
-        btn.setAttribute('aria-expanded', String(!hidden));
-      });
-      document.addEventListener('click', e=>{
-        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && e.target !== btn){
-          btn.setAttribute('aria-expanded','false'); menu.classList.add('hidden');
-        }
-      });
+      function bind(){
+        const btn  = document.getElementById('menuBtn');
+        const menu = document.getElementById('mobileMenu');
+        if (!btn || !menu) return;
+
+        let open = false;
+        const set = (v)=>{
+          open = v;
+          menu.classList.toggle('hidden', !open);
+          btn.setAttribute('aria-expanded', String(open));
+        };
+
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); set(!open); }, {passive:true});
+        document.addEventListener('click', (e)=>{
+          if (!open) return;
+          if (!menu.contains(e.target) && e.target !== btn) set(false);
+        });
+        document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') set(false); });
+        menu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> set(false)));
+        window.addEventListener('hashchange', ()=> set(false));
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bind, {once:true});
+      } else {
+        bind();
+      }
     })();
 
-    /* Starfield */
+    /* Starfield (theme-aware) */
     (function(){
       const cvs = document.getElementById('starfield');
       const ctx = cvs.getContext('2d', { alpha:false });
       let stars=[];
-      function resize(){ cvs.width=innerWidth; cvs.height=innerHeight;
-        stars = Array.from({length:200},()=>({x:Math.random()*cvs.width,y:Math.random()*cvs.height,r:Math.random()*1.6,v:Math.random()*0.3+0.05}));
+      function resize(){
+        cvs.width=innerWidth; cvs.height=innerHeight;
+        stars = Array.from({length:200},()=>({
+          x:Math.random()*cvs.width, y:Math.random()*cvs.height,
+          r:Math.random()*1.6, v:Math.random()*0.3+0.05
+        }));
       }
       addEventListener('resize', resize); resize();
       (function tick(){
@@ -197,20 +217,28 @@
         else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
         ctx.fillStyle=g; ctx.fillRect(0,0,cvs.width,cvs.height);
         ctx.fillStyle = light? 'rgba(60,90,140,.85)':'rgba(180,200,255,.85)';
-        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; } }
+        for(const s of stars){
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+          s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; }
+        }
         requestAnimationFrame(tick);
       })();
     })();
 
     /* ===== SHOP LOGIC (JSON first, GitHub API fallback) ===== */
+    const GITHUB_USER = 'davidru20';
+    const GITHUB_REPO = 'auburnrockets28';
+    const SHOP_FOLDER = 'images/shop';
+    const PRODUCTS_JSON = 'data/products.json';
+
     const grid = document.getElementById('grid');
     const empty = document.getElementById('empty');
     const q = document.getElementById('q');
     const sortSel = document.getElementById('sort');
     const pillbar = document.getElementById('pillbar');
 
-    let items = [];          // unified list of products
-    let activeCat = '';      // pill filter
+    let items = [];
+    let activeCat = '';
     const CATEGORY_LABELS = { hoodie:'Hoodies', jersey:'Jerseys', tee:'T-Shirts', hat:'Hats', pants:'Pants', other:'Other' };
 
     function fmtPrice(n){ return typeof n==='number' ? `$${Number(n).toFixed(2)}` : ''; }
@@ -243,10 +271,9 @@
         return inCat && inTerm;
       });
 
-      // sort
       if (sort === 'price-asc') list.sort((a,b)=> (a.price||0) - (b.price||0));
       else if (sort === 'price-desc') list.sort((a,b)=> (b.price||0) - (a.price||0));
-      else list.sort((a,b)=> (b.created||0) - (a.created||0)); // newest first if provided
+      else list.sort((a,b)=> (b.created||0) - (a.created||0));
 
       grid.innerHTML = '';
       if (!list.length){ empty.classList.remove('hidden'); return; }
@@ -256,14 +283,12 @@
         const card = document.createElement('div');
         card.className = 'card hover-up product';
 
-        // media
         const media = document.createElement('div');
         media.className = 'product-media';
         const img = document.createElement('img');
         img.loading='lazy'; img.src = p.image; img.alt = p.alt || p.title;
         media.appendChild(img);
 
-        // top-left badge
         const chips = document.createElement('div');
         chips.className = 'chips';
         chips.style.position='absolute'; chips.style.top='10px'; chips.style.left='10px';
@@ -274,7 +299,6 @@
         }
         media.appendChild(chips);
 
-        // body
         const body = document.createElement('div'); body.className = 'product-body';
         const row = document.createElement('div'); row.className = 'title-row';
         const title = document.createElement('div'); title.className = 'product-title'; title.textContent = p.title;
@@ -309,19 +333,17 @@
     }
 
     async function loadFromGitHubAPI(){
-      // Build URL for GitHub Contents API (public repos only)
       const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${SHOP_FOLDER}`;
       const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github+json' }});
       if (!res.ok) throw new Error('GitHub API failed');
       const files = await res.json();
-      // Map each image into a basic product card
       const imgs = files.filter(f => f.type==='file' && /\.(png|jpe?g|webp|gif)$/i.test(f.name));
       return imgs.map(f => ({
         id: f.sha,
-        title: f.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim(), // filename → title
+        title: f.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim(),
         category: 'other',
         price: null,
-        image: f.download_url,  // raw file URL from GitHub
+        image: f.download_url,
         alt: f.name,
         link: './contact.html',
         badge: 'Concept'
@@ -330,23 +352,20 @@
 
     (async function start(){
       try{
-        // Try JSON first (nice titles/prices/categories)
         items = await loadFromJSON();
       }catch{
-        // Fallback: auto-gallery from GitHub folder
         items = await loadFromGitHubAPI();
       }
-      // optional: assign created timestamps so "Newest" works
       const now = new Date();
       items.forEach((p,i)=>{ if (!p.created) p.created = Number(now.toISOString().slice(0,10).replace(/-/g,'')) - i; });
       buildPills(); render();
 
-      // listeners
       q.addEventListener('input', render);
       sortSel.addEventListener('change', render);
     })();
   </script>
 
-  <script src="script.js?v=26"></script>
+  <!-- Defer main site JS so it never blocks or rebinds early -->
+  <script src="script.js?v=26" defer></script>
 </body>
 </html>
