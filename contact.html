@@ -6,11 +6,23 @@
   <title>Contact • AHS Class of ’28</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-local starfield styles -->
+  <style>
+    /* Fullscreen starfield canvas behind everything */
+    #starfield{
+      position:fixed; inset:0; width:100%; height:100%;
+      z-index:-1; pointer-events:none; display:block;
+    }
+    @media (prefers-reduced-motion: reduce){ #starfield{ animation:none !important; } }
+  </style>
 </head>
 <body>
 
+  <!-- Starfield background -->
+  <canvas id="starfield" aria-hidden="true"></canvas>
+
   <!-- ============================ HEADER / NAV ============================ -->
-  <!-- ===== Global Header (regular site header) ===== -->
 <header class="header" role="banner">
   <nav class="nav" aria-label="Primary">
     <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -26,7 +38,7 @@
       <a href="./media.html">Media</a>
       <a href="./achievements.html">Achievements</a>
       <a href="./about.html">About</a>
-      <a class="active" href="./contact.html">Contact</a>
+      <a class="active" href="./contact.html" aria-current="page">Contact</a>
       <a href="./shop.html">Shop</a>
       <a href="./announcements.html">Announcements</a>
       <a href="./community.html">Community</a>
@@ -45,8 +57,8 @@
     <a href="./media.html">Media</a>
     <a href="./achievements.html">Achievements</a>
     <a href="./about.html">About</a>
-    <a href="./contact.html">Contact</a>
-    <a class="active" href="./shop.html">Shop</a>
+    <a class="active" href="./contact.html" aria-current="page">Contact</a>
+    <a href="./shop.html">Shop</a>
     <a href="./announcements.html">Announcements</a>
     <a href="./community.html">Community</a>
     <div class="small" style="padding:8px 10px; opacity:.8">Tap outside to close</div>
@@ -62,8 +74,7 @@
         <p class="small" style="margin-top:6px;">
           Phones aren’t allowed in school — use this form to reach us fast.
         </p>
-        <div class="inline" style="justify-content:center; margin-top:14px;">
-        </div>
+        <div class="inline" style="justify-content:center; margin-top:14px;"></div>
       </div>
     </section>
 
@@ -75,20 +86,15 @@
             <h2 class="section-title">Send a Message</h2>
             <p class="section-sub">Choose who you want to contact and write your message.</p>
 
-            <!-- 
-              ACTION OPTIONS:
-              A) Works right now without setup: we’ll build a mailto: link in JS (default).
-              B) To use Formspree later: replace action with your endpoint, like:
-                 action="https://formspree.io/f/abcxyz"
-            -->
-            <form id="contactForm" class="form" action="mailto:" method="POST">
+            <!-- Default: mailto. Swap action to Formspree later if desired. -->
+            <form id="contactForm" class="form" action="mailto:" method="POST" novalidate>
               <!-- Officer / Group / Advisors -->
               <label class="label" for="recipient">Who do you want to contact?</label>
               <select id="recipient" name="recipient" class="select" required>
                 <option value="" disabled selected>Select a recipient</option>
                 <optgroup label="Student Government">
                   <option value="ahsstudentgov28@gmail.com">Student Gov Group — ahsstudentgov28@gmail.com</option>
-                  <option value="student-gov@auburn.k12.ma.us">Student Gov (school)—student-gov@auburn.k12.ma.us</option>
+                  <option value="student-gov@auburn.k12.ma.us">Student Gov (school) — student-gov@auburn.k12.ma.us</option>
                 </optgroup>
                 <optgroup label="Officers">
                   <option value="matiemo28@auburn.k12.ma.us">Michael Atiemo — Vice President</option>
@@ -106,11 +112,11 @@
               <div class="inline">
                 <div style="flex:1;">
                   <label class="label" for="name">Your name</label>
-                  <input id="name" name="name" class="input" type="text" placeholder="Your name" required />
+                  <input id="name" name="name" class="input" type="text" placeholder="Your name" autocomplete="name" required />
                 </div>
                 <div style="flex:1;">
                   <label class="label" for="email">Your email</label>
-                  <input id="email" name="email" class="input" type="email" placeholder="you@school.org" required />
+                  <input id="email" name="email" class="input" type="email" placeholder="you@school.org" autocomplete="email" required />
                 </div>
               </div>
 
@@ -131,29 +137,30 @@
                 <button class="btn" type="reset">Clear</button>
               </div>
 
-              <p class="help">Tip: Later, swap to Formspree by replacing the form’s <code>action</code> with your endpoint.</p>
+              <p class="help">Tip: To use Formspree later, replace the form’s <code>action</code> with your endpoint.</p>
             </form>
           </article>
 
           <article class="panel hover-up">
             <h2 class="section-title">Contacts</h2>
-          <div class="table-wrapper">
-            <table class="table">
-              <thead>
-                <tr><th>Role</th><th>Name</th><th>Email</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>Student Gov (group)</td><td>—</td><td><a href="mailto:ahsstudentgov28@gmail.com">ahsstudentgov28@gmail.com</a></td></tr>
-                <tr><td>Student Gov (school)</td><td>—</td><td><a href="mailto:student-gov@auburn.k12.ma.us">student-gov@auburn.k12.ma.us</a></td></tr>
-                <tr><td>Vice President</td><td>Michael Atiemo</td><td><a href="mailto:michaelatiemo54@gmail.com">michaelatiemo54@gmail.com</a></td></tr>
-                <tr><td>Vice President (school)</td><td>Michael Atiemo</td><td><a href="mailto:matiemo28@auburn.k12.ma.us">matiemo28@auburn.k12.ma.us</a></td></tr>
-                <tr><td>President</td><td>Patrick Haroian</td><td><a href="mailto:pharoian28@auburn.k12.ma.us">pharoian28@auburn.k12.ma.us</a></td></tr>
-                <tr><td>Treasurer</td><td>David Ruco</td><td><a href="mailto:druco28@auburn.k12.ma.us">druco28@auburn.k12.ma.us</a></td></tr>
-                <tr><td>Secretary</td><td>Matias Gonzalez</td><td><a href="mailto:mgonzalez28@auburn.k12.ma.us">mgonzalez28@auburn.k12.ma.us</a></td></tr>
-                <tr><td>Advisor</td><td>J. Berg</td><td><a href="mailto:jberg@auburn.k12.ma.us">jberg@auburn.k12.ma.us</a></td></tr>
-                <tr><td>Class Advisor</td><td>Mr. Martin</td><td><a href="mailto:amartin@auburn.k12.ma.us">amartin@auburn.k12.ma.us</a></td></tr>
-              </tbody>
-            </table>
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr><th>Role</th><th>Name</th><th>Email</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Student Gov (group)</td><td>—</td><td><a href="mailto:ahsstudentgov28@gmail.com">ahsstudentgov28@gmail.com</a></td></tr>
+                  <tr><td>Student Gov (school)</td><td>—</td><td><a href="mailto:student-gov@auburn.k12.ma.us">student-gov@auburn.k12.ma.us</a></td></tr>
+                  <tr><td>Vice President</td><td>Michael Atiemo</td><td><a href="mailto:michaelatiemo54@gmail.com">michaelatiemo54@gmail.com</a></td></tr>
+                  <tr><td>Vice President (school)</td><td>Michael Atiemo</td><td><a href="mailto:matiemo28@auburn.k12.ma.us">matiemo28@auburn.k12.ma.us</a></td></tr>
+                  <tr><td>President</td><td>Patrick Haroian</td><td><a href="mailto:pharoian28@auburn.k12.ma.us">pharoian28@auburn.k12.ma.us</a></td></tr>
+                  <tr><td>Treasurer</td><td>David Ruco</td><td><a href="mailto:druco28@auburn.k12.ma.us">druco28@auburn.k12.ma.us</a></td></tr>
+                  <tr><td>Secretary</td><td>Matias Gonzalez</td><td><a href="mailto:mgonzalez28@auburn.k12.ma.us">mgonzalez28@auburn.k12.ma.us</a></td></tr>
+                  <tr><td>Advisor</td><td>J. Berg</td><td><a href="mailto:jberg@auburn.k12.ma.us">jberg@auburn.k12.ma.us</a></td></tr>
+                  <tr><td>Class Advisor</td><td>Mr. Martin</td><td><a href="mailto:amartin@auburn.k12.ma.us">amartin@auburn.k12.ma.us</a></td></tr>
+                </tbody>
+              </table>
+            </div> <!-- closed table-wrapper -->
 
             <div class="inline" style="margin-top:12px;">
               <a class="btn" href="./about.html">About this site</a>
@@ -176,7 +183,7 @@
 
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
 
-  <!-- Page-specific helper script (keeps your main script unchanged) -->
+  <!-- Page-specific helper script -->
   <script>
     (function contactPage(){
       const form = document.getElementById('contactForm');
@@ -188,15 +195,14 @@
 
       if (!form || !recipient) return;
 
+      function validEmail(v){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v); }
+
       form.addEventListener('submit', function(e){
         let ok = true;
         [recipient, nameEl, emailEl, subjEl, msgEl].forEach(el=>{
-          if (!el.value || (el.type === 'email' && !/^[^@]+@[^@]+\.[^@]+$/.test(el.value))) {
-            el.style.boxShadow = '0 0 0 2px rgba(255,77,77,.6)';
-            ok = false;
-          } else {
-            el.style.boxShadow = '';
-          }
+          const bad = !el.value || (el.type === 'email' && !validEmail(el.value));
+          el.style.boxShadow = bad ? '0 0 0 2px rgba(255,77,77,.6)' : '';
+          if (bad) ok = false;
         });
         if (!ok) {
           e.preventDefault();
@@ -205,16 +211,21 @@
         }
 
         // Build mailto if still using default action
-        if ((form.getAttribute('action') || '').startsWith('mailto:') || form.getAttribute('action') === '') {
+        const action = form.getAttribute('action') || '';
+        if (action === '' || action.startsWith('mailto:')) {
           e.preventDefault();
           const to = recipient.value;
           const subject = encodeURIComponent(`[AHS '28] ${subjEl.value}`);
           const body = encodeURIComponent(
             `From: ${nameEl.value} <${emailEl.value}>\n\n${msgEl.value}\n\n— Sent from the AHS Class of '28 site`
           );
-          const link = `mailto:${to}?subject=${subject}&body=${body}`;
-          window.location.href = link;
-          try { const t=document.getElementById('toast'); t.classList.remove('hidden'); t.textContent='Opening your email app…'; setTimeout(()=>t.classList.add('hidden'), 1800); } catch{}
+          window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+          try {
+            const t = document.getElementById('toast');
+            t.classList.remove('hidden');
+            t.textContent = 'Opening your email app…';
+            setTimeout(()=>t.classList.add('hidden'), 1800);
+          } catch {}
         }
       });
 
@@ -224,6 +235,102 @@
     })();
   </script>
 
-  <script src="script.js"></script>
+  <!-- Starfield script (parallax + twinkle; theme-aware; respects reduced motion) -->
+  <script>
+    (function(){
+      const canvas = document.getElementById('starfield');
+      const ctx = canvas.getContext('2d', { alpha:true });
+      const prefersReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let w=0,h=0, stars=[], raf=0, last=performance.now();
+
+      const LAYERS = [
+        { n:70,  spd:0.03, size:[0.6,1.2], a:[0.10,0.20] }, // far
+        { n:40,  spd:0.06, size:[0.8,1.6], a:[0.12,0.26] }, // mid
+        { n:18,  spd:0.10, size:[1.2,2.4], a:[0.16,0.32] }  // near
+      ];
+      const rand = (min,max)=> min + Math.random()*(max-min);
+
+      function theme(){
+        const light = document.documentElement.getAttribute('data-theme') === 'light';
+        return {
+          bgTop: light ? '#eaf2ff' : '#05070d',
+          bgMid: light ? '#f7fbff' : '#0a0f1b',
+          bgBot: light ? '#ffffff' : '#05070d',
+          star:  light ? '#6a86b8' : '#e8f1ff'
+        };
+      }
+
+      function resize(){
+        const dpr = devicePixelRatio || 1;
+        canvas.width  = Math.floor(innerWidth * dpr);
+        canvas.height = Math.floor(innerHeight * dpr);
+        canvas.style.width = '100%'; canvas.style.height = '100%';
+        ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
+        w = innerWidth; h = innerHeight;
+
+        stars = [];
+        LAYERS.forEach((L,li)=>{
+          for(let i=0;i<L.n;i++){
+            stars.push({
+              x: Math.random()*w, y: Math.random()*h,
+              r: rand(L.size[0], L.size[1]),
+              a: rand(L.a[0], L.a[1]),
+              tw: rand(0, Math.PI*2),
+              spd: L.spd, layer: li
+            });
+          }
+        });
+        paint(true);
+      }
+
+      function paint(staticOnly=false){
+        const c = theme();
+        const g = ctx.createLinearGradient(0,0,0,h);
+        g.addColorStop(0,c.bgTop); g.addColorStop(.5,c.bgMid); g.addColorStop(1,c.bgBot);
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+
+        for(const s of stars){
+          s.tw += .8 * (staticOnly?0:1/60);
+          const tw = 0.5 + 0.5 * Math.sin(s.tw + s.layer);
+          const alpha = Math.max(.08, Math.min(1, s.a * (0.85 + 0.25 * tw)));
+          ctx.globalAlpha = alpha;
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+          ctx.fillStyle = c.star; ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      function tick(ts){
+        const dt = Math.min(.05, (ts - last)/1000); last = ts;
+        for(const s of stars){
+          s.x += s.spd * 24 * dt;
+          s.y += s.spd * 6  * dt;
+          if (s.x > w+2) s.x = -2;
+          if (s.y > h+2) s.y = -2;
+        }
+        paint();
+        raf = requestAnimationFrame(tick);
+      }
+
+      resize();
+      addEventListener('resize', resize);
+      const mo = new MutationObserver(resize);
+      mo.observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+
+      if (!prefersReduce){
+        raf = requestAnimationFrame(tick);
+        document.addEventListener('visibilitychange', ()=> {
+          if (document.hidden) cancelAnimationFrame(raf);
+          else { last = performance.now(); raf = requestAnimationFrame(tick); }
+        });
+      } else {
+        paint(true);
+      }
+    })();
+  </script>
+
+  <!-- Your global site script (menu, clock, countdown, etc.) -->
+  <script src="script.js" defer></script>
 </body>
 </html>
+
