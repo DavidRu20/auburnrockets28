@@ -1,57 +1,67 @@
 [
-  {
-    "date": "2025-08-20",
-    "type": "event",
-    "label": "First Day of School 🎒"
-  },
-  {
-    "date": "2025-09-01",
-    "type": "holiday",
-    "label": "Labor Day — No Classes 🇺🇸"
-  },
-  {
-    "date": "2025-10-13",
-    "type": "no-school",
-    "label": "Professional Development Day (No Students)"
-  },
-  {
-    "date": "2025-11-26",
-    "type": "half",
-    "label": "Thanksgiving Break — Early Release 🦃"
-  },
-  {
-    "date": "2025-11-27",
-    "type": "break",
-    "label": "Thanksgiving Break"
-  },
-  {
-    "date": "2025-11-28",
-    "type": "break",
-    "label": "Thanksgiving Break"
-  },
-  {
-    "date": "2025-12-22",
-    "type": "break",
-    "label": "Winter Break Begins ❄️"
-  },
-  {
-    "date": "2026-01-01",
-    "type": "holiday",
-    "label": "New Year’s Day 🎉"
-  },
-  {
-    "date": "2026-02-16",
-    "type": "break",
-    "label": "February Vacation"
-  },
-  {
-    "date": "2026-04-20",
-    "type": "break",
-    "label": "Spring Break 🌸"
-  },
-  {
-    "date": "2026-06-19",
-    "type": "event",
-    "label": "Last Day of School 🎓"
-  }
+  /* ====== AUGUST 2025 ====== */
+  { "date": "2025-08-27", "type": "lunch", "label": "Chicken Tenders • Fries, Carrots • Fruit Cup / Salad Bar • Milk/Water" },
+  { "date": "2025-08-28", "type": "lunch", "label": "Big Daddy Pizza • Assorted Fruits / Salad Bar • Milk/Water" },
+  { "date": "2025-08-28", "type": "sport", "label": "Varsity Football (Scrimmage) vs Grafton —  Thu" },
+  { "date": "2025-08-28", "type": "event", "label": "AHS Picture Day — Thu" },
+  { "date": "2025-08-29", "type": "no-school", "label": "No School" },
+
+  /* ====== SEPTEMBER 2025 ====== */
+  { "date": "2025-09-01", "type": "no-school", "label": "Labor Day — No School" },
+  { "date": "2025-09-02", "type": "lunch", "label": "BBQ Pork Slider • Sweet Potato, Roasted Corn • Fruit/Salad Bar • Milk/Water" },
+  { "date": "2025-09-03", "type": "lunch", "label": "Teriyaki Chicken • Confetti Rice, Vegetables • Fruit Cup / Salad Bar • Milk/Water" },
+  { "date": "2025-09-04", "type": "lunch", "label": "Mac-N-Cheese + Dinner Roll • Salad Bar, Steamed Broccoli • Fruit Cup • Milk/Water" },
+  { "date": "2025-09-05", "type": "lunch", "label": "Personal Round Pizza + Salad Bar • Fruit Cup • Milk/Water" },
+
+  { "date": "2025-09-08", "type": "lunch", "label": "Chicken Tenders • Sweet Potato • Fruit Cup / Salad Bar • Milk/Water" },
+  { "date": "2025-09-09", "type": "lunch", "label": "Beef Nachos • Black Beans, Salsa • Salad Bar / Fruits • Milk/Water" },
+  { "date": "2025-09-10", "type": "lunch", "label": "BBQ Chicken • Coleslaw, Fries • Fresh Fruit / Salad Bar • Milk/Water" },
+  { "date": "2025-09-11", "type": "lunch", "label": "American Chop Suey • Roll, Steamed Peas • Salad Bar / Fruit Cup • Milk/Water" },
+  { "date": "2025-09-12", "type": "lunch", "label": "French Bread Pizza + Salad Bar • Fruit Cups • Milk/Water" },
+
+  { "date": "2025-09-15", "type": "lunch", "label": "Tomato Soup & Cheese Croissant • Hashbrown • Fresh Fruit / Salad Bar • Milk/Water" },
+  { "date": "2025-09-16", "type": "lunch", "label": "Chicken Fajita • Salsa/Guacamole • Fruit Cup / Salad Bar • Milk/Water" },
+  { "date": "2025-09-17", "type": "lunch", "label": "Open Faced Turkey • Mashed Potato / Carrots • Salad Bar / Fruit Cup • Milk/Water" },
+  { "date": "2025-09-18", "type": "lunch", "label": "Pasta & Meatballs • Dinner Roll, Steamed Peas • Fruit Cup / Salad Bar • Milk/Water" },
+  { "date": "2025-09-19", "type": "lunch", "label": "Personal Round Pizza + Salad Bar • Fruit Cups • Milk/Water" },
+
+  { "date": "2025-09-22", "type": "lunch", "label": "Breakfast for Lunch • Sausage, Tater Tots • Fresh Fruit / Salad Bar • Milk/Water" },
+  { "date": "2025-09-23", "type": "lunch", "label": "Chicken Nachos • Black Beans, Guacamole • Salsa / Sour Cream • Fruit Cup / Salad Bar • Milk/Water" },
+  { "date": "2025-09-24", "type": "lunch", "label": "Mandarin Chicken • Confetti Rice, Broccoli • Fruit Cup / Salad Bar • Milk/Water" },
+  { "date": "2025-09-25", "type": "lunch", "label": "Chili Cheese Dogs • Roasted Corn • Salad Bar / Fruit Cup • Milk/Water" },
+  { "date": "2025-09-26", "type": "lunch", "label": "Big Daddy Pizza + Salad Bar • Fruit Cups • Milk/Water" },
+
+  /* ====== OCTOBER 2025 ====== */
+  { "date": "2025-10-13", "type": "no-school", "label": "Indigenous Peoples’ Day — No School" },
+
+  /* ====== NOVEMBER 2025 ====== */
+  { "date": "2025-11-10", "type": "half", "label": "Half-Day — Parent/Teacher Conferences" },
+  { "date": "2025-11-11", "type": "no-school", "label": "Veterans Day — No School" },
+
+  /* ====== DECEMBER 2025 ====== */
+  { "date": "2025-12-23", "type": "half", "label": "Half-Day for Students & Staff" },
+  { "date": "2025-12-24", "type": "break", "label": "Winter Recess (starts)" },
+  { "date": "2025-12-25", "type": "break", "label": "Winter Recess" },
+  { "date": "2025-12-26", "type": "break", "label": "Winter Recess" },
+  { "date": "2025-12-29", "type": "break", "label": "Winter Recess" },
+  { "date": "2025-12-30", "type": "break", "label": "Winter Recess" },
+  { "date": "2025-12-31", "type": "break", "label": "Winter Recess" },
+
+  /* ====== JANUARY 2026 ====== */
+  { "date": "2026-01-01", "type": "break", "label": "Winter Recess" },
+  { "date": "2026-01-02", "type": "break", "label": "Winter Recess (ends)" },
+
+  /* ====== FEBRUARY 2026 — VACATION WEEK ====== */
+  { "date": "2026-02-16", "type": "break", "label": "February Vacation — No School" },
+  { "date": "2026-02-17", "type": "break", "label": "February Vacation — No School" },
+  { "date": "2026-02-18", "type": "break", "label": "February Vacation — No School" },
+  { "date": "2026-02-19", "type": "break", "label": "February Vacation — No School" },
+  { "date": "2026-02-20", "type": "break", "label": "February Vacation — No School" },
+
+  /* ====== APRIL 2026 — VACATION WEEK ====== */
+  { "date": "2026-04-20", "type": "break", "label": "Spring Vacation — No School" },
+  { "date": "2026-04-21", "type": "break", "label": "Spring Vacation — No School" },
+  { "date": "2026-04-22", "type": "break", "label": "Spring Vacation — No School" },
+  { "date": "2026-04-23", "type": "break", "label": "Spring Vacation — No School" },
+  { "date": "2026-04-24", "type": "break", "label": "Spring Vacation — No School" }
 ]
