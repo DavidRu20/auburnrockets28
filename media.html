@@ -36,8 +36,9 @@
     html.menu-open, body.menu-open{ overflow:hidden; } /* scroll-lock while open */
 
     /* ===== background starfield ===== */
-    body{ color:var(--text); background:transparent; overflow-x:hidden; }
-    #starfield{ position:fixed; inset:0; z-index:-1; }
+    html, body { max-width:100%; overflow-x:hidden; }
+    body{ color:var(--text); background:transparent; }
+    #starfield{ position:fixed; inset:0; z-index:-1; pointer-events:none; display:block; }
 
     /* ===== page-local styles (futuristic tweaks) ===== */
     .media-toolbar{
@@ -132,7 +133,7 @@
   <!-- ============================ HEADER / NAV ============================ -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
+      <a class="brand" href="./index.html" aria-label="AHS Class of 2028 — Home">
         <span class="logo" aria-hidden="true">A</span>
         AHS Class of ’28
       </a>
@@ -141,7 +142,7 @@
         <a href="./index.html">Home</a>
         <a href="./fundraisers.html">Fundraisers</a>
         <a href="./calendar.html">Calendar</a>
-        <a href="./media.html" aria-current="page">Media</a>
+        <a class="active" href="./media.html" aria-current="page">Media</a>
         <a href="./achievements.html">Achievements</a>
         <a href="./about.html">About</a>
         <a href="./contact.html">Contact</a>
@@ -158,7 +159,7 @@
       <a href="./index.html">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
-      <a href="./media.html" aria-current="page">Media</a>
+      <a class="active" href="./media.html" aria-current="page">Media</a>
       <a href="./achievements.html">Achievements</a>
       <a href="./about.html">About</a>
       <a href="./contact.html">Contact</a>
@@ -274,8 +275,7 @@
       stars = Array.from({length: 220}, ()=>({
         x: Math.random()*cvs.width, y: Math.random()*cvs.height,
         r: Math.random()*1.6, v: Math.random()*0.25+0.05
-      }));
-    }
+      }));}
     addEventListener('resize', resize); resize();
     (function tick(){
       const isLight = document.documentElement.getAttribute('data-theme')==='light';
