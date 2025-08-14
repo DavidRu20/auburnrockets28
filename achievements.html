@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Base styling */
+  
     body {
       background: #000;
       color: white;
@@ -17,7 +17,7 @@
       overflow-x: hidden;
     }
 
-    /* Header/nav (from original) */
+
     .header {
       background: rgba(0, 0, 0, 0.85);
       position: fixed;
@@ -82,7 +82,7 @@
       .mobile-menu.show { display: flex; }
     }
 
-    /* Intro section */
+  
     .intro-box {
       height: 100vh;
       display: flex;
@@ -93,7 +93,7 @@
       background: rgba(0,0,0,0.6);
     }
 
-    /* Achievements layout */
+ 
     .achievements-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -105,7 +105,7 @@
       margin: auto;
     }
 
-    /* Glass card style */
+  
     .achievement-card {
       background: rgba(255, 255, 255, 0.07);
       border-radius: 20px;
@@ -137,7 +137,7 @@
       line-height: 1.5;
     }
 
-    /* Student of the Month special */
+
     .student-of-month {
       box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
       border: 1px solid rgba(255, 215, 0, 0.5);
@@ -146,7 +146,7 @@
       color: gold;
       text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
     }
-    /* Crown on hover */
+
     .student-of-month::before {
       content: "👑";
       font-size: 3rem;
@@ -162,7 +162,7 @@
       opacity: 1;
     }
 
-    /* Starfield styling */
+ 
     .starfield {
       position: fixed;
       top: 0; left: 0;
@@ -172,7 +172,7 @@
       opacity: 0.15;
     }
 
-    /* Celebration effect */
+
     @keyframes goldFlash {
       0%, 100% { background: rgba(255, 215, 0, 0); }
       50% { background: rgba(255, 215, 0, 0.2); }
@@ -185,8 +185,6 @@
 </head>
 <body>
 
-  <!-- Header / Nav -->
-  <!-- ===== Global Header (regular site header) ===== -->
 <header class="header" role="banner">
   <nav class="nav" aria-label="Primary">
     <a class="brand" href="./" aria-label="AHS Class of 2028 — Home">
@@ -194,7 +192,7 @@
       AHS Class of ’28
     </a>
 
-    <!-- Desktop links -->
+
     <div class="links" role="navigation">
       <a href="./index.html">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
@@ -208,12 +206,11 @@
       <a href="./community.html">Community</a>
     </div>
 
-    <!-- Mobile menu button -->
     <button id="menuBtn" class="menu-btn" aria-expanded="false"
             aria-controls="mobileMenu" aria-label="Open menu">☰</button>
   </nav>
 
-  <!-- Mobile menu -->
+
   <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
     <a href="./index.html">Home</a>
     <a href="./fundraisers.html">Fundraisers</a>
@@ -229,15 +226,14 @@
   </div>
 </header>
 
-  <!-- Starfield -->
+ 
   <canvas class="starfield" id="starfield"></canvas>
 
-  <!-- Intro box -->
+  
   <section class="intro-box">
     Achievements
   </section>
 
-  <!-- Achievements grid -->
   <main class="achievements-container">
     <div class="achievement-card student-of-month" id="studentCard">
       <h2 class="achievement-title">🏆 Student of the Month</h2>
@@ -271,12 +267,12 @@
   </main>
 
   <script>
-    // Mobile menu toggle
+  
     document.getElementById('menuBtn').addEventListener('click', () => {
       document.getElementById('mobileMenu').classList.toggle('show');
     });
 
-    // Starfield
+ 
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
@@ -324,7 +320,7 @@
     createStars();
     animate();
 
-    // Celebration on click
+
     document.getElementById('studentCard').addEventListener('click', () => {
       document.body.classList.add('celebrate');
       setTimeout(() => {
