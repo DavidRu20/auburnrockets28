@@ -1,4 +1,4 @@
-<!doctype html> 
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -6,22 +6,35 @@
   <title>AHS Class of ’28 — Announcements</title>
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
+
   <style>
+    /* --- Header hardening: consistent layout + reliable mobile menu --- */
+    .nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .links{ display:flex; align-items:center; gap:16px; flex-wrap:nowrap; white-space:nowrap; }
+    .mobile-menu{ z-index:1000; }
+    .hidden{ display:none !important; }
+
+    /* Page base */
     body { color: var(--text); background: transparent; overflow-x:hidden; }
-    #starfield{ position: fixed; inset:0; z-index:-1; }
+    #starfield{ position: fixed; inset:0; z-index:-1; pointer-events:none; display:block; }
     main{ max-width: 1100px; margin: 0 auto; padding: 26px 18px 44px; }
+
+    /* Announcements */
     .ann-list{ display:grid; gap:14px; }
     .ann.card{ padding:16px; }
     .ann-title{ font-weight:900; font-size:1.1rem; margin:0 0 6px; }
     .ann-meta{ font-size:12px; color:var(--muted); margin-bottom:10px; }
     .ann-content p{ margin: 0 0 10px; }
+
+    /* Tools */
     .toolbar{ display:flex; gap:10px; align-items:center; margin:12px 0 18px; }
     .toolbar .input{ max-width:360px; }
+
     .empty{ text-align:center; opacity:.85; padding:24px 10px; border:1px dashed var(--border); border-radius:14px; }
   </style>
 </head>
 <body>
-  <canvas id="starfield"></canvas>
+  <canvas id="starfield" aria-hidden="true"></canvas>
 
   <!-- Header / Nav -->
   <header class="header" role="banner">
@@ -44,8 +57,9 @@
       </div>
       <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">☰</button>
     </nav>
+
     <div id="mobileMenu" class="mobile-menu hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-      <a href="./">Home</a>
+      <a href="./index.html">Home</a>
       <a href="./fundraisers.html">Fundraisers</a>
       <a href="./calendar.html">Calendar</a>
       <a href="./media.html">Media</a>
@@ -78,38 +92,51 @@
   </footer>
 
   <script>
-    /* Mobile menu */
-    (function(){
-      const btn = document.getElementById('menuBtn');
-      const menu = document.getElementById('mobileMenu');
-      if (!btn || !menu) return;
-      btn.addEventListener('click', e=>{
-        e.stopPropagation();
-        const hidden = menu.classList.toggle('hidden');
-        btn.setAttribute('aria-expanded', String(!hidden));
-      });
-      document.addEventListener('click', e=>{
-        if (!menu.classList.contains('hidden') && !menu.contains(e.target) && e.target !== btn){
-          btn.setAttribute('aria-expanded','false'); menu.classList.add('hidden');
-        }
-      });
-      // Close menu immediately when a link is tapped
-      menu.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (link){
-          btn.setAttribute('aria-expanded','false');
-          menu.classList.add('hidden');
-        }
-      });
+    /* ===== Universal mobile menu (guarded so it never double-binds) ===== */
+    (function initMobileMenu(){
+      if (window.__ahsMenuBound) return;
+      window.__ahsMenuBound = true;
+
+      function bind(){
+        const btn  = document.getElementById('menuBtn');
+        const menu = document.getElementById('mobileMenu');
+        if (!btn || !menu) return;
+
+        let open = false;
+        const set = (v)=>{
+          open = v;
+          menu.classList.toggle('hidden', !open);
+          btn.setAttribute('aria-expanded', String(open));
+        };
+
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); set(!open); }, {passive:true});
+        document.addEventListener('click', (e)=>{
+          if (!open) return;
+          if (!menu.contains(e.target) && e.target !== btn) set(false);
+        });
+        document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') set(false); });
+        menu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> set(false)));
+        window.addEventListener('hashchange', ()=> set(false));
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bind, {once:true});
+      } else {
+        bind();
+      }
     })();
 
-    /* Starfield */
+    /* Starfield (theme-aware, non-interactive) */
     (function(){
       const cvs = document.getElementById('starfield');
       const ctx = cvs.getContext('2d', { alpha:false });
       let stars=[];
-      function resize(){ cvs.width=innerWidth; cvs.height=innerHeight;
-        stars = Array.from({length:200},()=>({x:Math.random()*cvs.width,y:Math.random()*cvs.height,r:Math.random()*1.6,v:Math.random()*0.3+0.05}));
+      function resize(){
+        cvs.width = innerWidth; cvs.height = innerHeight;
+        stars = Array.from({length:200},()=>({
+          x:Math.random()*cvs.width, y:Math.random()*cvs.height,
+          r:Math.random()*1.6, v:Math.random()*0.3+0.05
+        }));
       }
       addEventListener('resize', resize); resize();
       (function tick(){
@@ -119,15 +146,18 @@
         else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
         ctx.fillStyle=g; ctx.fillRect(0,0,cvs.width,cvs.height);
         ctx.fillStyle = light? 'rgba(60,90,140,.85)':'rgba(180,200,255,.85)';
-        for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill(); s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; } }
+        for(const s of stars){
+          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+          s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; }
+        }
         requestAnimationFrame(tick);
       })();
     })();
 
-    /* Announcements loader with cache-buster and error display */
+    /* ===== Announcements loader with search ===== */
     const CANDIDATE_SOURCES = [
-      'data/announcements.json',      // same folder / root
-      '../data/announcements.json'    // if this page is inside a subfolder
+      'data/announcements.json',
+      '../data/announcements.json'
     ];
 
     const listEl = document.getElementById('list');
@@ -135,7 +165,6 @@
     const q = document.getElementById('q');
     let ANN = [];
 
-    // Markdown-ish to HTML (links open in a new tab)
     function mdToHTML(s){
       if(!s) return '';
       let html = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -144,35 +173,25 @@
       html = '<p>'+html.replace(/\n/g,'<br>')+'</p>';
       return html;
     }
-
-    // Safe date → timestamp helper for sort/format
     function parseTimeSafe(v){
-      if (!v) return -Infinity;            // invalids go last
+      if (!v) return -Infinity;
       const t = new Date(v).getTime();
       return Number.isNaN(t) ? -Infinity : t;
     }
-
-    // Normalize incoming JSON item keys → {title,date,content,html}
     function normalizeItem(raw){
       return {
         title:   raw.title   ?? raw.name    ?? raw.heading ?? '',
         date:    raw.date    ?? raw.posted  ?? raw.published ?? raw.created ?? '',
         content: raw.content ?? raw.body    ?? raw.text    ?? raw.markdown ?? '',
-        html:    raw.html    ?? ''  // if present, we render this directly
+        html:    raw.html    ?? ''
       };
     }
 
     function render(){
       const term = (q.value || '').toLowerCase().trim();
-
       const filtered = ANN
-        .filter(a => {
-          const title = (a.title || '').toLowerCase();
-          const content = (a.content || '').toLowerCase();
-          const html = (a.html || '').toLowerCase();
-          return (title + ' ' + content + ' ' + html).includes(term);
-        })
-        .sort((a, b) => parseTimeSafe(b.date) - parseTimeSafe(a.date));
+        .filter(a => (a.title||a.content||a.html||'').toLowerCase().includes(term))
+        .sort((a,b)=> parseTimeSafe(b.date) - parseTimeSafe(a.date));
 
       listEl.innerHTML = '';
       if (!filtered.length){ emptyEl.classList.remove('hidden'); return; }
@@ -210,8 +229,7 @@
     async function fetchFirst(urls){
       for (const path of urls){
         try{
-          const url = path + '?ts=' + Date.now();
-          const res = await fetch(url, { cache: 'no-store' });
+          const res = await fetch(path + '?ts=' + Date.now(), { cache: 'no-store' });
           if(res.ok) return await res.text();
         }catch(_) {}
       }
@@ -223,28 +241,23 @@
         const text = await fetchFirst(CANDIDATE_SOURCES);
         let data;
         try { data = JSON.parse(text); }
-        catch(e){ showError('JSON parse error — check commas/brackets'); return; }
+        catch{ showError('JSON parse error — check commas/brackets'); return; }
 
         if(Array.isArray(data)) ANN = data.map(normalizeItem);
         else if (data && Array.isArray(data.items)) ANN = data.items.map(normalizeItem);
         else { showError('JSON must be an array: [ {title,date,content}, ... ]'); return; }
 
-        // Skip totally empty entries
         ANN = ANN.filter(a => a && (a.title || a.content || a.html));
-
         render();
 
-        // Debounced search input for smoother typing
-        function debounce(fn, ms=120){
-          let id; return (...args)=>{ clearTimeout(id); id = setTimeout(()=>fn(...args), ms); };
-        }
-        q.addEventListener('input', debounce(render, 120));
+        // Debounced search
+        let id; q.addEventListener('input', ()=>{ clearTimeout(id); id=setTimeout(render, 120); });
       }catch(err){
         showError(err.message || 'Unknown error');
       }
     })();
   </script>
 
-  <script src="script.js?v=27"></script>
+  <script src="script.js?v=27" defer></script>
 </body>
 </html>
