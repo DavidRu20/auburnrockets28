@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0d6efd" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Page-local styles for starfield -->
+  <!-- Page-local styles for starfield + nav fix -->
   <style>
     /* Fullscreen starfield canvas behind everything */
     #starfield {
@@ -23,6 +23,33 @@
     @media (prefers-reduced-motion: reduce) {
       #starfield { animation: none !important; }
     }
+
+    /* --- NAV: prevent tabs from wrapping/stacking --- */
+    .header{ position:sticky; top:0; z-index:1000; }         /* stay on top of canvas */
+    .header .nav{ display:flex; align-items:center; justify-content:space-between; }
+
+    .header .nav .links{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      white-space:nowrap;       /* keep all tabs on one line */
+      overflow-x:auto;          /* if it runs out of room, allow horizontal scroll */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .header .nav .links a{
+      flex:0 0 auto;            /* don’t shrink into each other */
+    }
+
+    /* Show the burger only when needed; keep desktop clean */
+    .menu-btn{ display:none; }
+    @media (max-width: 900px){
+      .header .nav .links{ display:none; }   /* hand off to mobile drawer */
+      .menu-btn{ display:inline-flex; }
+    }
+
+    /* Make sure the mobile drawer sits above everything too */
+    .mobile-menu{ position:fixed; inset:auto 0 0 0; z-index:1100; }
   </style>
 </head>
 <body>
@@ -183,18 +210,17 @@
   <!-- Toast placeholder -->
   <div id="toast" class="toast info hidden" role="status" aria-live="polite"></div>
 
-  <!-- Subtle starfield script (parallax + twinkle; respects reduced motion) -->
+  <!-- Subtle starfield script -->
   <script>
     (function(){
       const canvas = document.getElementById('starfield');
       if (!canvas) return;
       const ctx = canvas.getContext('2d', { alpha: true });
 
-      // Layers of stars for depth
       const LAYERS = [
-        { count: 70,  speed: 0.03, size: [0.6, 1.2],  alpha: [0.10, 0.20] }, // far
-        { count: 40,  speed: 0.06, size: [0.8, 1.6],  alpha: [0.12, 0.26] }, // mid
-        { count: 18,  speed: 0.10, size: [1.2, 2.4],  alpha: [0.16, 0.32] }  // near
+        { count: 70,  speed: 0.03, size: [0.6, 1.2],  alpha: [0.10, 0.20] },
+        { count: 40,  speed: 0.06, size: [0.8, 1.6],  alpha: [0.12, 0.26] },
+        { count: 18,  speed: 0.10, size: [1.2, 2.4],  alpha: [0.16, 0.32] }
       ];
       const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       let stars = [];
@@ -211,7 +237,7 @@
               y: Math.random() * h,
               r: rand(L.size[0], L.size[1]),
               a: rand(L.alpha[0], L.alpha[1]),
-              tw: rand(0, Math.PI * 2), // twinkle phase
+              tw: rand(0, Math.PI * 2),
               spd: L.speed,
               layer: li
             });
@@ -227,7 +253,7 @@
         ctx.setTransform(1,0,0,1,0,0);
         ctx.scale(devicePixelRatio, devicePixelRatio);
         makeStars();
-        drawStatic(); // immediate paint
+        drawStatic();
       }
 
       function drawStatic(){
@@ -243,18 +269,16 @@
       }
 
       function tick(ts){
-        const dt = Math.min(0.05, (ts - last) / 1000); // cap delta
+        const dt = Math.min(0.05, (ts - last) / 1000);
         last = ts;
         ctx.clearRect(0, 0, w, h);
 
         for (const s of stars){
-          // gentle parallax drift to the right + slight downward
           s.x += s.spd * 24 * dt;
           s.y += s.spd * 6  * dt;
           if (s.x > window.innerWidth) s.x = -2;
           if (s.y > window.innerHeight) s.y = -2;
 
-          // twinkle (very subtle)
           s.tw += 0.8 * dt;
           const twinkle = 0.5 + 0.5 * Math.sin(s.tw + s.layer);
           const alpha = Math.max(0.08, Math.min(1, s.a * (0.85 + 0.25 * twinkle)));
@@ -270,7 +294,6 @@
         rafId = requestAnimationFrame(tick);
       }
 
-      // Boot
       resize();
       window.addEventListener('resize', resize);
 
@@ -281,7 +304,6 @@
           else { last = performance.now(); rafId = requestAnimationFrame(tick); }
         });
       } else {
-        // Static sky if reduced motion
         drawStatic();
       }
     })();
