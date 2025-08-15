@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark" class="force-dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28</title>
   <meta name="theme-color" content="#0d6efd" />
+  <meta name="color-scheme" content="dark" />
   <link rel="stylesheet" href="styles.css" />
 
   <style>
@@ -38,7 +39,31 @@
 
     /* Main spacing */
     main{ padding: 0 18px 44px; }
+
+    /* ===== FORCE DARK LOOK, ALWAYS ===== */
+    html.force-dark {
+      /* Pin tokens to your dark palette so light mode can't override */
+      --bg: #0b0e1a;
+      --text: #e8efff;
+      --muted: #a9b7d0;
+      --panel: rgba(20,24,38,.78);
+      --panel-solid: #141826;
+      --border: rgba(255,255,255,.08);
+      --shadow-1: 0 6px 16px rgba(0,0,0,.35);
+      --shadow-2: 0 14px 40px rgba(0,0,0,.45);
+      --brand: #0d6efd;
+      --danger: #ff4d4f;
+      --header-bg: rgba(15,18,30,.72);
+      --header-border: rgba(255,255,255,.06);
+      color-scheme: dark; /* dark form controls/scrollbars */
+    }
   </style>
+
+  <!-- Pin theme early in case other scripts run -->
+  <script>
+    document.documentElement.setAttribute('data-theme','dark');
+    document.documentElement.classList.add('force-dark');
+  </script>
 </head>
 <body>
 
