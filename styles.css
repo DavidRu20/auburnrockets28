@@ -56,12 +56,23 @@
 }
 
 /* Respect system light preference only if you don't force dark via data-theme */
-@media (prefers-color-scheme: light){
-  :root:not([data-theme="dark"]){
-    --bg:#f6f8fc; --panel:#ffffff; --panel-2:#f5f7fb; --text:#0b1220; --muted:#4c5a70;
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg:#f5f7fb;
+    --bg-2:#ffffff;
+    --panel:#ffffff;
+    --panel-2:#f0f3f8;
+    --text:#0b1220;
+    --muted:#4b5a70;
     --border:rgba(0,0,0,.08);
-    --shadow-1: 0 6px 18px rgba(0,0,0,.09);
-    --shadow-2: 0 20px 60px rgba(0,0,0,.10);
+
+    --blue:#0d6efd;
+    --blue-2:#2b8cff;
+    --blue-3:#2b8cff;
+
+    --shadow-1: 0 6px 18px rgba(0,0,0,.08);
+    --shadow-2: 0 20px 60px rgba(0,0,0,.12);
     --inner-1: inset 0 1px 0 rgba(255,255,255,.6);
   }
 }
