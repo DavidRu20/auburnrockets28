@@ -74,6 +74,52 @@
     /* Main spacing */
     main{ padding-bottom: 44px; }
   </style>
+
+  <!-- ================= MOBILE-ONLY FIX PACK (no desktop changes) ================= -->
+  <style>
+    @media (max-width: 780px){
+
+      /* Contacts table: allow horizontal scroll instead of cutting off */
+      .table-wrapper{
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+        border-radius:12px;
+        border:1px solid var(--border);
+      }
+      .table{
+        width:100%;
+        min-width:600px;           /* keep columns readable */
+        table-layout:fixed;        /* enables ellipsis */
+        border-collapse:separate;
+        border-spacing:0;
+      }
+      .table th, .table td{
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        padding:12px 14px;
+      }
+
+      /* Form: stack two-up row, keep iOS from zooming, fit viewport */
+      .form .inline{ display:flex; flex-direction:column; gap:16px; }
+      .form input, .form select, .form textarea, .form button,
+      input, select, textarea, button{
+        width:100%;
+        font-size:16px;            /* prevents iOS focus zoom */
+        line-height:1.3;
+        padding:12px 14px;
+        border-radius:10px;
+      }
+      .form textarea{ min-height:140px; resize:vertical; }
+
+      /* Keep bottom buttons above iPhone home bar */
+      main, .panel, .section{
+        padding-bottom:max(20px, env(safe-area-inset-bottom));
+      }
+      .btn.primary, .form .btn{ width:100%; border-radius:12px; font-weight:700; }
+    }
+  </style>
+  <!-- ========================= END MOBILE FIX PACK ========================= -->
 </head>
 <body>
 
