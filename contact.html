@@ -75,51 +75,62 @@
     main{ padding-bottom: 44px; }
   </style>
 
-  <!-- ================= MOBILE-ONLY FIX PACK (no desktop changes) ================= -->
+  <!-- ================= MOBILE-ONLY SHRINK PACK (no desktop changes) ================= -->
   <style>
     @media (max-width: 780px){
 
-      /* Contacts table: allow horizontal scroll instead of cutting off */
+      /* Keep Name + Email side-by-side, but allow them to shrink */
+      .form .inline{
+        display:flex !important;
+        gap:8px !important;            /* tighter gap */
+      }
+      .form .inline > div{
+        flex:1 1 0 !important;
+        min-width:0 !important;        /* allow shrinking instead of overflowing */
+      }
+
+      /* Slimmer form controls (no iOS zoom because still >=14px) */
+      .form input,
+      .form select,
+      .form textarea,
+      .form button{
+        font-size:14px !important;
+        line-height:1.3 !important;
+        padding:8px 10px !important;
+        border-radius:8px !important;
+        width:100% !important;
+        box-sizing:border-box !important;
+      }
+      .form .label{ font-size:13px !important; }
+      .form textarea{ min-height:100px !important; resize:vertical !important; }
+
+      /* Contacts table: smaller text/padding + safe horizontal scroll if needed */
       .table-wrapper{
-        overflow-x:auto;
+        overflow-x:auto;                 /* safety net on tiny phones */
         -webkit-overflow-scrolling:touch;
-        border-radius:12px;
-        border:1px solid var(--border);
       }
       .table{
         width:100%;
-        min-width:600px;           /* keep columns readable */
-        table-layout:fixed;        /* enables ellipsis */
         border-collapse:separate;
         border-spacing:0;
+        table-layout:fixed;              /* enables ellipsis */
+        min-width:0;                     /* let it shrink */
       }
       .table th, .table td{
+        font-size:14px !important;
+        padding:8px 10px !important;
         white-space:nowrap;
         overflow:hidden;
         text-overflow:ellipsis;
-        padding:12px 14px;
       }
 
-      /* Form: stack two-up row, keep iOS from zooming, fit viewport */
-      .form .inline{ display:flex; flex-direction:column; gap:16px; }
-      .form input, .form select, .form textarea, .form button,
-      input, select, textarea, button{
-        width:100%;
-        font-size:16px;            /* prevents iOS focus zoom */
-        line-height:1.3;
-        padding:12px 14px;
-        border-radius:10px;
-      }
-      .form textarea{ min-height:140px; resize:vertical; }
-
-      /* Keep bottom buttons above iPhone home bar */
+      /* Make sure nothing gets trapped behind iPhone home bar */
       main, .panel, .section{
         padding-bottom:max(20px, env(safe-area-inset-bottom));
       }
-      .btn.primary, .form .btn{ width:100%; border-radius:12px; font-weight:700; }
     }
   </style>
-  <!-- ========================= END MOBILE FIX PACK ========================= -->
+  <!-- ======================= END MOBILE SHRINK PACK ======================= -->
 </head>
 <body>
 
