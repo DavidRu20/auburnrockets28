@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AHS Class of ’28 — Achievements</title>
   <meta name="theme-color" content="#0d6efd" />
+
+  <!-- Force dark theme BEFORE CSS loads -->
+  <script>
+    (function () {
+      try {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+      } catch (_) {}
+    })();
+  </script>
+  <meta name="color-scheme" content="dark">
+
   <link rel="stylesheet" href="styles.css" />
 
   <style>
@@ -135,16 +147,11 @@
   </style>
 </head>
 <body>
-  <!-- Force dark mode -->
-  <script>
-    document.documentElement.setAttribute('data-theme', 'dark');
-    localStorage.setItem('theme', 'dark');
-  </script>
 
   <!-- Background -->
   <canvas id="starfield" aria-hidden="true"></canvas>
 
-  <!-- Header / Nav -->
+  <!-- Header / Nav (standardized) -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
       <a class="brand" href="./index.html" aria-label="AHS Class of 2028 — Home">
@@ -220,14 +227,15 @@
     </div>
   </main>
 
-  <!-- Mobile Menu script -->
+  <!-- Mobile Menu (robust + scroll lock) -->
   <script>
     (function(){
       const btn  = document.getElementById('menuBtn');
       const menu = document.getElementById('mobileMenu');
       if (!btn || !menu) return;
-      if (btn.dataset.bound === "1") return;
+      if (btn.dataset.bound === "1") return; // avoid double-binding
       btn.dataset.bound = "1";
+
       const DESKTOP_W = 980;
       let open = false;
       function setOpen(v){
@@ -237,6 +245,7 @@
         document.documentElement.classList.toggle('menu-open', open);
         document.body.classList.toggle('menu-open', open);
       }
+
       btn.addEventListener('click', (e)=>{ e.stopPropagation(); setOpen(!open); }, {passive:true});
       document.addEventListener('click', (e)=>{ if(open && !menu.contains(e.target) && e.target !== btn) setOpen(false); });
       document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') setOpen(false); });
@@ -245,12 +254,12 @@
     })();
   </script>
 
-  <!-- Starfield -->
+  <!-- Starfield Background (identical to Announcements) -->
   <script>
     (function(){
       const cvs = document.getElementById('starfield');
       if(!cvs) return;
-      const ctx = cvs.getContext('2d', { alpha:false });
+      const ctx = cvs.getContext('2d', { alpha:false }); // solid gradient background
       let stars=[];
       function resize(){
         cvs.width = innerWidth; cvs.height = innerHeight;
@@ -278,10 +287,19 @@
 
   <!-- Page interactions -->
   <script>
+    // Celebration pulse on Student of the Month
     document.getElementById('studentCard')?.addEventListener('click', () => {
       document.body.classList.add('celebrate');
       setTimeout(() => document.body.classList.remove('celebrate'), 4000);
     });
+  </script>
+
+  <!-- Safety guard: if anything flipped the theme back, set it to dark again -->
+  <script>
+    if (document.documentElement.getAttribute('data-theme') !== 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      try { localStorage.setItem('theme', 'dark'); } catch(_) {}
+    }
   </script>
 
   <script src="script.js?v=16" defer></script>
