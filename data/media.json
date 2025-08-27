@@ -2,15 +2,14 @@
   "photos": [
     {
       "src": "img/media/wlecome back.jpeg",
-      "caption": "Welcom Back!!!",
-      "tags": ["Welcome", "Teasere"]
+      "caption": "Welcome Back!!!",
+      "tags": ["Welcome", "Teaser"]
     },
     {
       "src": "img/media/B9A05C87-7F2D-4936-A28D-44680AB162A1.png",
-      "caption": "Whats Next?",
-      "tags": ["Upincoming", "Next"]
-    }
-    
+      "caption": "What's Next?",
+      "tags": ["Upcoming", "Next"]
+    },
     {
       "src": "img/media/IMG_0667.jpeg",
       "caption": "Lip Sync",
@@ -28,7 +27,7 @@
       "youtube": "g5lL1syE6QA",
       "title": "NEW WEBSITE",
       "meta": "00:51 • Highlights",
-      "tags": ["website","AHS"]
+      "tags": ["website", "AHS"]
     }
   ]
 }
