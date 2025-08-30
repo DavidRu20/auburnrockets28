@@ -9,7 +9,6 @@
   { "image": "images/shop/soccerjersycolar.jpg",     "title": "Soccer Jersey (Collar)",         "category": "jersey", "price": 52 },
   { "image": "images/shop/sweats.jpg",               "title": "Sweatpants",                     "category": "pants",  "price": 32 },
   { "image": "images/shop/truckerhat.jpg",           "title": "Trucker Hat",                    "category": "hat",    "price": 20 },
-  { "image": "images/shop/tshirt-cream.jpg",         "title": "T-Shirt (Cream)",                "category": "tee",    "price": 22 }
   { "image": "images/shop/basketball-jersey.png",    "title": "Basketball Jersey",           "category": "jersey", "price": 50 },
   { "image": "images/shop/football-jersey-blue.png", "title": "Football Jersey (Blue)",      "category": "jersey", "price": 55 },
   { "image": "images/shop/hockey-jersey.jpg",        "title": "Hockey Jersey",               "category": "jersey", "price": 60 }
