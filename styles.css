@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AHS Class of ’28 — Global Styles (Futuristic / Glass / Blue Theme)
+   Auburn High School — Global Styles (Futuristic / Glass / Blue Theme)
    - Mobile-first, responsive, accessible
    - Prefers-reduced-motion respected
    - Light/Dark via [data-theme] on :root (default = dark)
@@ -105,6 +105,10 @@ svg{ display:block; }
 button,input,select,textarea{ font:inherit; color:inherit; }
 a{ color:inherit; text-decoration:none; }
 :focus-visible{ outline:2px solid var(--focus); outline-offset:2px; border-radius:8px; }
+#starfield{
+  position:fixed; inset:0; z-index:-1; pointer-events:none; display:block;
+  width:100%; height:100%;
+}
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce){
@@ -147,6 +151,12 @@ a{ color:inherit; text-decoration:none; }
   width:38px; height:38px; border-radius:12px; display:grid; place-items:center;
   background:linear-gradient(135deg,var(--blue),var(--blue-2)); color:#fff; font-weight:900;
   box-shadow:0 8px 24px rgba(13,110,253,.35);
+  position:relative; overflow:hidden;
+}
+.brand .logo::after{
+  content:""; position:absolute; inset:-40% -20% auto auto; width:60px; height:60px;
+  background:radial-gradient(circle, rgba(255,255,255,.55), rgba(255,255,255,0) 60%);
+  opacity:.55; transform:translate(18px,-18px);
 }
 .links a{ color:var(--muted); margin-left:16px; font-weight:600; transition:color var(--t-fast); }
 .links a:hover{ color:var(--text); }
@@ -180,7 +190,21 @@ a{ color:inherit; text-decoration:none; }
 :root[data-theme="light"] .nav a.active{ color:var(--text); }
 
 /* =============================== HERO =================================== */
-.hero{ min-height:calc(100vh - 70px); display:grid; place-items:center; text-align:center; padding:40px 18px; }
+.hero{
+  min-height:calc(100vh - 70px); display:grid; place-items:center; text-align:center; padding:40px 18px;
+  position:relative; overflow:hidden;
+}
+.hero::before{
+  content:""; position:absolute; inset:8% 6% auto 6%; height:180px;
+  border-radius:999px; filter:blur(40px);
+  background:radial-gradient(circle, rgba(82,168,255,.22), rgba(82,168,255,0) 65%);
+  opacity:.8; pointer-events:none;
+}
+.hero::after{
+  content:""; position:absolute; inset:auto 0 10% 0; height:140px;
+  background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), rgba(255,255,255,0) 70%);
+  filter:blur(30px); opacity:.6; pointer-events:none;
+}
 .card{
   display:inline-block; padding:28px 30px; border-radius:var(--r-xl); border:1px solid var(--border);
   background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
@@ -193,6 +217,56 @@ h1{
   background:linear-gradient(90deg,var(--blue-2),#fff);
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
+#homeTitle.lux-title{
+  font-size:clamp(36px,4.6vw,54px);
+  letter-spacing:.6px;
+}
+.brand-kicker{
+  display:inline-flex; align-items:center; gap:8px; padding:6px 14px;
+  border-radius:999px; border:1px solid rgba(255,255,255,.12);
+  background:rgba(12,16,32,.55); color:var(--muted); font-size:12px; font-weight:700;
+  text-transform:uppercase; letter-spacing:2px;
+}
+.brand-kicker .dot{
+  width:6px; height:6px; border-radius:50%; background:var(--blue-2); box-shadow:0 0 12px var(--blue-2);
+}
+.hero-tagline{
+  font-size:16px; color:var(--muted); margin:14px auto 18px; max-width:520px;
+}
+.hero-highlights{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px; margin:18px 0 14px;
+}
+.hero-pill{
+  display:flex; align-items:center; gap:10px; padding:12px 14px;
+  border-radius:14px; border:1px solid var(--border);
+  background:rgba(20,24,40,.65); text-align:left;
+  box-shadow:var(--inner-1);
+}
+.hero-pill span{ font-weight:700; }
+.hero-pill .icon{
+  width:32px; height:32px; border-radius:10px; display:grid; place-items:center;
+  background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,0));
+  border:1px solid rgba(255,255,255,.14);
+}
+.hero-orbits{
+  position:absolute; inset:auto 0 -20px 0; height:120px; pointer-events:none;
+  display:flex; justify-content:center; gap:14px; opacity:.7;
+}
+.hero-orbits span{
+  display:inline-block; width:120px; height:120px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.08); transform:scale(.7);
+  animation:orbit-float 10s ease-in-out infinite;
+}
+.hero-orbits span:nth-child(2){ width:160px; height:160px; animation-delay:1.4s; opacity:.55; }
+.hero-orbits span:nth-child(3){ width:210px; height:210px; animation-delay:2.2s; opacity:.4; }
+.rocket-mark{
+  position:absolute; top:-18px; right:-18px; width:86px; height:86px;
+  border-radius:22px; border:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(140deg, rgba(13,110,253,.4), rgba(13,110,253,0));
+  display:grid; place-items:center; font-size:30px; box-shadow:var(--shadow-1);
+  animation:float 8s ease-in-out infinite;
+}
 #date{ opacity:.9; font-size:16px; margin:6px 0 2px; }
 #time{ opacity:.95; font-size:28px; font-weight:800; margin:0 0 18px; letter-spacing:.3px; }
 
@@ -201,6 +275,10 @@ h1{
 .box{ min-width:92px; padding:12px 10px; border-radius:14px; background:var(--panel); border:1px solid var(--border); }
 .box .num{ font-size:26px; font-weight:800; }
 .box .lbl{ font-size:12px; color:var(--muted); margin-top:2px; }
+.countdown .box{
+  background:rgba(15,19,35,.75);
+  box-shadow:var(--inner-1);
+}
 
 /* ============================== BUTTONS ================================= */
 .btn{
@@ -328,6 +406,66 @@ h1{
 .section{ padding:28px 0; }
 .section .section-title{ font-weight:900; letter-spacing:.3px; margin-bottom:12px; }
 .section .section-sub{ color:var(--muted); margin-top:-4px; margin-bottom:12px; }
+.section .section-kicker{
+  text-transform:uppercase; letter-spacing:2px; font-size:12px; color:var(--muted);
+  display:inline-flex; align-items:center; gap:8px; margin-bottom:10px;
+}
+.section .section-kicker::before{
+  content:""; width:18px; height:2px; background:linear-gradient(90deg,var(--blue-2),transparent);
+}
+.lux-grid{
+  display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+}
+.lux-card{
+  padding:18px; border-radius:18px; border:1px solid var(--border);
+  background:linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  box-shadow:var(--shadow-1); position:relative; overflow:hidden;
+}
+.lux-card::after{
+  content:""; position:absolute; inset:auto -30% -40% auto; width:120px; height:120px;
+  background:radial-gradient(circle, rgba(82,168,255,.28), rgba(82,168,255,0) 60%);
+  opacity:.7;
+}
+.lux-card .lux-icon{
+  width:42px; height:42px; border-radius:14px; display:grid; place-items:center;
+  background:rgba(12,16,32,.6); border:1px solid rgba(255,255,255,.12);
+  margin-bottom:10px; font-size:20px;
+}
+.lux-card .lux-title{ font-weight:800; margin:6px 0; }
+.lux-card .lux-text{ color:var(--muted); font-size:14px; }
+
+.stat-grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
+.stat-card{
+  border-radius:16px; border:1px solid var(--border); padding:14px;
+  background:rgba(14,18,30,.72); text-align:left;
+}
+.stat-card .stat-value{ font-size:22px; font-weight:900; }
+.stat-card .stat-label{ color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:1.5px; }
+
+.accent-divider{
+  height:1px; background:linear-gradient(90deg, rgba(255,255,255,.08), rgba(82,168,255,.45), rgba(255,255,255,.08));
+  margin:18px 0;
+}
+
+.rocket-trail{
+  position:relative; display:inline-flex; align-items:center; gap:10px;
+  padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.14);
+  background:rgba(12,16,32,.55);
+}
+.rocket-trail::after{
+  content:""; position:absolute; right:-34px; width:28px; height:2px;
+  background:linear-gradient(90deg, rgba(255,255,255,.5), rgba(255,255,255,0));
+  opacity:.7;
+}
+
+@keyframes float{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-8px); }
+}
+@keyframes orbit-float{
+  0%,100%{ transform:translateY(0) scale(.72); }
+  50%{ transform:translateY(-6px) scale(.78); }
+}
 
 /* ================================ FOOTER ================================ */
 .footer{
@@ -353,5 +491,3 @@ h1{
   80%{ box-shadow:0 0 0 14px rgba(13,110,253,0); }
   100%{ box-shadow:0 0 0 0 rgba(13,110,253,0); }
 }
-
-
