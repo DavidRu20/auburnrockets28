@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Contact • AHS Class of ’28</title>
+  <title>Contact • Auburn High School</title>
   <meta name="theme-color" content="#0d6efd" />
   <meta name="color-scheme" content="dark" />
 
@@ -140,9 +140,9 @@
   <!-- ============================ HEADER / NAV ============================ -->
   <header class="header" role="banner">
     <nav class="nav" aria-label="Primary">
-      <a class="brand" href="./index.html" aria-label="AHS Class of 2028 — Home">
-        <span class="logo" aria-hidden="true">A</span>
-        AHS Class of ’28
+      <a class="brand" href="./index.html" aria-label="Auburn High School — Home">
+        <span class="logo" aria-hidden="true">🚀</span>
+        Auburn High School
       </a>
 
       <!-- Desktop links -->
@@ -290,7 +290,7 @@
   <footer class="footer">
     <div class="container">
       <div class="small">
-        Built for AHS Class of 2028 • Contact page
+        Built for Auburn High School • Contact page
       </div>
     </div>
   </footer>
@@ -328,9 +328,9 @@
         if (action === '' || action.startsWith('mailto:')) {
           e.preventDefault();
           const to = recipient.value;
-          const subject = encodeURIComponent(`[AHS '28] ${subjEl.value}`);
+          const subject = encodeURIComponent(`[Auburn High School] ${subjEl.value}`);
           const body = encodeURIComponent(
-            `From: ${nameEl.value} <${emailEl.value}>\n\n${msgEl.value}\n\n— Sent from the AHS Class of '28 site`
+            `From: ${nameEl.value} <${emailEl.value}>\n\n${msgEl.value}\n\n— Sent from the Auburn High School site`
           );
           window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
           try {
@@ -375,39 +375,7 @@
     })();
   </script>
 
-  <!-- Starfield script (identical gradient/colors to the other pages) -->
-  <script>
-    (function(){
-      const cvs = document.getElementById('starfield');
-      if(!cvs) return;
-      const ctx = cvs.getContext('2d', { alpha:false }); // solid gradient background
-      let stars=[];
-      function resize(){
-        cvs.width = innerWidth; cvs.height = innerHeight;
-        stars = Array.from({length:200},()=>({
-          x:Math.random()*cvs.width, y:Math.random()*cvs.height,
-          r:Math.random()*1.6, v:Math.random()*0.3+0.05
-        }));
-      }
-      addEventListener('resize', resize); resize();
-      (function tick(){
-        const light = document.documentElement.getAttribute('data-theme')==='light';
-        const g = ctx.createLinearGradient(0,0,0,cvs.height);
-        if(light){ g.addColorStop(0,'#eaf2ff'); g.addColorStop(1,'#ffffff'); }
-        else{ g.addColorStop(0,'#0b0e1a'); g.addColorStop(1,'#000'); }
-        ctx.fillStyle=g; ctx.fillRect(0,0,cvs.width,cvs.height);
-        ctx.fillStyle = light? 'rgba(60,90,140,.85)':'rgba(180,200,255,.85)';
-        for(const s of stars){
-          ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
-          s.y+=s.v; if(s.y>cvs.height){ s.y=-2; s.x=Math.random()*cvs.width; }
-        }
-        requestAnimationFrame(tick);
-      })();
-    })();
-  </script>
-
   <!-- Your global site script (if needed) -->
   <script src="script.js" defer></script>
 </body>
 </html>
-
